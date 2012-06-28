@@ -5,32 +5,31 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TextToken extends AbstractToken {
-	String text;
+
 	
-	public TextToken(String text, TokenType type) {
-		super(type);
-		this.text = text;
+	public TextToken(Span span, TokenType type) {
+		super(span, type);
 	}
 	
 	@Override
 	public String text() {
-		return text;
+		return span.toText();
 	}
 	
-	public static TextToken valueOf(String text, TokenType type) {
-		return new TextToken(text, type);
+	public static TextToken valueOf(Span span, TokenType type) {
+		return new TextToken(span, type);
 	}
 	
-	public static final TextToken SPACE = TextToken.valueOf(" ", BaseTokenType.SPACE);
-	public static final TextToken NEWLINE = TextToken.valueOf("\n", BaseTokenType.SPACE);
-	public static final TextToken COMMA = TextToken.valueOf(",", BaseTokenType.PUNC);
-	public static final TextToken DOT = TextToken.valueOf(".", BaseTokenType.PUNC);
-	public static final TextToken EMPTY = TextToken.valueOf("", BaseTokenType.SPACE);
-	public static final TextToken NULL = TextToken.valueOf("", BaseTokenType.NULL);
+	//public static TextToken makeSpace = TextToken.valueOf(" ", BaseTokenType.SPACE);
+	//public static final TextToken NEWLINE = TextToken.valueOf("\n", BaseTokenType.SPACE);
+	//public static final TextToken COMMA = TextToken.valueOf(",", BaseTokenType.PUNC);
+	//public static final TextToken DOT = TextToken.valueOf(".", BaseTokenType.PUNC);
+	//public static final TextToken EMPTY = TextToken.valueOf("", BaseTokenType.SPACE);
+	public static final TextToken NULL = TextToken.valueOf(Span.NULL, BaseTokenType.NULL);
 
 	@Override
 	public String toString() {
-		return String.format("#text:'%s'%s,%s", text, type, properties);
+		return String.format("#text:'%s'%s,%s", text(), type, properties);
 	}
 
 	@Override

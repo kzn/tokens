@@ -1,6 +1,7 @@
 package name.kazennikov.tokens;
 
-public class Span implements CharSequence {
+public class Span{
+	public static final Span NULL = new Span(null, 0, 0);
 	String text;
 	int start;
 	int end;
@@ -11,20 +12,16 @@ public class Span implements CharSequence {
 		this.end = end;
 	}
 
-	@Override
+
 	public int length() {
 		return end - start;
 	}
 
-	@Override
+
 	public char charAt(int index) {
 		return text.charAt(start + index);
 	}
 
-	@Override
-	public CharSequence subSequence(int start, int end) {
-		return text.subSequence(this.start + start, this.start + end);
-	}
 	
 	public int getStart() {
 		return start;
@@ -32,5 +29,30 @@ public class Span implements CharSequence {
 	
 	public int getEnd() {
 		return end;
+	}
+	
+	public void translate(int offset) {
+		start += offset;
+		end += offset;
+	}
+	
+	public static Span make(String text, int start, int end) {
+		return new Span(text, start, end);
+	}
+	
+	public static Span make(String text, int pos) {
+		return new Span(text, pos, pos);
+	}
+	
+	public String toText() {
+		return text.subSequence(start, end).toString();
+	}
+	
+	public String getSource() {
+		return text;
+	}
+	
+	public Span subSpan(int start, int end) {
+		return make(text, this.start + start, this.start + end);
 	}
 }

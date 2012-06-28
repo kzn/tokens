@@ -24,6 +24,6 @@ public class TokenStream extends SequenceStream<AbstractToken> {
 			for(int i = start; i != end; i++) {
 				tokens.add(get(i));
 			}
-			return new BaseToken(tokens, type);
+			return BaseToken.make(type, tokens);
 		}
 }

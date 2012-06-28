@@ -10,8 +10,10 @@ public class BaseToken extends AbstractToken {
 	Map<String, Object> properties;
 	
 	
-	public BaseToken(List<AbstractToken> tokens, TokenType type) {
-		super(type);
+	
+	
+	public BaseToken(Span span, TokenType type, List<AbstractToken> tokens) {
+		super(span, type);
 		this.childs = tokens;
 	}
 	
@@ -45,8 +47,19 @@ public class BaseToken extends AbstractToken {
 		return sb.toString();
 	}
 	
+	public static BaseToken make(TokenType type, List<AbstractToken> tokens) {
+		if(tokens.isEmpty())
+			return new BaseToken(Span.NULL, type, tokens);
+		
+		int start = tokens.get(0).getSpan().getStart();
+		int end = tokens.get(tokens.size() - 1).getSpan().getEnd();
+		String text = tokens.get(0).getSpan().getSource();
+		
+		return new BaseToken(new Span(text, start, end), type, tokens);
+	}
+	
 	public BaseToken subSequence(int from, int to) {
-		return new BaseToken(childs.subList(from, to), type);
+		return make(type, childs.subList(from, to));
 	}
 	
 	@Override
@@ -65,9 +78,9 @@ public class BaseToken extends AbstractToken {
 			end--;
 		
 		if(start >= end)
-			return new BaseToken(new ArrayList<AbstractToken>(), type);
+			return make(type, new ArrayList<AbstractToken>());
 		
-		return new BaseToken(childs.subList(start, end + 1), type);
+		return make(type, childs.subList(start, end + 1));
 	}
 	
 	public List<AbstractToken> childs() {
