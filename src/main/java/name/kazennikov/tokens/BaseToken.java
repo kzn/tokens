@@ -12,8 +12,8 @@ public class BaseToken extends AbstractToken {
 	
 	
 	
-	public BaseToken(Span span, TokenType type, List<AbstractToken> tokens) {
-		super(span, type);
+	public BaseToken(String src, int start, int end, TokenType type, List<AbstractToken> tokens) {
+		super(src,start, end, type);
 		this.childs = tokens;
 	}
 	
@@ -47,19 +47,19 @@ public class BaseToken extends AbstractToken {
 		return sb.toString();
 	}
 	
-	public static BaseToken make(TokenType type, List<AbstractToken> tokens) {
+	public static BaseToken valueOf(TokenType type, List<AbstractToken> tokens) {
 		if(tokens.isEmpty())
-			return new BaseToken(Span.NULL, type, tokens);
+			return new BaseToken(null, 0, 0, type, tokens);
 		
-		int start = tokens.get(0).getSpan().getStart();
-		int end = tokens.get(tokens.size() - 1).getSpan().getEnd();
-		String text = tokens.get(0).getSpan().getSource();
+		int start = tokens.get(0).getStart();
+		int end = tokens.get(tokens.size() - 1).getEnd();
+		String text = tokens.get(0).getSrc();
 		
-		return new BaseToken(new Span(text, start, end), type, tokens);
+		return new BaseToken(text, start, end, type, tokens);
 	}
 	
 	public BaseToken subSequence(int from, int to) {
-		return make(type, childs.subList(from, to));
+		return valueOf(type, childs.subList(from, to));
 	}
 	
 	@Override
@@ -78,9 +78,9 @@ public class BaseToken extends AbstractToken {
 			end--;
 		
 		if(start >= end)
-			return make(type, new ArrayList<AbstractToken>());
+			return valueOf(type, new ArrayList<AbstractToken>());
 		
-		return make(type, childs.subList(start, end + 1));
+		return valueOf(type, childs.subList(start, end + 1));
 	}
 	
 	public List<AbstractToken> childs() {

@@ -7,17 +7,12 @@ import java.util.Set;
 public class TextToken extends AbstractToken {
 
 	
-	public TextToken(Span span, TokenType type) {
-		super(span, type);
+	public TextToken(String src, int start, int end, TokenType type) {
+		super(src, start, end, type);
 	}
 	
-	@Override
-	public String text() {
-		return span.toText();
-	}
-	
-	public static TextToken valueOf(Span span, TokenType type) {
-		return new TextToken(span, type);
+	public static TextToken valueOf(String src, int start, int end, TokenType type) {
+		return new TextToken(src, start, end, type);
 	}
 	
 	//public static TextToken makeSpace = TextToken.valueOf(" ", BaseTokenType.SPACE);
@@ -25,7 +20,7 @@ public class TextToken extends AbstractToken {
 	//public static final TextToken COMMA = TextToken.valueOf(",", BaseTokenType.PUNC);
 	//public static final TextToken DOT = TextToken.valueOf(".", BaseTokenType.PUNC);
 	//public static final TextToken EMPTY = TextToken.valueOf("", BaseTokenType.SPACE);
-	public static final TextToken NULL = TextToken.valueOf(Span.NULL, BaseTokenType.NULL);
+	public static final TextToken NULL = TextToken.valueOf(null, 0, 0, BaseTokenType.NULL);
 
 	@Override
 	public String toString() {

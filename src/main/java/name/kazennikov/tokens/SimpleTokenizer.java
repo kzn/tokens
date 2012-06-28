@@ -83,7 +83,7 @@ public class SimpleTokenizer {
 
 			if(isSeparator(ch)) {
 				if(start != pos) {
-					tokens.add(TextToken.valueOf(new Span(text, start, pos), infer(text, start, pos)));
+					tokens.add(TextToken.valueOf(text, start, pos, infer(text, start, pos)));
 				}
 
 				int tStart = pos;
@@ -97,12 +97,12 @@ public class SimpleTokenizer {
 							break;
 						pos++;
 					}
-					tokens.add(new TextToken(new Span(text, tStart, pos), newLine? BaseTokenType.NEWLINE : BaseTokenType.SPACE));
+					tokens.add(TextToken.valueOf(text, tStart, pos, newLine? BaseTokenType.NEWLINE : BaseTokenType.SPACE));
 				} else {
 					int puncStart = pos;
 					while (pos < text.length() && text.charAt(pos) == ch)
 						pos++;
-					tokens.add(TextToken.valueOf(new Span(text, puncStart, pos), BaseTokenType.PUNC));
+					tokens.add(TextToken.valueOf(text, puncStart, pos, BaseTokenType.PUNC));
 				}
 				start = pos;
 				continue;
@@ -111,14 +111,14 @@ public class SimpleTokenizer {
 			pos++;
 		}
 		if(start != pos) {
-			tokens.add(TextToken.valueOf(new Span(text,start, pos), infer(text, start, pos)));
+			tokens.add(TextToken.valueOf(text,start, pos, infer(text, start, pos)));
 		}
 
 		return tokens;
 	}
 	
 	public static BaseToken tokenize(String text, TokenType type) {
-		return BaseToken.make(type, tokenize(text));
+		return BaseToken.valueOf(type, tokenize(text));
 	}
 
 	public static void main(String[] args) {

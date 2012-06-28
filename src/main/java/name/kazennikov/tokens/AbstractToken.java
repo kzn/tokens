@@ -6,10 +6,14 @@ import java.util.Map;
 public abstract class AbstractToken {
 	Map<String, Object> properties;
 	TokenType type;
-	Span span;
+	String src;
+	int start;
+	int end;
 	
-	public AbstractToken(Span span, TokenType type) {
-		this.span = span;
+	public AbstractToken(String src, int start, int end, TokenType type) {
+		this.src = src;
+		this.start = start;
+		this.end = end;
 		this.type = type;
 	}
 	
@@ -35,7 +39,7 @@ public abstract class AbstractToken {
 	}
 	
 	public String text() {
-		return span.toText();
+		return src.substring(start, end).toString();
 	}
 	
 	public abstract int size();
@@ -57,7 +61,15 @@ public abstract class AbstractToken {
 		return properties;
 	}
 	
-	public Span getSpan() {
-		return span;
+	public int getStart() {
+		return start;
+	}
+	
+	public int getEnd() {
+		return end;
+	}
+	
+	public String getSrc() {
+		return src;
 	}
 }

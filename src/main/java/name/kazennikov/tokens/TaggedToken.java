@@ -7,8 +7,8 @@ public class TaggedToken<E> extends BaseToken {
 	E tag;
 	List<E> possibleTags;
 
-	public TaggedToken(Span span, List<AbstractToken> tokens, TokenType type, List<E> possibleTags) {
-		super(span, type, tokens);
+	public TaggedToken(String src, int start, int end, List<AbstractToken> tokens, TokenType type, List<E> possibleTags) {
+		super(src, start, end, type, tokens);
 		this.possibleTags = possibleTags;
 	}
 	
