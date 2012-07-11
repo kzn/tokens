@@ -14,7 +14,7 @@ public class SimpleTokenizer {
 	 * @return
 	 */
 	public static boolean isSeparator(char ch) {
-		if(Character.isSpaceChar(ch))
+		if(Character.isSpaceChar(ch) || Character.isWhitespace(ch))
 			return true;
 
 		int type = Character.getType(ch);
@@ -87,13 +87,13 @@ public class SimpleTokenizer {
 				}
 
 				int tStart = pos;
-				if(Character.isSpaceChar(ch)) {
+				if(Character.isSpaceChar(ch) || Character.isWhitespace(ch)) {
 					boolean newLine = (ch == '\n' || ch == '\r');
 
 					while(pos < text.length()) {
 						ch = text.charAt(pos);
 						newLine = newLine || ch == '\n' || ch == '\r';
-						if(!Character.isSpaceChar(ch))
+						if(!Character.isSpaceChar(ch) && !Character.isWhitespace(ch))
 							break;
 						pos++;
 					}
