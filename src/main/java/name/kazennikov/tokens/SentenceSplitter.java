@@ -63,7 +63,7 @@ public class SentenceSplitter {
 			
 			String value = token.text();
 			
-			if(value.length() == 1 && (value == "!" || value == "?" || value == "."))
+			if(value.length() == 1 && (value.equals("!") || value.equals("?") || value.equals(".")))
 				return true;
 			
 			return value.contains(".");
