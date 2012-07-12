@@ -21,16 +21,19 @@ public class BaseTokenType implements TokenType {
 	}
 	private static HashMap<String, TokenType> types = new HashMap<String, TokenType>();
 	public final static TokenType NULL = BaseTokenType.add("null", null);
-	public final static TokenType SEPARATOR = BaseTokenType.add("sep", null);
 	public final static TokenType TEXT = BaseTokenType.add("text", null);
+	
 	// separators
+	public final static TokenType SEPARATOR = BaseTokenType.add("sep", null);
 	public final static TokenType PUNC = BaseTokenType.add("punc", SEPARATOR);
-	public final static TokenType SPACE = BaseTokenType.add("space", SEPARATOR);
 
+	// whitespace
+	public final static TokenType WHITESPACE = BaseTokenType.add("ws", SEPARATOR);
+	public final static TokenType SPACE = BaseTokenType.add("space", WHITESPACE);
+	public final static TokenType NEWLINE = BaseTokenType.add("newline", WHITESPACE);
 
 	// text
 	public final static TokenType ALPHANUM = BaseTokenType.add("alphanum", TEXT);
-	public final static TokenType NEWLINE = BaseTokenType.add("newline", SEPARATOR);
 	public final static TokenType LETTERS = BaseTokenType.add("letters", TEXT);
 	public final static TokenType DIGITS = BaseTokenType.add("digits", TEXT);
 	public final static TokenType MISC = BaseTokenType.add("misc", TEXT);
