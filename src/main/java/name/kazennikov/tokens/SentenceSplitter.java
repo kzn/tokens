@@ -32,7 +32,7 @@ public class SentenceSplitter {
 		public List<AbstractToken> split(TokenStream in) {
 			List<AbstractToken> tokens = new ArrayList<AbstractToken>();
 			
-			while(in.current() != in.nullObject && in.current().is(BaseTokenType.SPACE))
+			while(in.current() != in.nullObject && in.current().is(BaseTokenType.WHITESPACE))
 				in.next();
 
 			int sentenceStart = in.pos();
@@ -42,7 +42,7 @@ public class SentenceSplitter {
 				if(isSentenceEnd(in, splitOnLower)) {
 					tokens.add(in.getSequence(sentenceStart, in.pos(), NLPTokenType.SENTENCE).trim());
 					
-					while(in.current() != in.nullObject && in.current().is(BaseTokenType.SPACE))
+					while(in.current() != in.nullObject && in.current().is(BaseTokenType.WHITESPACE))
 						in.next();
 					
 					sentenceStart = in.pos();
@@ -90,7 +90,7 @@ public class SentenceSplitter {
 			while(s.current().is(BaseTokenType.PUNC))
 				s.next();
 			
-			if(!s.current().is(BaseTokenType.SPACE))
+			if(!s.current().is(BaseTokenType.WHITESPACE))
 				return false;
 			
 			int sentStart = s.pos();
