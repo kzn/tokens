@@ -1,7 +1,6 @@
 package name.kazennikov.tokens;
 
 import java.util.List;
-import java.util.Set;
 
 public class TaggedToken<E> extends BaseToken {
 	E tag;

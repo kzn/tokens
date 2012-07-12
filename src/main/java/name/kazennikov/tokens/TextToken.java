@@ -1,8 +1,5 @@
 package name.kazennikov.tokens;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class TextToken extends AbstractToken {
 
