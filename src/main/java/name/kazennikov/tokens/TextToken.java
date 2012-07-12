@@ -20,7 +20,7 @@ public class TextToken extends AbstractToken {
 	//public static final TextToken COMMA = TextToken.valueOf(",", BaseTokenType.PUNC);
 	//public static final TextToken DOT = TextToken.valueOf(".", BaseTokenType.PUNC);
 	//public static final TextToken EMPTY = TextToken.valueOf("", BaseTokenType.SPACE);
-	public static final TextToken NULL = TextToken.valueOf(null, 0, 0, BaseTokenType.NULL);
+	public static final TextToken NULL = TextToken.valueOf("", 0, 0, BaseTokenType.NULL);
 
 	@Override
 	public String toString() {
