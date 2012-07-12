@@ -24,9 +24,13 @@ public class SentenceSplitter {
 			this.abbrev.add(abbrev);
 		}
 		
+		public List<AbstractToken> split(List<AbstractToken> tokens) {
+			return split(new TokenStream(tokens));
+		}
 		
-		public List<BaseToken> split(TokenStream in) {
-			List<BaseToken> tokens = new ArrayList<BaseToken>();
+		
+		public List<AbstractToken> split(TokenStream in) {
+			List<AbstractToken> tokens = new ArrayList<AbstractToken>();
 			int sentenceStart = 0;
 
 			while(!in.isEmpty()) {
@@ -140,7 +144,7 @@ public class SentenceSplitter {
 			BaseToken ts = SimpleTokenizer.tokenize("Мама мыла раму. Это 2.5 предложения.", NLPTokenType.SENTENCE);
 			SentenceSplitter ss = new SentenceSplitter(new HashSet<String>());
 			
-			List<BaseToken> ts1 = ss.split(new TokenStream(ts.childs()));
+			List<AbstractToken> ts1 = ss.split(new TokenStream(ts.childs()));
 			
 			System.out.printf("Split size: %d%n", ts1.size());
 			
