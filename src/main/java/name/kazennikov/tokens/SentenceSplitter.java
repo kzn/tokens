@@ -31,11 +31,20 @@ public class SentenceSplitter {
 		
 		public List<AbstractToken> split(TokenStream in) {
 			List<AbstractToken> tokens = new ArrayList<AbstractToken>();
-			int sentenceStart = 0;
+			
+			while(in.current() != in.nullObject && in.current().is(BaseTokenType.SPACE))
+				in.next();
+
+			int sentenceStart = in.pos();
+
 
 			while(!in.isEmpty()) {
 				if(isSentenceEnd(in, splitOnLower)) {
 					tokens.add(in.getSequence(sentenceStart, in.pos(), NLPTokenType.SENTENCE).trim());
+					
+					while(in.current() != in.nullObject && in.current().is(BaseTokenType.SPACE))
+						in.next();
+					
 					sentenceStart = in.pos();
 				} else {
 					in.next();
@@ -77,20 +86,26 @@ public class SentenceSplitter {
 				return true;
 			}
 			
-			// skip all punctuation
+			// skip all punctuation after current position
 			while(s.current().is(BaseTokenType.PUNC))
 				s.next();
 			
 			if(!s.current().is(BaseTokenType.SPACE))
 				return false;
 			
-			while(s.current() != TextToken.NULL && !s.current().is(BaseTokenType.TEXT))
-				s.next();
+			int sentStart = s.pos();
+			// skip all non-text after the punctuation
+			while(s.get(sentStart) != TextToken.NULL && !s.get(sentStart).is(BaseTokenType.TEXT)) {
+				//s.next();
+				sentStart++;
+			}
 			
-			if(s.current() == TextToken.NULL)
+			if(s.get(sentStart) == TextToken.NULL) {
+				s.setPos(sentStart);
 				return true;
+			}
 			
-			if(!Character.isLowerCase(s.current().text().charAt(0)) || splitOnLower) {
+			if(!Character.isLowerCase(s.get(sentStart).text().charAt(0)) || splitOnLower) {
 				if(isAbbrev(prev) || isInitial(prev))
 					return false;
 				return true;

@@ -180,6 +180,9 @@ public class SequenceStream<E> {
 	 * @param index index of the token
 	 */
 	public E get(int index) {
+		if(index < 0 || index >= tokens.size())
+			return nullObject;
+		
 		return tokens.get(index);
 	}
 }
