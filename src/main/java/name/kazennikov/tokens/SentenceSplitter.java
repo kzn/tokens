@@ -23,7 +23,12 @@ public class SentenceSplitter {
 		public void addAbbrev(String abbrev) {
 			this.abbrev.add(abbrev);
 		}
-		
+
+		/**
+		 * Split given list of tokens into list of sentences
+		 * @param tokens
+		 * @return list of sentences, contains at least 1 sentence if tokens list isn't empty
+		 */
 		public List<AbstractToken> split(List<AbstractToken> tokens) {
 			return split(new TokenStream(tokens));
 		}
@@ -56,7 +61,10 @@ public class SentenceSplitter {
 			}
 			return tokens;
 		}
-		
+
+		/**
+		 * Check if the token could be a possible EOS
+		 */
 		public static boolean isPossibleEOS(AbstractToken token) {
 			if(!token.is(BaseTokenType.PUNC))
 				return false;
@@ -70,9 +78,13 @@ public class SentenceSplitter {
 		}
 		
 		/**
-		 * Check if current token is a sentence end token
-		 * @param s
-		 * @return
+		 * Check if current token is a sentence end token. Also, if the current token is 
+		 * the end of sentence, then advance to the logical end of the sentence.
+		 * The method also checks for abbreviations that couldn't mean EOS
+		 * @param s token stream
+		 * @param splitOnLower if true, sentence ends on punctuation mark even if the start of the
+		 * next sentence in in lowercase
+		 * @return true if current tokens end a sentence
 		 */
 		public boolean isSentenceEnd(TokenStream s, boolean splitOnLower) {
 			if(!isPossibleEOS(s.current()))
@@ -96,7 +108,6 @@ public class SentenceSplitter {
 			int sentStart = s.pos();
 			// skip all non-text after the punctuation
 			while(s.get(sentStart) != TextToken.NULL && !s.get(sentStart).is(BaseTokenType.TEXT)) {
-				//s.next();
 				sentStart++;
 			}
 			
@@ -118,8 +129,12 @@ public class SentenceSplitter {
 			
 		}
 
-		private boolean isInitial(AbstractToken prev) {
-			String value = prev.text();
+		/**
+		 * Checks if the token could be an initial like A. A. Petrov
+		 * @param token token to check
+		 */
+		private boolean isInitial(AbstractToken token) {
+			String value = token.text();
 			if(value.isEmpty())
 				return false;
 			
