@@ -54,6 +54,10 @@ public class Annotation {
 		return String.format("%s@[%d,%d]%s", name, start, end, features);
 	}
 	
+	public String toString(Document d) {
+		return String.format("'%s'@%s[%d,%d]%s", getText(d), name, start, end, features);
+	}
+	
 	
 	public String getText(Document d) {
 		return d.getText().substring(start, end);
@@ -61,6 +65,10 @@ public class Annotation {
 	
 	public boolean isEmpty() {
 		return start == end;
+	}
+	
+	public <E> E as(Class<E> cls) {
+		return cls.cast(this);
 	}
 
 }

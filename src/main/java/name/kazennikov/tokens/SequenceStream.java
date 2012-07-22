@@ -25,6 +25,10 @@ public class SequenceStream<E> {
 		return current() == nullObject;
 	}
 	
+	public boolean isNull(E object) {
+		return object == nullObject;
+	}
+	
 	public E getNull() {
 		return nullObject;
 	}
