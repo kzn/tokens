@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 
-public class Document {
+public class Document implements CharSequence {
 	String text;
 	
 	Map<String, List<Annotation>> annotations = Maps.newHashMap();
@@ -44,5 +44,20 @@ public class Document {
 	
 	public void clearAnnotations(String name) {
 		getAnnotations(name).clear();
+	}
+
+	@Override
+	public int length() {
+		return text.length();
+	}
+
+	@Override
+	public char charAt(int index) {
+		return text.charAt(index);
+	}
+
+	@Override
+	public CharSequence subSequence(int start, int end) {
+		return text.subSequence(start, end);
 	}
 }

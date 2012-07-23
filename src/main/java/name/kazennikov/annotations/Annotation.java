@@ -31,6 +31,14 @@ public class Annotation {
 		return end;
 	}
 	
+	public void setStart(int start) {
+		this.start = start;
+	}
+
+	public void setEnd(int end) {
+		this.end = end;
+	}
+
 	public Set<String> getFeatureNames() {
 		return features.keySet();
 	}
