@@ -11,6 +11,7 @@ public class BaseTokenType implements TokenType {
 		this.parent = parent;
 	}
 	
+	@Override
 	public String name() {
 		return name;
 	}
