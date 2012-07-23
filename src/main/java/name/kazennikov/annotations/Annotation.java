@@ -67,7 +67,8 @@ public class Annotation {
 		return features;
 	}
 	
-	public String toString(Document d) {
+	@Override
+	public String toString() {
 		return String.format("'%s'@%s[%d,%d]%s", getText(), name, start, end, features);
 	}
 	
@@ -83,5 +84,24 @@ public class Annotation {
 	public <E> E as(Class<E> cls) {
 		return cls.cast(this);
 	}
+	
+	public boolean contains(Annotation other) {
+		return start <= other.getStart() && end >= other.getEnd();
+	}
+	
+	public boolean intersects(Annotation other) {
+		return end > other.getStart() || start <= other.getEnd();
+	}
+	
+	public boolean isLeftOf(Annotation other) {
+		return start > other.start;
+	}
+	
+	public boolean isRightOf(Annotation other) {
+		return start < other.start;
+	}
+	
+	
+	
 
 }
