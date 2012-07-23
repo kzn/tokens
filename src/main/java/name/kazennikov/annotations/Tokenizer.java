@@ -79,7 +79,7 @@ public class Tokenizer implements Annotator {
 		ann.annotate(d);
 		
 		for(Annotation a : d.getAnnotations(TOKEN)) {
-			System.out.printf("'%s' %s%n", a.getText(d), a.getFeatureMap());
+			System.out.printf("'%s' %s%n", a.getText(), a.getFeatureMap());
 		}
 	}
 	

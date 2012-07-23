@@ -6,7 +6,8 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 
 public class Annotation {
-
+	Document doc;
+	
 	String name;
 	int start;
 	int end;
@@ -17,6 +18,14 @@ public class Annotation {
 		this.name = name;
 		this.start = start;
 		this.end = end;
+	}
+	
+	public Document getDoc() {
+		return doc;
+	}
+	
+	public void setDoc(Document doc) {
+		this.doc = doc;
 	}
 	
 	public String getName() {
@@ -58,17 +67,13 @@ public class Annotation {
 		return features;
 	}
 	
-	public String toString() {
-		return String.format("%s@[%d,%d]%s", name, start, end, features);
-	}
-	
 	public String toString(Document d) {
-		return String.format("'%s'@%s[%d,%d]%s", getText(d), name, start, end, features);
+		return String.format("'%s'@%s[%d,%d]%s", getText(), name, start, end, features);
 	}
 	
 	
-	public String getText(Document d) {
-		return d.getText().substring(start, end);
+	public String getText() {
+		return doc.getText().substring(start, end);
 	}
 	
 	public boolean isEmpty() {

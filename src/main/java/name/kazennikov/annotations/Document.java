@@ -39,6 +39,7 @@ public class Document implements CharSequence {
 	
 	public void addAnnotation(Annotation ann) {
 		List<Annotation> anns = getAnnotations(ann.getName());
+		ann.setDoc(this);
 		anns.add(ann);
 	}
 	

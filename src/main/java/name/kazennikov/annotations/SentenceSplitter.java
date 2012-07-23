@@ -79,7 +79,7 @@ public class SentenceSplitter implements Annotator {
 		if(!((TokenType)token.getFeature("type")).is(BaseTokenType.PUNC))
 			return false;
 		
-		String value = token.getText(d);
+		String value = token.getText();
 		
 		if(value.length() == 1 && (value.equals("!") || value.equals("?") || value.equals(".")))
 			return true;
@@ -127,7 +127,7 @@ public class SentenceSplitter implements Annotator {
 			return true;
 		}
 		
-		if(!Character.isLowerCase(s.get(sentStart).getText(d).charAt(0)) || splitOnLower) {
+		if(!Character.isLowerCase(s.get(sentStart).getText().charAt(0)) || splitOnLower) {
 			if(isAbbrev(d, prev) || isInitial(d, prev))
 				return false;
 			return true;
@@ -145,7 +145,7 @@ public class SentenceSplitter implements Annotator {
 	 * @param token token to check
 	 */
 	private boolean isInitial(Document d, Annotation token) {
-		String value = token.getText(d);
+		String value = token.getText();
 		if(value.isEmpty())
 			return false;
 		
@@ -153,7 +153,7 @@ public class SentenceSplitter implements Annotator {
 	}
 
 	private boolean isAbbrev(Document d, Annotation prev) {
-		return abbrev.contains(prev.getText(d));
+		return abbrev.contains(prev.getText());
 	}
 	
 	/**
@@ -190,7 +190,7 @@ public class SentenceSplitter implements Annotator {
 		ss.annotate(d);
 		
 		for(Annotation a : d.getAnnotations(SENT)) {
-			System.out.printf("'%s' %s%n", a.getText(d), a.getFeatureMap());
+			System.out.printf("'%s' %s%n", a.getText(), a.getFeatureMap());
 		}
 
 		
