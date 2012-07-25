@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 
-public class Annotation {
+public class Annotation implements CharSequence {
 	Document doc;
 	
 	String name;
@@ -99,6 +99,21 @@ public class Annotation {
 	
 	public boolean isRightOf(Annotation other) {
 		return start < other.start;
+	}
+
+	@Override
+	public int length() {
+		return end - start;
+	}
+
+	@Override
+	public char charAt(int index) {
+		return doc.getText().charAt(start + index);
+	}
+
+	@Override
+	public CharSequence subSequence(int start, int end) {
+		return doc.getText().subSequence(this.start + start, this.start + end);
 	}
 	
 	

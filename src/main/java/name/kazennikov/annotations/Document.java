@@ -7,18 +7,22 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 
-public class Document implements CharSequence {
+public class Document extends Annotation implements CharSequence {
 	String text;
 	
 	Map<String, List<Annotation>> annotations = Maps.newHashMap();
 	
 	public Document() {	
+		super("doc", 0, 0);
+		setDoc(this);
 	}
 	
 	public Document(String text) {
+		super("doc", 0, text.length());
 		this.text = text;
 	}
 
+	@Override
 	public String getText() {
 		return text;
 	}
