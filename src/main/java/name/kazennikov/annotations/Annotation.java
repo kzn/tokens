@@ -116,6 +116,10 @@ public class Annotation implements CharSequence {
 		return doc.getText().subSequence(this.start + start, this.start + end);
 	}
 	
+	public boolean isCoextensive(Annotation ann) {
+		return ann.getStart() == start && ann.getEnd() == end;
+	}
+	
 	
 	
 
