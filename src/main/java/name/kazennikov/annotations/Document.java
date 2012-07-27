@@ -20,6 +20,7 @@ public class Document extends Annotation implements CharSequence {
 	public Document(String text) {
 		super("doc", 0, text.length());
 		this.text = text;
+		setDoc(this);
 	}
 
 	@Override
