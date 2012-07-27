@@ -1,6 +1,7 @@
 package name.kazennikov.annotations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,12 +14,15 @@ public class Document extends Annotation implements CharSequence {
 	Map<String, List<Annotation>> annotations = Maps.newHashMap();
 	
 	public Document() {	
-		super("doc", 0, 0);
-		setDoc(this);
+		this("");
 	}
 	
 	public Document(String text) {
-		super("doc", 0, text.length());
+		this("doc", text);
+	}
+	
+	public Document(String annotName, String text) {
+		super(annotName, 0, text.length());
 		this.text = text;
 		setDoc(this);
 	}
@@ -29,6 +33,9 @@ public class Document extends Annotation implements CharSequence {
 	}
 	
 	public List<Annotation> getAnnotations(String name) {
+		if(name.equals(getName()))
+			return Arrays.asList((Annotation)this);
+		
 		List<Annotation> ann = annotations.get(name);
 		if(ann == null) {
 			ann = new ArrayList<Annotation>();
