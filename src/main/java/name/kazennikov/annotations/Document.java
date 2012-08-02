@@ -32,7 +32,7 @@ public class Document extends Annotation implements CharSequence {
 		return text;
 	}
 	
-	public List<Annotation> getAnnotations(String name) {
+	public List<Annotation> get(String name) {
 		if(name.equals(getName()))
 			return Arrays.asList((Annotation)this);
 		
@@ -50,13 +50,13 @@ public class Document extends Annotation implements CharSequence {
 	}
 	
 	public void addAnnotation(Annotation ann) {
-		List<Annotation> anns = getAnnotations(ann.getName());
+		List<Annotation> anns = get(ann.getName());
 		ann.setDoc(this);
 		anns.add(ann);
 	}
 	
 	public void clearAnnotations(String name) {
-		getAnnotations(name).clear();
+		get(name).clear();
 	}
 
 	@Override

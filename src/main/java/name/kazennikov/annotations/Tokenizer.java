@@ -78,7 +78,7 @@ public class Tokenizer implements Annotator {
 		Annotator ann = new Tokenizer();
 		ann.annotate(d);
 		
-		for(Annotation a : d.getAnnotations(TOKEN)) {
+		for(Annotation a : d.get(TOKEN)) {
 			System.out.printf("'%s' %s%n", a.getText(), a.getFeatureMap());
 		}
 	}

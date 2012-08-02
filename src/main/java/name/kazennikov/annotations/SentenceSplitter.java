@@ -33,7 +33,7 @@ public class SentenceSplitter implements Annotator {
 
 	@Override
 	public void annotate(Document doc) {
-		AnnotationStream in = new AnnotationStream(null, doc.getAnnotations("token"));
+		AnnotationStream in = new AnnotationStream(null, doc.get("token"));
 		
 		while(!in.isNull() && ((TokenType)in.current().getFeature("type")).is(BaseTokenType.WHITESPACE))
 			in.next();
@@ -189,7 +189,7 @@ public class SentenceSplitter implements Annotator {
 		tok.annotate(d);
 		ss.annotate(d);
 		
-		for(Annotation a : d.getAnnotations(SENT)) {
+		for(Annotation a : d.get(SENT)) {
 			System.out.printf("'%s' %s%n", a.getText(), a.getFeatureMap());
 		}
 

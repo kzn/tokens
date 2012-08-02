@@ -12,6 +12,8 @@ public class Annotation implements CharSequence {
 	int start;
 	int end;
 	
+	Object data;
+	
 	Map<String, Object> features = Maps.newHashMap();
 	
 	public Annotation(String name, int start, int end) {
@@ -119,6 +121,21 @@ public class Annotation implements CharSequence {
 	public boolean isCoextensive(Annotation ann) {
 		return ann.getStart() == start && ann.getEnd() == end;
 	}
+
+	public Object getData() {
+		return data;
+	}
+	
+	public <E> E getData(Class<E> cls) {
+		return cls.cast(data);
+	}
+
+	public void setData(Object data) {
+		this.data = data;
+	}
+	
+	
+	
 	
 	
 	
