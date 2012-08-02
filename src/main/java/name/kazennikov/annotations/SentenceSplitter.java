@@ -20,12 +20,23 @@ import name.kazennikov.tokens.TokenType;
 
 import com.google.common.collect.Sets;
 
+/**
+ * Basic sentence splitter. Requires that the document is already tokenized
+ * @author Anton Kazennikov
+ *
+ */
 public class SentenceSplitter implements Annotator {
 	public static final String SENT = "sent";
 	
 	Set<String> abbrev = Sets.newHashSet();
 	boolean splitOnLower;
 	
+	/**
+	 * Construct new sentence splitter
+	 * @param abbrevs list of words after which a '.' is not a EOS
+	 * @param splitOnLower if true, then a '.' ends a sentence even when the next 
+	 * word starts with a lower case letter
+	 */
 	public SentenceSplitter(Collection<String> abbrevs, boolean splitOnLower) {
 		this.abbrev.addAll(abbrevs);
 		this.splitOnLower = splitOnLower;
