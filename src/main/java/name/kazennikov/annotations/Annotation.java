@@ -71,7 +71,7 @@ public class Annotation implements CharSequence {
 	
 	@Override
 	public String toString() {
-		return String.format("'%s'@%s[%d,%d]%s", getText(), name, start, end, features);
+		return String.format("'%s'@%s[%d,%d]%s%s", getText(), name, start, end, features, data);
 	}
 	
 	
