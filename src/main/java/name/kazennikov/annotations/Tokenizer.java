@@ -5,8 +5,26 @@ import name.kazennikov.tokens.SimpleTokenizer;
 import name.kazennikov.tokens.TextToken;
 import name.kazennikov.tokens.TokenType;
 
+/**
+ * Tokenizer is an annotator that annotates document with
+ * 'token' annotations. A 'token' also has a feature 'type' which
+ * defines token type:
+ * <ul>
+ * <li> SPACE space token
+ * <li> NEWLINE newline token
+ * <li> PUNC punctuation token
+ * <li> LETTERS letters only token
+ * <li> DIGITS digits only token
+ * <li> ALPHANUM alphanumeric token(letters + digits)
+ * <li> MISC misc token 
+ * </ul>
+ * 
+ * @author Anton Kazennikov
+ *
+ */
 public class Tokenizer implements Annotator {
 	public static final String TOKEN = "token";
+	public static final String TYPE = "type";
 	
 	
 	public Tokenizer() {
