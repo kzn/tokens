@@ -11,5 +11,9 @@ public class AnnotationStream extends SequenceStream<Annotation> {
 		super(nullObject, tokens);
 	}
 	
+	public AnnotationStream(List<? extends Annotation> anns) {
+		this(null, anns);
+	}
+	
 
 }
