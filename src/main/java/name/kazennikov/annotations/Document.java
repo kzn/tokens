@@ -2,10 +2,12 @@ package name.kazennikov.annotations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 public class Document extends Annotation implements CharSequence {
@@ -72,5 +74,30 @@ public class Document extends Annotation implements CharSequence {
 	@Override
 	public CharSequence subSequence(int start, int end) {
 		return text.subSequence(start, end);
+	}
+	
+	/**
+	 * Get annotations that are constrained by span of given annotation and properties of valid annotations
+	 * @param a constrain span of the output annotation
+	 * @param p select predicate for constrained annotations
+	 * @return list of annotations
+	 */
+	public List<Annotation> getAnnotationsWithin(Annotation a, Predicate<Annotation> p) {
+		List<Annotation> anns = new ArrayList<Annotation>();
+		
+		for(List<Annotation> anList : annotations.values()) {
+			for(Annotation an : anList ) {
+				// skip given
+				if(an == a)
+					continue;
+				
+				if(a.contains(an) && p.apply(an))
+					anns.add(an);
+			}
+		}
+		
+		Collections.sort(anns, Annotation.COMPARATOR);
+		
+		return anns;
 	}
 }

@@ -1,5 +1,6 @@
 package name.kazennikov.annotations;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
@@ -7,6 +8,14 @@ import com.google.common.collect.Maps;
 
 public class Annotation implements CharSequence {
 	Document doc;
+	
+	public final static Comparator<Annotation> COMPARATOR = new Comparator<Annotation>() {
+		
+		@Override
+		public int compare(Annotation o1, Annotation o2) {
+			return o1.start - o2.start;
+		}
+	};
 	
 	String name;
 	int start;
@@ -134,10 +143,7 @@ public class Annotation implements CharSequence {
 		this.data = data;
 	}
 	
-	
-	
-	
-	
-	
+
+
 
 }
