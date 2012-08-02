@@ -2,6 +2,7 @@ package name.kazennikov.annotations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,12 @@ public class Document extends Annotation implements CharSequence {
 		List<Annotation> anns = get(ann.getName());
 		ann.setDoc(this);
 		anns.add(ann);
+	}
+	
+	public void addAnnotations(Collection<? extends Annotation> ans) {
+		for(Annotation a : ans) {
+			addAnnotation(a);
+		}
 	}
 	
 	public void clearAnnotations(String name) {
