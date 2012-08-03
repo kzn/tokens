@@ -11,9 +11,14 @@ public class ConditionalAnnotator implements Annotator {
 	public boolean check(Document d) {
 		return true;
 	}
-	
 
-	@Override
+
+    @Override
+    public boolean isApplicable(Document doc) {
+        return a.isApplicable(doc);
+    }
+
+    @Override
 	public void annotate(Document doc) {
 		if(check(doc)) {
 			a.annotate(doc);

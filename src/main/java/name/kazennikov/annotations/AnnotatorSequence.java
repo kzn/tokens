@@ -44,9 +44,14 @@ public class AnnotatorSequence implements Annotator {
 	public List<Annotator> getAnnotators() {
 		return annotators;
 	}
-	
 
-	@Override
+
+    @Override
+    public boolean isApplicable(Document doc) {
+        return !annotators.isEmpty() && annotators.get(0).isApplicable(doc);
+    }
+
+    @Override
 	public void annotate(Document doc) {
 		for(Annotator a : annotators) {
 			a.annotate(doc);

@@ -31,8 +31,13 @@ public class Tokenizer implements Annotator {
 		
 	}
 
-	
-	@Override
+
+    @Override
+    public boolean isApplicable(Document doc) {
+        return true;
+    }
+
+    @Override
 	public void annotate(Document doc) {
 		
 		String text = doc.getText();

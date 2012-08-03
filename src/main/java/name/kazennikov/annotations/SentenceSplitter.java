@@ -42,7 +42,12 @@ public class SentenceSplitter implements Annotator {
 		this.splitOnLower = splitOnLower;
 	}
 
-	@Override
+    @Override
+    public boolean isApplicable(Document doc) {
+        return doc.contains(Tokenizer.TOKEN);
+    }
+
+    @Override
 	public void annotate(Document doc) {
 		AnnotationStream in = new AnnotationStream(null, doc.get("token"));
 		

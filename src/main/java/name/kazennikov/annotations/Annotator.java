@@ -12,9 +12,18 @@ package name.kazennikov.annotations;
  *
  */
 public interface Annotator {
-	/**
+
+    /**
+     * Checks if this annotator is applicable to the document
+     * @param doc document to check
+     */
+    public boolean isApplicable(Document doc);
+
+    /**
 	 * Annotate a document
 	 * @param doc
 	 */
 	public void annotate(Document doc);
+
+
 }

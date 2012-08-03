@@ -1,12 +1,6 @@
 package name.kazennikov.annotations;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
@@ -23,7 +17,12 @@ public class Document extends Annotation implements CharSequence {
 	public Document(String text) {
 		this("doc", text);
 	}
-	
+
+    /**
+     * Construct a document with root annotation and given text
+     * @param annotName global document annotation
+     * @param text document text
+     */
 	public Document(String annotName, String text) {
 		super(annotName, 0, text.length());
 		this.text = text;
@@ -34,7 +33,12 @@ public class Document extends Annotation implements CharSequence {
 	public String getText() {
 		return text;
 	}
-	
+
+    /**
+     * Get annotations by name
+     * @param name annotations name
+     * @return
+     */
 	public List<Annotation> get(String name) {
 		if(name.equals(getName()))
 			return Arrays.asList((Annotation)this);
@@ -47,17 +51,39 @@ public class Document extends Annotation implements CharSequence {
 		
 		return ann;
 	}
-	
+
+    /**
+     * Checks if document has any of this annotations
+     * @param annotationName annotation name
+     */
+    public boolean contains(String annotationName) {
+        return getName().equals(annotationName) || annotations.containsKey(annotationName);
+    }
+
+    /**
+     * Get set of all annotations present in the document
+     * @return
+     */
 	public Set<String> getAnnotationNames() {
-		return annotations.keySet();
+        HashSet<String> annotNames = new HashSet<String>(annotations.keySet());
+        annotNames.add(getName());
+		return annotNames;
 	}
-	
+
+    /**
+     * Add single annotation to the document
+     * @param ann
+     */
 	public void addAnnotation(Annotation ann) {
 		List<Annotation> anns = get(ann.getName());
 		ann.setDoc(this);
 		anns.add(ann);
 	}
-	
+
+    /**
+     * Add all annotations from annotation list
+     * @param ans
+     */
 	public void addAnnotations(Collection<? extends Annotation> ans) {
 		for(Annotation a : ans) {
 			addAnnotation(a);
