@@ -18,6 +18,15 @@ public class SimpleAnnotationTests extends TestCase {
 		tokenizer.annotate(d);
 		assertEquals(3, d.get(Tokenizer.TOKEN).size());
 	}
+
+    @Test
+    public void testTokenizerSeps() {
+        Document d = new Document("doc", "foo=bar");
+        Tokenizer tokenizer = new Tokenizer();
+        tokenizer.annotate(d);
+        assertEquals(3, d.get(Tokenizer.TOKEN).size());
+
+    }
 	
 	@Test
 	public void testSentSplitter() {
