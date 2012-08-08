@@ -2,7 +2,6 @@ package name.kazennikov.annotations;
 
 import name.kazennikov.tokens.BaseTokenType;
 import name.kazennikov.tokens.SimpleTokenizer;
-import name.kazennikov.tokens.TextToken;
 import name.kazennikov.tokens.TokenType;
 
 /**
@@ -66,8 +65,9 @@ public class Tokenizer implements Annotator {
 					add(doc, tStart, pos, newLine? BaseTokenType.NEWLINE : BaseTokenType.SPACE);
 				} else {
 					int puncStart = pos;
-					while (pos < text.length() && text.charAt(pos) == ch)
-						pos++;
+                    pos++;
+//					while (pos < text.length() && text.charAt(pos) == ch)
+//						pos++;
 					add(doc, puncStart, pos, BaseTokenType.PUNC);
 				}
 				start = pos;
