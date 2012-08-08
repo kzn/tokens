@@ -94,7 +94,7 @@ public class Tokenizer implements Annotator {
 	
 	
 	public static void main(String[] args) {
-		String text = "Мама мыла раму.";
+		String text = "Мама мыла раму. Сан=Хосе";
 		
 		Document d = new Document(text);
 		
