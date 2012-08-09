@@ -6,16 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import name.kazennikov.tokens.AbstractToken;
-import name.kazennikov.tokens.BaseToken;
 import name.kazennikov.tokens.BaseTokenType;
-import name.kazennikov.tokens.NLPTokenType;
-import name.kazennikov.tokens.SimpleTokenizer;
-import name.kazennikov.tokens.TextToken;
-import name.kazennikov.tokens.TokenStream;
 import name.kazennikov.tokens.TokenType;
 
 import com.google.common.collect.Sets;
@@ -44,7 +37,7 @@ public class SentenceSplitter implements Annotator {
 
     @Override
     public boolean isApplicable(Document doc) {
-        return doc.contains(Tokenizer.TOKEN);
+        return doc.contains(Annotation.TOKEN);
     }
 
     @Override
@@ -200,7 +193,7 @@ public class SentenceSplitter implements Annotator {
 	public static void main(String[] args) {
 		String s = "Мама мыла раму. Это 2.5 предложения.";
 		Document d = new Document(s);
-		Annotator tok = new Tokenizer();
+		Annotator tok = new BasicTokenizer();
 		Annotator ss = new SentenceSplitter(new ArrayList<String>(), false);
 		tok.annotate(d);
 		ss.annotate(d);

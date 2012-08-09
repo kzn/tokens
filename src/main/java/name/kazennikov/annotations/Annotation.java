@@ -7,6 +7,13 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 
 public class Annotation implements CharSequence {
+    public static final String TOKEN = "token";
+    public static final String WORD = "word";
+    public static final String SENT = "sent";
+    public static final String DOC = "doc";
+    public static final String TYPE = "type";
+    public static final String KIND = "kind";
+
 	Document doc;
 	
 	public final static Comparator<Annotation> COMPARATOR = new Comparator<Annotation>() {

@@ -14,24 +14,24 @@ public class SimpleAnnotationTests extends TestCase {
 	@Test
 	public void testTokenizer() {
 		Document d = new Document("doc", "foo bar");
-		Tokenizer tokenizer = new Tokenizer();
+		UnicodeTokenizer tokenizer = new UnicodeTokenizer();
 		tokenizer.annotate(d);
-		assertEquals(3, d.get(Tokenizer.TOKEN).size());
+		assertEquals(3, d.get(Annotation.TOKEN).size());
 	}
 
     @Test
     public void testTokenizerSeps() {
         Document d = new Document("doc", "foo=bar");
-        Tokenizer tokenizer = new Tokenizer();
+        UnicodeTokenizer tokenizer = new UnicodeTokenizer();
         tokenizer.annotate(d);
-        assertEquals(3, d.get(Tokenizer.TOKEN).size());
+        assertEquals(3, d.get(Annotation.TOKEN).size());
 
     }
 	
 	@Test
 	public void testSentSplitter() {
 		Document d = new Document("doc", "foo bar. Bar foo.");
-		Tokenizer tokenizer = new Tokenizer();
+		UnicodeTokenizer tokenizer = new UnicodeTokenizer();
 		tokenizer.annotate(d);
 		SentenceSplitter ss = new SentenceSplitter(new HashSet<String>(), false);
 		ss.annotate(d);
@@ -42,7 +42,7 @@ public class SimpleAnnotationTests extends TestCase {
 	@Test
 	public void testContrainedRetrieval() {
 		Document d = new Document("doc", "foo bar. Bar foo baz.");
-		Tokenizer tokenizer = new Tokenizer();
+		UnicodeTokenizer tokenizer = new UnicodeTokenizer();
 		tokenizer.annotate(d);
 		SentenceSplitter ss = new SentenceSplitter(new HashSet<String>(), false);
 		ss.annotate(d);
