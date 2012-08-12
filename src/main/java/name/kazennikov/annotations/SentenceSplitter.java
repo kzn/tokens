@@ -77,7 +77,7 @@ public class SentenceSplitter implements Annotator {
 			end--;
 		
 		
-		Annotation a = new Annotation(SENT, s.get(start).getStart(), s.get(end).getEnd());
+		Annotation a = new Annotation(d, SENT, s.get(start).getStart(), s.get(end).getEnd());
 		d.addAnnotation(a);
 	}
 

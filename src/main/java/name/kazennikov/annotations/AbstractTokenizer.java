@@ -20,6 +20,12 @@ import name.kazennikov.tokens.TokenType;
  * </ul>
  */
 public abstract class AbstractTokenizer implements Annotator {
+	public static final String DIGITS = "digits";
+	public static final String LETTERS = "letters";
+	public static final String ALPHANUM = "alphanum";
+	public static final String MISC = "misc";
+	public static final String SPACE = "space";
+	public static final String PUNC = "punc";
 
     public AbstractTokenizer() {
     }
@@ -126,14 +132,14 @@ public abstract class AbstractTokenizer implements Annotator {
         }
     }
 
-    Annotation makeAnnotation(int start, int end, TokenType type) {
-        Annotation ann = new Annotation(Annotation.TOKEN, start, end);
+    Annotation makeAnnotation(Document doc, int start, int end, TokenType type) {
+        Annotation ann = new Annotation(doc, Annotation.TOKEN, start, end);
         ann.setFeature(Annotation.TYPE, type);
 
         return ann;
     }
 
     void add(Document d, int start, int end, TokenType type) {
-        d.addAnnotation(makeAnnotation(start, end, type));
+        d.addAnnotation(makeAnnotation(d, start, end, type));
     }
 }
