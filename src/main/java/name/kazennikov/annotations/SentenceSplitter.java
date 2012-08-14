@@ -1,5 +1,9 @@
 package name.kazennikov.annotations;
 
+import com.google.common.collect.Sets;
+import name.kazennikov.tokens.BaseTokenType;
+import name.kazennikov.tokens.TokenType;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -7,11 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
-import name.kazennikov.tokens.BaseTokenType;
-import name.kazennikov.tokens.TokenType;
-
-import com.google.common.collect.Sets;
 
 /**
  * Basic sentence splitter. Requires that the document is already tokenized
@@ -77,7 +76,7 @@ public class SentenceSplitter implements Annotator {
 			end--;
 		
 		
-		Annotation a = new Annotation(SENT, s.get(start).getStart(), s.get(end).getEnd());
+		Annotation a = new Annotation(d, SENT, s.get(start).getStart(), s.get(end).getEnd());
 		d.addAnnotation(a);
 	}
 

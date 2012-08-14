@@ -1,9 +1,9 @@
 package name.kazennikov.annotations;
 
-import java.util.*;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
+
+import java.util.*;
 
 public class Document extends Annotation implements CharSequence {
 	String text;
@@ -24,7 +24,7 @@ public class Document extends Annotation implements CharSequence {
      * @param text document text
      */
 	public Document(String annotName, String text) {
-		super(annotName, 0, text.length());
+		super(null, annotName, 0, text.length());
 		this.text = text;
 		setDoc(this);
 	}
@@ -36,20 +36,26 @@ public class Document extends Annotation implements CharSequence {
 
     /**
      * Get annotations by name
-     * @param name annotations name
+     * @param names annotations names
      * @return
      */
-	public List<Annotation> get(String name) {
-		if(name.equals(getName()))
-			return Arrays.asList((Annotation)this);
+	public List<Annotation> get(String... names) {
+        List<Annotation> anns = new ArrayList<Annotation>();
+
+        for(String name : names) {
+            if(name.equals(getName())) {
+                anns.add(this);
+            }
+
+            List<Annotation> ann = annotations.get(name);
+            if(ann != null) {
+                anns.addAll(ann);
+            }
+        }
+
+        Collections.sort(anns, Annotation.COMPARATOR);
 		
-		List<Annotation> ann = annotations.get(name);
-		if(ann == null) {
-			ann = new ArrayList<Annotation>();
-			annotations.put(name, ann);
-		}
-		
-		return ann;
+		return anns;
 	}
 
     /**
@@ -75,9 +81,20 @@ public class Document extends Annotation implements CharSequence {
      * @param ann
      */
 	public void addAnnotation(Annotation ann) {
-		List<Annotation> anns = get(ann.getName());
+		//List<Annotation> anns = get(ann.getName());
+		if(ann.getName() == getName()) {
+			throw new IllegalArgumentException("Couldn't add annotation with same name as document root");
+		}
+		List<Annotation> annots = annotations.get(ann.getName());
+		
+		if(annots == null) {
+			annots = new ArrayList<Annotation>();
+			annotations.put(ann.getName(), annots);
+		}
+		
 		ann.setDoc(this);
-		anns.add(ann);
+		annots.add(ann);
+		Collections.sort(annots, Annotation.COMPARATOR);
 	}
 
     /**

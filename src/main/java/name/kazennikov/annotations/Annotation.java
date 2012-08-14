@@ -1,10 +1,10 @@
 package name.kazennikov.annotations;
 
+import com.google.common.collect.Maps;
+
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Maps;
 
 public class Annotation implements CharSequence {
     public static final String TOKEN = "token";
@@ -20,7 +20,8 @@ public class Annotation implements CharSequence {
 		
 		@Override
 		public int compare(Annotation o1, Annotation o2) {
-			return o1.start - o2.start;
+			int res = o1.start - o2.start;
+			return res != 0? res : o1.end - o2.end;
 		}
 	};
 	
@@ -32,7 +33,8 @@ public class Annotation implements CharSequence {
 	
 	Map<String, Object> features = Maps.newHashMap();
 	
-	public Annotation(String name, int start, int end) {
+	public Annotation(Document doc, String name, int start, int end) {
+		this.doc = doc;
 		this.name = name;
 		this.start = start;
 		this.end = end;
