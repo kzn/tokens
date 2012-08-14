@@ -23,7 +23,8 @@ public class SimpleTokenizer {
 				type == Character.END_PUNCTUATION ||
 				type == Character.INITIAL_QUOTE_PUNCTUATION ||
 				type == Character.FINAL_QUOTE_PUNCTUATION || 
-				type == Character.OTHER_PUNCTUATION)
+				type == Character.OTHER_PUNCTUATION ||
+                type == Character.MATH_SYMBOL)
 			return true;
 
 
