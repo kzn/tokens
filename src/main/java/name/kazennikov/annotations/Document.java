@@ -94,7 +94,6 @@ public class Document extends Annotation implements CharSequence {
 		
 		ann.setDoc(this);
 		annots.add(ann);
-		Collections.sort(annots, Annotation.COMPARATOR);
 	}
 
     /**
@@ -106,6 +105,22 @@ public class Document extends Annotation implements CharSequence {
 			addAnnotation(a);
 		}
 	}
+
+    public void sortAnnotations() {
+        for(List<Annotation> annots : annotations.values()) {
+            Collections.sort(annots, Annotation.COMPARATOR);
+        }
+    }
+
+    public void sortAnnotations(String... names) {
+        for(String anName : names) {
+            List<Annotation> annots = annotations.get(anName);
+            if(annots == null || annots.isEmpty())
+                continue;
+
+            Collections.sort(annots, Annotation.COMPARATOR);
+        }
+    }
 	
 	public void clearAnnotations(String name) {
 		get(name).clear();
