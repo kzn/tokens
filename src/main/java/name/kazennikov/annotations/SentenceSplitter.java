@@ -110,6 +110,9 @@ public class SentenceSplitter implements Annotator {
 		
 		Annotation prev = s.current(-1);
 		Annotation next = s.current(1);
+
+        if(prev == null)
+            return false;
 		
 		if(s.isNull(next)) {
 			s.next();
