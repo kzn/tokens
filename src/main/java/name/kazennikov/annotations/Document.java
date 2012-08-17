@@ -60,11 +60,19 @@ public class Document extends Annotation implements CharSequence {
 
     /**
      * Checks if document has any of this annotations
-     * @param annotationName annotation name
+     * @param annotationNames annotation names
      */
-    public boolean contains(String annotationName) {
-        return getName().equals(annotationName) || annotations.containsKey(annotationName);
+    public boolean contains(String... annotationNames) {
+        for(String annotationName : annotationNames) {
+             boolean  res = getName().equals(annotationName) || annotations.containsKey(annotationName);
+            if(res)
+                return true;
+        }
+
+        return false;
     }
+
+
 
     /**
      * Get set of all annotations present in the document
