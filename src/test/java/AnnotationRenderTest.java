@@ -19,8 +19,9 @@ public class AnnotationRenderTest extends TestCase {
 		factory = XMLOutputFactory.newFactory();
 		d = new Document("doc", "This is a tree.");
 		d.addAnnotation("foo", 0, 4);
+		d.addAnnotation("foo1", 1, 4);
 		d.addAnnotation("bar", 0, 7);
-		d.addAnnotation("bar", 10, 17);
+		d.addAnnotation("baz", 10, 17);
 		
 	}
 	
@@ -32,7 +33,7 @@ public class AnnotationRenderTest extends TestCase {
 		render.render(d.getAllAnnotations());
 		writer.close();
 		String value = sw.toString();
-		assertEquals("<doc><bar><foo>This</foo> is</bar> a <bar>tree.</bar></doc>", value);
+		assertEquals("<doc><bar><foo>T<foo1>his</foo1></foo> is</bar> a <baz>tree.</baz></doc>", value);
 	}
 
 }
