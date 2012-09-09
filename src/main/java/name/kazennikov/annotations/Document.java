@@ -103,6 +103,11 @@ public class Document extends Annotation implements CharSequence {
 		ann.setDoc(this);
 		annots.add(ann);
 	}
+	
+	public void addAnnotation(String name, int start, int end) {
+		Annotation a = new Annotation(this, name, start, end);
+		addAnnotation(a);
+	}
 
     /**
      * Add all annotations from annotation list
