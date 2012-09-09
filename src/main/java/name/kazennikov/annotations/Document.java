@@ -178,4 +178,14 @@ public class Document extends Annotation implements CharSequence {
 		
 		return anns;
 	}
+	
+	public List<Annotation> getAllAnnotations() {
+		List<Annotation> l = new ArrayList<Annotation>();
+		l.add(this);
+		for(List<Annotation> al : annotations.values()) {
+			l.addAll(al);
+		}
+		
+		return l;
+	}
 }
