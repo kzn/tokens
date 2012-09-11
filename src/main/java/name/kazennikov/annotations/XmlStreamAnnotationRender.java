@@ -42,7 +42,7 @@ public class XmlStreamAnnotationRender extends AbstractAnnotationRender {
 		} catch (XMLStreamException e) {
 			throw new AnnotationRenderException(e);
 		}
-	}
+    }
 
 	@Override
 	public void onText(String text) throws AnnotationRenderException {
