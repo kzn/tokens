@@ -1,9 +1,8 @@
 package name.kazennikov.annotations;
 
-import java.util.Map;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.util.Map;
 
 
 public class XmlStreamAnnotationRender extends AbstractAnnotationRender {
@@ -27,7 +26,9 @@ public class XmlStreamAnnotationRender extends AbstractAnnotationRender {
 			writer.writeStartElement(annotation.getName());
 			Map<String, Object> featMap = annotation.getFeatureMap();
 			for(Map.Entry<String, Object> feat : featMap.entrySet()) {
-				writer.writeAttribute(feat.getKey(), feat.getValue().toString());
+                Object value = feat.getValue();
+                if(value != null)
+                    writer.writeAttribute(feat.getKey(), value.toString());
 			}
 		} catch (XMLStreamException e) {
 			throw new AnnotationRenderException(e);
