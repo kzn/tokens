@@ -3,6 +3,8 @@ package name.kazennikov.annotations;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.util.*;
 
 public class Document extends Annotation implements CharSequence {
@@ -188,4 +190,32 @@ public class Document extends Annotation implements CharSequence {
 		
 		return l;
 	}
+
+    public void toXml(XMLStreamWriter writer) throws XMLStreamException {
+        writer.writeStartElement("doc");
+        writer.writeAttribute("text", text);
+        writer.writeAttribute("root", getName()); // get root annotation
+
+        for(Annotation a : getAllAnnotations()) {
+            writer.writeStartElement("annotation");
+            writer.writeAttribute("type", a.getName());
+            writer.writeAttribute("start", Integer.toString(a.getStart()));
+            writer.writeAttribute("end", Integer.toString(a.getEnd()));
+
+            writer.writeStartElement("features");
+            for(Map.Entry<String, Object> e : features.entrySet()) {
+                if(e.getValue() != null) {
+                    writer.writeAttribute(e.getKey(), e.getValue().toString());
+                }
+            }
+            writer.writeEndElement(); // features
+
+            writer.writeEndElement(); // annotation
+
+
+
+        }
+
+        writer.writeEndElement();
+    }
 }
