@@ -123,7 +123,7 @@ public interface XmlWriter {
 			
 			XmlWriter w = getWriter(object);
 			
-			if(w == null || !w.writeTo(writer, this, object)) {
+			if(w == null || !w.isApplicable(object) || !w.writeTo(writer, this, object)) {
 				defaultWriter.writeTo(writer, this, object);
 			}
 
