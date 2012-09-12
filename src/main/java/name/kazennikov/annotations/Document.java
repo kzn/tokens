@@ -110,6 +110,12 @@ public class Document extends Annotation implements CharSequence {
 		Annotation a = new Annotation(this, name, start, end);
 		addAnnotation(a);
 	}
+	
+	public void addAnnotation(String name, int start, int end, Map<String, Object> features) {
+		Annotation a = new Annotation(this, name, start, end);
+		a.features = features;
+		addAnnotation(a);
+	}
 
     /**
      * Add all annotations from annotation list
@@ -191,31 +197,4 @@ public class Document extends Annotation implements CharSequence {
 		return l;
 	}
 
-    public void toXml(XMLStreamWriter writer) throws XMLStreamException {
-        writer.writeStartElement("doc");
-        writer.writeAttribute("text", text);
-        writer.writeAttribute("root", getName()); // get root annotation
-
-        for(Annotation a : getAllAnnotations()) {
-            writer.writeStartElement("annotation");
-            writer.writeAttribute("type", a.getName());
-            writer.writeAttribute("start", Integer.toString(a.getStart()));
-            writer.writeAttribute("end", Integer.toString(a.getEnd()));
-
-            writer.writeStartElement("features");
-            for(Map.Entry<String, Object> e : features.entrySet()) {
-                if(e.getValue() != null) {
-                    writer.writeAttribute(e.getKey(), e.getValue().toString());
-                }
-            }
-            writer.writeEndElement(); // features
-
-            writer.writeEndElement(); // annotation
-
-
-
-        }
-
-        writer.writeEndElement();
-    }
 }
