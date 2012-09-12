@@ -23,6 +23,7 @@ public interface XmlWriter {
      * @throws XMLStreamException
      */
     public boolean writeTo(XMLStreamWriter writer, XmlWriter rootWriter, Object object) throws XMLStreamException;
+    public boolean isApplicable(Object o);
 
     public static class TrivialXmlWriter implements XmlWriter {
 
@@ -34,15 +35,17 @@ public interface XmlWriter {
             writer.writeEndElement();
             return true;
         }
+
+		@Override
+		public boolean isApplicable(Object o) {
+			return true;
+		}
     }
     
     public static class DocumentWriter implements XmlWriter {
 
     	@Override
     	public boolean writeTo(XMLStreamWriter writer, XmlWriter rootWriter, Object object) throws XMLStreamException {
-    		if(!(object instanceof Document))
-    			return false;
-
     		Document doc = (Document) object;
 
     		writer.writeStartElement("doc");
@@ -76,6 +79,11 @@ public interface XmlWriter {
 
     		return true;
     	}
+
+		@Override
+		public boolean isApplicable(Object o) {
+			return o instanceof Document;
+		}
 
     }
 
@@ -125,14 +133,17 @@ public interface XmlWriter {
 		public boolean writeTo(XMLStreamWriter writer, Object object) throws XMLStreamException {
 			return writeTo(writer, this, object);
 		}
+
+		@Override
+		public boolean isApplicable(Object o) {
+			return true;
+		}
     }
     
     public static class ListWriter implements XmlWriter {
 
 		@Override
 		public boolean writeTo(XMLStreamWriter writer, XmlWriter xmlWriter, Object object) throws XMLStreamException {
-			if(!(object instanceof List<?>))
-				return false;
 			
 			List<?> l = (List<?>) object;
 			
@@ -142,6 +153,11 @@ public interface XmlWriter {
 			
 
 			return true;
+		}
+
+		@Override
+		public boolean isApplicable(Object o) {
+			return o instanceof List<?>;
 		}
     	
     }
