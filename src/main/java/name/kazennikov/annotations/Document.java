@@ -268,4 +268,6 @@ public class Document extends Annotation implements CharSequence {
 		
 		return l;
 	}
+	
+	
 }
