@@ -109,7 +109,7 @@ public class Annotation implements CharSequence {
 		return start <= other.getStart() && end >= other.getEnd();
 	}
 	
-	public boolean intersects(Annotation other) {
+	public boolean overlaps(Annotation other) {
 		return end > other.getStart() || start <= other.getEnd();
 	}
 	
@@ -120,11 +120,38 @@ public class Annotation implements CharSequence {
 	public boolean isRightOf(Annotation other) {
 		return start < other.start;
 	}
+	
+	public boolean contained(Annotation other) {
+		return other.contains(this);
+	}
+	
+	
+	public boolean contains(int start, int end) {
+		return this.start <= start && this.end >= end;
+	}
+	
+	public boolean overlaps(int start, int end) {
+		return this.end > start || this.start <= end;
+	}
+	
+	public boolean isLeftOf(int position) {
+		return start > position;
+	}
+	
+	public boolean isRightOf(int position) {
+		return start < position;
+	}
+	
+	public boolean contained(int start, int end) {
+		return start <= this.start && end >= this.end;
+	}
+
 
 	@Override
 	public int length() {
 		return end - start;
 	}
+
 
 	@Override
 	public char charAt(int index) {

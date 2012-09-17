@@ -59,6 +59,60 @@ public class Document extends Annotation implements CharSequence {
 		
 		return anns;
 	}
+	
+	public List<Annotation> getAll() {
+		return getAllAnnotations();
+	}	
+	
+	/**
+	 * Get annotations that covers given span
+	 * @param start span start
+	 * @param end span end
+	 * @return
+	 */
+	public List<Annotation> getCovering(int start, int end) {
+		List<Annotation> anns = new ArrayList<Annotation>();
+		
+		for(Annotation a : getAll()) {
+			if(a.getStart() <= start && a.getEnd() >= end)
+				anns.add(a);
+		}
+		
+		return anns;
+		
+	}
+	
+	public List<Annotation> getFiltered(Predicate<Annotation> predicate) {
+		List<Annotation> anns = new ArrayList<Annotation>();
+		
+		for(Annotation a : getAll()) {
+			if(predicate.apply(a))
+				anns.add(a);
+		}
+		
+		return anns;
+	}
+	
+	/**
+	 * Get all annotations that overlaps with given span
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public List<Annotation> getOverlapping(int start, int end) {
+		List<Annotation> anns = new ArrayList<Annotation>();
+		
+		for(Annotation a : getAll()) {
+			if(a.getStart() <= start && a.getEnd() >= end)
+				anns.add(a);
+		}
+		
+		return anns;
+		
+	}
+
+
+	
 
     /**
      * Checks if document has any of this annotations
@@ -187,6 +241,24 @@ public class Document extends Annotation implements CharSequence {
 		return anns;
 	}
 	
+	/**
+	 * Get annotatations from document that satisfies a predicate
+	 * @param predicate
+	 * @return
+	 */
+	public List<Annotation> get(Predicate<Annotation> predicate) {
+		List<Annotation> anns = new ArrayList<Annotation>();
+		
+		for(Annotation a : getAll()) {
+			if(predicate.apply(a))
+				anns.add(a);
+		}
+		
+		Collections.sort(anns, Annotation.COMPARATOR);
+		
+		return anns;
+	}
+	
 	public List<Annotation> getAllAnnotations() {
 		List<Annotation> l = new ArrayList<Annotation>();
 		l.add(this);
@@ -196,5 +268,4 @@ public class Document extends Annotation implements CharSequence {
 		
 		return l;
 	}
-
 }
