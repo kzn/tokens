@@ -13,6 +13,7 @@ public class Annotation implements CharSequence {
     public static final String DOC = "doc";
     public static final String TYPE = "type";
     public static final String KIND = "kind";
+    public static final String DATA = "data";
 
 	Document doc;
 	
