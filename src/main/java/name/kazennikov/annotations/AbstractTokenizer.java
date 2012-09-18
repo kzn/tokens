@@ -135,7 +135,7 @@ public abstract class AbstractTokenizer implements Annotator {
     Annotation makeAnnotation(Document doc, int start, int end, TokenType type) {
         Annotation ann = new Annotation(doc, Annotation.TOKEN, start, end);
         ann.setFeature(Annotation.TYPE, type);
-        ann.setFeature(Annotation.DATA, type);
+        //ann.setFeature(Annotation.DATA, type);
 
         return ann;
     }
