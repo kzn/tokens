@@ -292,10 +292,9 @@ public class Document extends Annotation implements CharSequence {
 
 				for(Map.Entry<String, Object> e : a.getFeatureMap().entrySet()) {
 					if(e.getValue() != null) {
-						writer.writeStartElement("feat");
+						writer.writeEmptyElement("feat");
 						writer.writeAttribute("name", e.getKey());
 						writer.writeAttribute("value", e.getValue().toString());
-						writer.writeEndElement();
 					}
 				}
 			}
