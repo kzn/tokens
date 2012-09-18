@@ -5,6 +5,9 @@ import com.google.common.collect.Maps;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+import name.kazennikov.xml.XmlWritable;
+
 import java.util.*;
 
 public class Document extends Annotation implements CharSequence {
@@ -267,6 +270,40 @@ public class Document extends Annotation implements CharSequence {
 		}
 		
 		return l;
+	}
+	
+
+	public void toXml(XMLStreamWriter writer, Map<String, XmlWritable<Map<String, Object>>> anWriters) throws XMLStreamException {
+		writer.writeStartElement("doc");
+		writer.writeAttribute("text", getText());
+		writer.writeAttribute("root", getName()); // get root annotation
+
+		for(Annotation a : getAll()) {
+			XmlWritable<Map<String, Object>> featWriter = anWriters != null? anWriters.get(a.getName()) : null;
+			writer.writeStartElement("annotation");
+			writer.writeAttribute("type", a.getName());
+			writer.writeAttribute("start", Integer.toString(a.getStart()));
+			writer.writeAttribute("end", Integer.toString(a.getEnd()));
+
+			if(featWriter != null) {
+				featWriter.write(writer, a.getFeatureMap());
+			} else {
+				writer.writeStartElement("features");
+				for(Map.Entry<String, Object> e : a.getFeatureMap().entrySet()) {
+					if(e.getValue() != null) {
+						writer.writeStartElement("feat");
+						writer.writeAttribute("name", e.getKey());
+						writer.writeAttribute("value", e.getValue().toString());
+						writer.writeEndElement();
+					}
+				}
+				writer.writeEndElement(); // features
+			}
+
+			writer.writeEndElement(); // annotation
+		}
+
+		writer.writeEndElement();
 	}
 	
 	
