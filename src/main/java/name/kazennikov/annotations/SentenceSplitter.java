@@ -41,9 +41,9 @@ public class SentenceSplitter implements Annotator {
 
     @Override
 	public void annotate(Document doc) {
-		AnnotationStream in = new AnnotationStream(null, doc.get("token"));
+		AnnotationStream in = new AnnotationStream(null, doc.get(Annotation.TOKEN));
 		
-		while(!in.isNull() && ((TokenType)in.current().getFeature("type")).is(BaseTokenType.WHITESPACE))
+		while(!in.isNull() && in.current().getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.WHITESPACE))
 			in.next();
 
 		int sentenceStart = in.pos();
@@ -54,7 +54,7 @@ public class SentenceSplitter implements Annotator {
 				add(doc, in, sentenceStart, in.pos()); // TODO: trim
 				
 				
-				while(!in.isNull()  && in.current().getFeature("type", TokenType.class).is(BaseTokenType.WHITESPACE))
+				while(!in.isNull()  && in.current().getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.WHITESPACE))
 					in.next();
 				
 				sentenceStart = in.pos();
@@ -69,10 +69,10 @@ public class SentenceSplitter implements Annotator {
 	}
 	
 	public void add(Document d, AnnotationStream s, int start, int end) {
-		while(s.isNull(s.get(start)) || s.get(start).getFeature("type", TokenType.class).is(BaseTokenType.SPACE))
+		while(s.isNull(s.get(start)) || s.get(start).getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.SPACE))
 			start++;
 		
-		while(s.isNull(s.get(end)) || s.get(end).getFeature("type", TokenType.class).is(BaseTokenType.SPACE))
+		while(s.isNull(s.get(end)) || s.get(end).getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.SPACE))
 			end--;
 		
 		
@@ -84,7 +84,7 @@ public class SentenceSplitter implements Annotator {
 	 * Check if the token could be a possible EOS
 	 */
 	public static boolean isPossibleEOS(Document d, Annotation token) {
-		if(!((TokenType)token.getFeature("type")).is(BaseTokenType.PUNC))
+		if(!token.getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.PUNC))
 			return false;
 		
 		String value = token.getText();
@@ -120,16 +120,16 @@ public class SentenceSplitter implements Annotator {
 		}
 		
 		// skip all punctuation after current position
-		while(s.current().getFeature("type", TokenType.class).is(BaseTokenType.PUNC)) {
+		while(s.current().getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.PUNC)) {
 			s.next();
 		}
 		
-		if(!s.current().getFeature("type", TokenType.class).is(BaseTokenType.WHITESPACE))
+		if(!s.current().getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.WHITESPACE))
 			return false;
 		
 		int sentStart = s.pos();
 		// skip all non-text after the punctuation
-		while(s.isNull(s.get(sentStart)) && !s.get(sentStart).getFeature("type", TokenType.class).is(BaseTokenType.TEXT)) {
+		while(s.isNull(s.get(sentStart)) && !s.get(sentStart).getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.TEXT)) {
 			sentStart++;
 		}
 		
