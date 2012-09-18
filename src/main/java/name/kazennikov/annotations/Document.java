@@ -262,6 +262,25 @@ public class Document extends Annotation implements CharSequence {
 		return anns;
 	}
 	
+	/**
+	 * Get annotatations from document that satisfies a predicate
+	 * @param type
+	 * @param predicate
+	 * @return
+	 */
+	public List<Annotation> get(String type, Predicate<Annotation> predicate) {
+		List<Annotation> anns = new ArrayList<Annotation>();
+		
+		for(Annotation a : get(type)) {
+			if(predicate.apply(a))
+				anns.add(a);
+		}
+		
+		Collections.sort(anns, Annotation.COMPARATOR);
+		
+		return anns;
+	}
+	
 	public List<Annotation> getAllAnnotations() {
 		List<Annotation> l = new ArrayList<Annotation>();
 		l.add(this);
