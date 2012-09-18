@@ -284,7 +284,6 @@ public class Document extends Annotation implements CharSequence {
 			writer.writeAttribute("type", a.getName());
 			writer.writeAttribute("start", Integer.toString(a.getStart()));
 			writer.writeAttribute("end", Integer.toString(a.getEnd()));
-			writer.writeStartElement("features");
 
 			if(featWriter != null) {
 				featWriter.write(writer, a.getFeatureMap());
@@ -292,13 +291,12 @@ public class Document extends Annotation implements CharSequence {
 
 				for(Map.Entry<String, Object> e : a.getFeatureMap().entrySet()) {
 					if(e.getValue() != null) {
-						writer.writeEmptyElement("feat");
+						writer.writeEmptyElement("feature");
 						writer.writeAttribute("name", e.getKey());
 						writer.writeAttribute("value", e.getValue().toString());
 					}
 				}
 			}
-			writer.writeEndElement(); // features
 
 			writer.writeEndElement(); // annotation
 		}
