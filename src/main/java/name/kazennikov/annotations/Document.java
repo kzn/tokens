@@ -351,7 +351,8 @@ public class Document extends Annotation implements CharSequence {
 					AnnotationXmlLoader loader = anLoaders.get(stream.getAttributeValue(null, "type"));
 					if(loader == null)
 						loader = BASE_LOADER;
-					loader.load(stream);
+					Annotation a = loader.load(stream);
+					doc.addAnnotation(a);
 				}
 			}
 			
