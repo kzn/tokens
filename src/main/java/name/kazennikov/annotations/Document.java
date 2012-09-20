@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import name.kazennikov.xml.XmlWritable;
@@ -293,9 +294,9 @@ public class Document extends Annotation implements CharSequence {
 	
 
 	public void toXml(XMLStreamWriter writer, Map<String, XmlWritable<Map<String, Object>>> anWriters) throws XMLStreamException {
-		writer.writeStartElement("doc");
+		writer.writeStartElement(DOC);
 		writer.writeAttribute("text", getText());
-		writer.writeAttribute("root", getName()); // get root annotation
+		writer.writeAttribute("type", getName()); // get root annotation
 
 		for(Annotation a : getAll()) {
 			XmlWritable<Map<String, Object>> featWriter = anWriters != null? anWriters.get(a.getName()) : null;
@@ -321,6 +322,43 @@ public class Document extends Annotation implements CharSequence {
 		}
 
 		writer.writeEndElement();
+	}
+	
+	
+	private static AnnotationXmlLoader BASE_LOADER = new AnnotationXmlLoader.Base();
+	/**
+	 * Reads document from STAX stream
+	 * @param reader xml stream
+	 * @param anLoaders annotation parsers
+	 * @return
+	 */
+	public static Document read(XMLStreamReader stream, Map<String, AnnotationXmlLoader> anLoaders) throws XMLStreamException {
+		String tag = stream.getName().getLocalPart();
+		if(!tag.equals(DOC))
+			return null;
+		
+		String anDoc = stream.getAttributeValue(null, "type");
+		String text = stream.getAttributeValue(null, "text");
+		Document doc = new Document(anDoc, text);
+		
+		while(stream.hasNext()) {
+			if(stream.isEndElement() && stream.getLocalName().equals(DOC))
+				break;
+			
+			if(stream.isStartElement()) {
+				String ctag = stream.getLocalName();
+				if(ctag.equals("annotation")) {
+					AnnotationXmlLoader loader = anLoaders.get(stream.getAttributeValue(null, "type"));
+					if(loader == null)
+						loader = BASE_LOADER;
+					loader.load(stream);
+				}
+			}
+			
+			stream.next();
+		}
+		
+		return doc;
 	}
 	
 	
