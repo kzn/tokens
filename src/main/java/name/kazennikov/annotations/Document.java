@@ -337,7 +337,7 @@ public class Document extends Annotation implements CharSequence {
 		if(!tag.equals(DOC))
 			return null;
 		
-		String anDoc = stream.getAttributeValue(null, "type");
+		String anDoc = stream.getAttributeValue(null, "root");
 		String text = stream.getAttributeValue(null, "text");
 		Document doc = new Document(anDoc, text);
 		
@@ -348,11 +348,20 @@ public class Document extends Annotation implements CharSequence {
 			if(stream.isStartElement()) {
 				String ctag = stream.getLocalName();
 				if(ctag.equals("annotation")) {
-					AnnotationXmlLoader loader = anLoaders.get(stream.getAttributeValue(null, "type"));
+					String anType = stream.getAttributeValue(null, "type");
+					AnnotationXmlLoader loader = anLoaders.get(anType);
 					if(loader == null)
 						loader = BASE_LOADER;
 					Annotation a = loader.load(stream);
-					doc.addAnnotation(a);
+					if(anType == anDoc) {
+						// load root annotation
+						doc.name = anType;
+						doc.features = a.features;
+						doc.data = a.data;
+					} else {
+						// load other annotations
+						doc.addAnnotation(a);
+					}
 				}
 			}
 			
