@@ -12,7 +12,8 @@ import java.util.*;
 public class Document extends Annotation implements CharSequence {
 	String text;
 	
-	Map<String, List<Annotation>> annotations = Maps.newHashMap();
+	//Map<String, List<Annotation>> annotations = Maps.newHashMap();
+	AnnotationList annotations = new AnnotationList();
 	
 	public Document() {	
 		this("");
@@ -31,6 +32,7 @@ public class Document extends Annotation implements CharSequence {
 		super(null, annotName, 0, text.length());
 		this.text = text;
 		setDoc(this);
+		annotations.add(this);
 	}
 
 	@Override
@@ -43,18 +45,22 @@ public class Document extends Annotation implements CharSequence {
      * @param names annotations names
      * @return
      */
-	public List<Annotation> get(String... names) {
-        List<Annotation> anns = new ArrayList<Annotation>();
+	public AnnotationList get(String... names) {
+        AnnotationList anns = new AnnotationList();
 
         for(String name : names) {
             if(name.equals(getName())) {
                 anns.add(this);
             }
-
-            List<Annotation> ann = annotations.get(name);
-            if(ann != null) {
-                anns.addAll(ann);
-            }
+        }
+        
+        for(Annotation a : annotations) {
+        	for(String name : names) {
+        		if(a.getName().equals(name)) {
+        			anns.add(a);
+        			break;
+        		}
+        	}
         }
 
         Collections.sort(anns, Annotation.COMPARATOR);
@@ -62,8 +68,8 @@ public class Document extends Annotation implements CharSequence {
 		return anns;
 	}
 	
-	public List<Annotation> getAll() {
-		return getAllAnnotations();
+	public AnnotationList getAll() {
+		return annotations;
 	}	
 	
 	/**
@@ -72,8 +78,8 @@ public class Document extends Annotation implements CharSequence {
 	 * @param end span end
 	 * @return
 	 */
-	public List<Annotation> getCovering(int start, int end) {
-		List<Annotation> anns = new ArrayList<Annotation>();
+	public AnnotationList getCovering(int start, int end) {
+		AnnotationList anns = new AnnotationList();
 		
 		for(Annotation a : getAll()) {
 			if(a.getStart() <= start && a.getEnd() >= end)
@@ -84,8 +90,8 @@ public class Document extends Annotation implements CharSequence {
 		
 	}
 	
-	public List<Annotation> getFiltered(Predicate<Annotation> predicate) {
-		List<Annotation> anns = new ArrayList<Annotation>();
+	public AnnotationList getFiltered(Predicate<Annotation> predicate) {
+		AnnotationList anns = new AnnotationList();
 		
 		for(Annotation a : getAll()) {
 			if(predicate.apply(a))
@@ -101,8 +107,8 @@ public class Document extends Annotation implements CharSequence {
 	 * @param end
 	 * @return
 	 */
-	public List<Annotation> getOverlapping(int start, int end) {
-		List<Annotation> anns = new ArrayList<Annotation>();
+	public AnnotationList getOverlapping(int start, int end) {
+		AnnotationList anns = new AnnotationList();
 		
 		for(Annotation a : getAll()) {
 			if(a.getStart() <= start && a.getEnd() >= end)
@@ -121,11 +127,12 @@ public class Document extends Annotation implements CharSequence {
      * @param annotationNames annotation names
      */
     public boolean contains(String... annotationNames) {
-        for(String annotationName : annotationNames) {
-             boolean  res = getName().equals(annotationName) || annotations.containsKey(annotationName);
-            if(res)
-                return true;
-        }
+    	for(Annotation a : annotations) {
+    		for(String s : annotationNames) {
+    			if(a.getName().equals(s))
+    				return true;
+    		}
+    	}
 
         return false;
     }
@@ -133,33 +140,12 @@ public class Document extends Annotation implements CharSequence {
 
 
     /**
-     * Get set of all annotations present in the document
-     * @return
-     */
-	public Set<String> getAnnotationNames() {
-        HashSet<String> annotNames = new HashSet<String>(annotations.keySet());
-        annotNames.add(getName());
-		return annotNames;
-	}
-
-    /**
      * Add single annotation to the document
      * @param ann
      */
 	public void addAnnotation(Annotation ann) {
-		//List<Annotation> anns = get(ann.getName());
-		if(ann.getName() == getName()) {
-			throw new IllegalArgumentException("Couldn't add annotation with same name as document root");
-		}
-		List<Annotation> annots = annotations.get(ann.getName());
-		
-		if(annots == null) {
-			annots = new ArrayList<Annotation>();
-			annotations.put(ann.getName(), annots);
-		}
-		
 		ann.setDoc(this);
-		annots.add(ann);
+		annotations.add(ann);
 	}
 	
 	public void addAnnotation(String name, int start, int end) {
@@ -184,24 +170,8 @@ public class Document extends Annotation implements CharSequence {
 	}
 
     public void sortAnnotations() {
-        for(List<Annotation> annots : annotations.values()) {
-            Collections.sort(annots, Annotation.COMPARATOR);
-        }
+    	Collections.sort(annotations, Annotation.COMPARATOR);
     }
-
-    public void sortAnnotations(String... names) {
-        for(String anName : names) {
-            List<Annotation> annots = annotations.get(anName);
-            if(annots == null || annots.isEmpty())
-                continue;
-
-            Collections.sort(annots, Annotation.COMPARATOR);
-        }
-    }
-	
-	public void clearAnnotations(String name) {
-		get(name).clear();
-	}
 
 	@Override
 	public int length() {
@@ -224,18 +194,16 @@ public class Document extends Annotation implements CharSequence {
 	 * @param p select predicate for constrained annotations
 	 * @return list of annotations
 	 */
-	public List<Annotation> getAnnotationsWithin(Annotation a, Predicate<Annotation> p) {
-		List<Annotation> anns = new ArrayList<Annotation>();
+	public AnnotationList getAnnotationsWithin(Annotation a, Predicate<Annotation> p) {
+		AnnotationList anns = new AnnotationList();
 		
-		for(List<Annotation> anList : annotations.values()) {
-			for(Annotation an : anList ) {
+		for(Annotation an : annotations) {
 				// skip given
 				if(an == a)
 					continue;
 				
 				if(a.contains(an) && p.apply(an))
 					anns.add(an);
-			}
 		}
 		
 		Collections.sort(anns, Annotation.COMPARATOR);
@@ -244,20 +212,13 @@ public class Document extends Annotation implements CharSequence {
 	}
 	
 	/**
-	 * Get annotatations from document that satisfies a predicate
+	 * Get annotations from document that satisfies a predicate
 	 * @param predicate
 	 * @return
 	 */
-	public List<Annotation> get(Predicate<Annotation> predicate) {
-		List<Annotation> anns = new ArrayList<Annotation>();
-		
-		for(Annotation a : getAll()) {
-			if(predicate.apply(a))
-				anns.add(a);
-		}
-		
+	public AnnotationList get(Predicate<Annotation> predicate) {
+		AnnotationList anns = annotations.get(predicate);
 		Collections.sort(anns, Annotation.COMPARATOR);
-		
 		return anns;
 	}
 	
@@ -267,11 +228,11 @@ public class Document extends Annotation implements CharSequence {
 	 * @param predicate
 	 * @return
 	 */
-	public List<Annotation> get(String type, Predicate<Annotation> predicate) {
-		List<Annotation> anns = new ArrayList<Annotation>();
+	public AnnotationList get(String type, Predicate<Annotation> predicate) {
+		AnnotationList anns = new AnnotationList();
 		
-		for(Annotation a : get(type)) {
-			if(predicate.apply(a))
+		for(Annotation a : anns) {
+			if(a.getName().equals(type) && predicate.apply(a))
 				anns.add(a);
 		}
 		
@@ -280,14 +241,8 @@ public class Document extends Annotation implements CharSequence {
 		return anns;
 	}
 	
-	public List<Annotation> getAllAnnotations() {
-		List<Annotation> l = new ArrayList<Annotation>();
-		l.add(this);
-		for(List<Annotation> al : annotations.values()) {
-			l.addAll(al);
-		}
-		
-		return l;
+	public AnnotationList getAllAnnotations() {
+		return annotations;
 	}
 	
 
