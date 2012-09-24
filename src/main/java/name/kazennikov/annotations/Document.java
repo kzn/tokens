@@ -336,6 +336,15 @@ public class Document extends Annotation implements CharSequence {
         }
     }
     
+    public void removeIf(Predicate<Annotation> p) {
+    	annotations.removeIf(p);
+    }
+    
+    public void removeIfNot(Predicate<Annotation> p) {
+    	annotations.removeIfNot(p);
+    }
+
+    
 	
 	
 }
