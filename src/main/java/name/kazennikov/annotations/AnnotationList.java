@@ -1,10 +1,12 @@
 package name.kazennikov.annotations;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,5 +33,19 @@ public class AnnotationList extends ArrayList<Annotation> {
 
     public void sort(Comparator<Annotation> comparator) {
         Collections.sort(this, comparator);
+    }
+    
+    public void removeIf(Predicate<Annotation> p) {
+    	Iterator<Annotation> it = iterator();
+    	
+    	while(it.hasNext()) {
+    		if(p.apply(it.next())) {
+    			it.remove();
+    		}
+    	}
+    }
+    
+    public void removeIfNot(Predicate<Annotation> p) {
+    	removeIf(Predicates.not(p));
     }
 }

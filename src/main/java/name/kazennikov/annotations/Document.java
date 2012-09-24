@@ -306,7 +306,7 @@ public class Document extends Annotation implements CharSequence {
 					if(loader == null)
 						loader = BASE_LOADER;
 					Annotation a = loader.load(stream);
-					if(anType == anDoc) {
+					if(anType.equals(anDoc)) {
 						// load root annotation
 						doc.name = anType;
 						doc.features = a.features;
@@ -335,6 +335,7 @@ public class Document extends Annotation implements CharSequence {
             a = rewriter.rewriter(a);
         }
     }
+    
 	
 	
 }
