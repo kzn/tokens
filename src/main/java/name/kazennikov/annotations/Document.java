@@ -284,7 +284,7 @@ public class Document extends Annotation implements CharSequence {
 		if(!tag.equals(DOC))
 			return null;
 		
-		String anDoc = stream.getAttributeValue(null, "root");
+		String anDoc = stream.getAttributeValue(null, "type");
 		String text = stream.getAttributeValue(null, "text");
 		Document doc = new Document(anDoc, text);
 		
