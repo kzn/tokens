@@ -47,12 +47,6 @@ public class Document extends Annotation implements CharSequence {
      */
 	public AnnotationList get(String... names) {
         AnnotationList anns = new AnnotationList();
-
-        for(String name : names) {
-            if(name.equals(getName())) {
-                anns.add(this);
-            }
-        }
         
         for(Annotation a : annotations) {
         	for(String name : names) {
