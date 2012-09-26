@@ -72,8 +72,11 @@ public class Annotation implements CharSequence {
 	public Set<String> getFeatureNames() {
 		return features.keySet();
 	}
-	public Object getFeature(String feat) {
-		return features.get(feat);
+	
+	
+	@SuppressWarnings("unchecked")
+	public <E> E getFeature(String feat) {
+		return (E) features.get(feat);
 	}
 	
 	public <E> E getFeature(String feat, Class<E> cls) {
