@@ -29,21 +29,47 @@ public class Align {
         int rightStart = 0;
 
         while(leftPos < left.size() && rightPos < right.size()) {
+            Annotation leftStartAnn = left.get(leftStart);
+            Annotation rightStartAnn = right.get(rightStart);
+
+        	
             Annotation leftAnn = left.get(leftPos);
             Annotation rightAnn = right.get(rightPos);
 
+            
             if(leftAnn.getStart() == rightAnn.getStart()) {
-                leftStart = leftPos;
-                rightStart = rightPos;
+            	// check for phantom annotation
+            	if(leftAnn.getStart() != leftStartAnn.getStart())
+            		leftStart = leftPos;
+            	
+            	// check for phantom annotation
+            	if(rightAnn.getStart() != rightStartAnn.getStart())
+            		rightStart = rightPos;
             }
 
             // aligned
             if(leftAnn.getEnd() == rightAnn.getEnd()) {
-                leftAligned.add(new ArrayList<Annotation>(left.subList(leftStart, leftPos + 1)));
-                rightAligned.add(new ArrayList<Annotation>(right.subList(rightStart, rightPos + 1)));
+                // continue iteration while the left annotations continue to have same end offset as right annotation
+                if(leftPos + 1 < left.size() && left.get(leftPos + 1).getEnd() == rightAnn.getEnd()) {
+                	leftPos++;
+                	continue;
+                }
+                
+                // continue iteration while the right annotations continue to have same end offset as left annotation
+                if(rightPos + 1 < right.size() && right.get(rightPos + 1).getEnd() == leftAnn.getEnd()) {
+                	rightPos++;
+                	continue;
+                }
+
+                
+                
 
                 leftPos++;
                 rightPos++;
+                
+                leftAligned.add(new ArrayList<Annotation>(left.subList(leftStart, leftPos)));
+                rightAligned.add(new ArrayList<Annotation>(right.subList(rightStart, rightPos)));
+
 
             } else if(leftAnn.getStart() > rightAnn.getStart() || leftAnn.getEnd() > rightAnn.getEnd()) {
                 rightPos++;
