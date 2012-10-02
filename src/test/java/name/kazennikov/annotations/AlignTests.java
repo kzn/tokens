@@ -71,7 +71,7 @@ public class AlignTests extends TestCase {
 	}
 	
 	@Test
-	public void testAlignmentSimple() {
+	public void testAlignmentSimple2() {
 		Document doc = prepareDoc1();
 		List<List<Annotation>> left = new ArrayList<List<Annotation>>();
 		List<List<Annotation>> right = new ArrayList<List<Annotation>>();
