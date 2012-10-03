@@ -338,6 +338,10 @@ public class Document extends Annotation implements CharSequence {
     	annotations.removeIfNot(p);
     }
 
+	public void remove(Annotation a) {
+		annotations.remove(a);
+	}
+
     
 	
 	
