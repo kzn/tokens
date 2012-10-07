@@ -14,5 +14,5 @@ public interface AnnotationRewriter {
      * @param a source annotation
      * @return result annotation
      */
-    public Annotation rewriter(Annotation a);
+    public Annotation rewrite(Annotation a);
 }

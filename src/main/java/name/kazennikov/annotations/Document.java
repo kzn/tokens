@@ -1,13 +1,14 @@
 package name.kazennikov.annotations;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
 import name.kazennikov.xml.XmlWritable;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 public class Document extends Annotation implements CharSequence {
 	String text;
@@ -319,14 +320,14 @@ public class Document extends Annotation implements CharSequence {
 	}
 
     /**
-     * Rewrites annotations with side-effect rewriter
+     * Rewrites annotations with side-effect rewrite
      * @param rewriter
      */
     public void rewrite(AnnotationRewriter rewriter) {
 
 
         for(Annotation a : getAll()) {
-            a = rewriter.rewriter(a);
+            a = rewriter.rewrite(a);
         }
     }
     
