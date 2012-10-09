@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
-public class Annotation implements CharSequence {
+public class Annotation implements CharSequence, Comparable<Annotation>{
     public static final String TOKEN = "token";
     public static final String WORD = "word";
     public static final String SENT = "sent";
@@ -22,7 +22,7 @@ public class Annotation implements CharSequence {
 		@Override
 		public int compare(Annotation o1, Annotation o2) {
 			int res = o1.start - o2.start;
-			return res != 0? res : o1.end - o2.end;
+			return res != 0? res : o2.end - o1.end;
 		}
 	};
 	
@@ -185,6 +185,11 @@ public class Annotation implements CharSequence {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public int compareTo(Annotation o) {
+		return COMPARATOR.compare(this, o);
 	}
 	
 
