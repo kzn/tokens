@@ -48,4 +48,9 @@ public class AnnotationList extends ArrayList<Annotation> {
     public void removeIfNot(Predicate<Annotation> p) {
     	removeIf(Predicates.not(p));
     }
+    
+    @Override
+    public Annotation get(int index) {
+    	return super.get(index < 0? size() - index : index);
+    }
 }
