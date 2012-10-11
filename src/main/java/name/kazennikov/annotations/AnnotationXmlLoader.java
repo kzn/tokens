@@ -35,9 +35,19 @@ public interface AnnotationXmlLoader {
 		@Override
 		public void parseFeatures(XMLStreamReader reader, Annotation a) throws XMLStreamException {
 			while(reader.hasNext()) {
+				reader.next();
 				if(reader.isEndElement() && reader.getLocalName().equals("annotation"))
 					break;
-				reader.next();
+				if(reader.isStartElement()) {
+					String tag = reader.getLocalName();
+					String value = reader.getElementText();
+					
+					if(tag.equals(Annotation.TYPE) || tag.equals(Annotation.KIND)) {
+						value = value.intern();
+					}
+					
+					a.setFeature(tag, value);
+				}
 			}
 		}
 	}
