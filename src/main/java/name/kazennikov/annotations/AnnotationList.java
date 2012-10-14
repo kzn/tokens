@@ -17,10 +17,11 @@ import java.util.Iterator;
  */
 public class AnnotationList extends ArrayList<Annotation> {
 
-    public AnnotationList get(Predicate<Annotation> p) {
+    public AnnotationList get(Predicate<Annotation>... p) {
         AnnotationList list = new AnnotationList();
+        Predicate<Annotation> pred = Predicates.and(p);
         for(Annotation a : this) {
-            if(p.apply(a))
+            if(pred.apply(a))
                 list.add(a);
         }
 
