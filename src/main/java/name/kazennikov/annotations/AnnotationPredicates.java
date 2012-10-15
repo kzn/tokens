@@ -39,7 +39,7 @@ public class AnnotationPredicates {
         return new Predicate<Annotation>() {
             @Override
             public boolean apply(@Nullable Annotation a) {
-                return a.getStart() <= start && a.getEnd() <= end;
+                return a.getStart() >= start && a.getEnd() <= end;
             }
         };
     }
@@ -51,7 +51,7 @@ public class AnnotationPredicates {
         return new Predicate<Annotation>() {
             @Override
             public boolean apply(@Nullable Annotation a) {
-                return a.getStart() >= start && a.getEnd() >= end;
+                return a.getStart() <= start && a.getEnd() >= end;
             }
         };
     }
