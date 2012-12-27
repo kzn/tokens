@@ -9,11 +9,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 /**
- * Created with IntelliJ IDEA.
- * User: kzn
- * Date: 23.09.12
- * Time: 23:26
- * To change this template use File | Settings | File Templates.
+ * List of annotations. Some basic extension over the java ArrayList
  */
 public class AnnotationList extends ArrayList<Annotation> {
 
@@ -28,14 +24,25 @@ public class AnnotationList extends ArrayList<Annotation> {
         return list;
     }
 
+    /**
+     * Sort annotations using default annotation comparator
+     */
     public void sort() {
         Collections.sort(this, Annotation.COMPARATOR);
     }
 
+    /**
+     * Sort annotations with given annotation comparator
+     * @param comparator annotation comparator
+     */
     public void sort(Comparator<Annotation> comparator) {
         Collections.sort(this, comparator);
     }
     
+    /**
+     * Removes all annotations which match a predicate
+     * @param p annotation predicate
+     */
     public void removeIf(Predicate<Annotation> p) {
     	Iterator<Annotation> it = iterator();
     	
@@ -46,6 +53,10 @@ public class AnnotationList extends ArrayList<Annotation> {
     	}
     }
     
+    /**
+     * Removes all annotations which does NOT match a predicate
+     * @param p annotation predicate
+     */
     public void removeIfNot(Predicate<Annotation> p) {
     	removeIf(Predicates.not(p));
     }
