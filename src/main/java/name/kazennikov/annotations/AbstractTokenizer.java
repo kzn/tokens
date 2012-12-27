@@ -4,19 +4,28 @@ import name.kazennikov.tokens.BaseTokenType;
 import name.kazennikov.tokens.TokenType;
 
 /**
- * Tokenizer that splits input string into 3 types of tokens:
+ * Tokenizer that splits input string into tokens.
+ * <p>
+ * A token is a continuous sequence of characters that is delimited by text start/end or separator characters.
+ * A sequence of repeating separator characters is one token.
+ * <p>
+ * Technically it adds 'Token' annotations to the document. This annotations
+ * has a 'type' feature which designates the token type.
+ * <p>
+ * Predefined token types:
  * <ul>
  *     <li>Whitespace. It captures all whitespace chars into single tokens</li>
  *     <li>Punctuation. Emit a token for each punctuation char</li>
  *     <li>Tokens. A content token is a sequence of non-separator characters</li>
  * </ul>
  *
- * Optionally, it inferes type of content token. Types could be:
+ * Also, it infers type of content token. Predefined types are:
  * <ul>
- *     <li>DIGITS</li>
- *     <li>LETTERS</li>
- *     <li>ALPHANUM</li>
- *     <li>MISC</li>
+ *     <li>DIGITS - for digit only char sequences
+ *     <li>LETTERS - for letter only char sequences
+ *     <li>ALPHANUM - for alphanumeric char sequences
+ *     <li>PUNC - punctuation
+ *     <li>MISC - for other char sequences
  * </ul>
  */
 public abstract class AbstractTokenizer implements Annotator {
@@ -135,8 +144,6 @@ public abstract class AbstractTokenizer implements Annotator {
     Annotation makeAnnotation(Document doc, int start, int end, TokenType type) {
         Annotation ann = new Annotation(doc, Annotation.TOKEN, start, end);
         ann.setFeature(Annotation.TYPE, type);
-        //ann.setFeature(Annotation.DATA, type);
-
         return ann;
     }
 
