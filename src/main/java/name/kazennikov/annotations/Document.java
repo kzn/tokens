@@ -211,7 +211,7 @@ public class Document extends Annotation implements CharSequence {
 	 * @param predicate
 	 * @return
 	 */
-	public AnnotationList get(Predicate<Annotation> predicate) {
+	public AnnotationList get(Predicate<Annotation>... predicate) {
 		AnnotationList anns = annotations.get(predicate);
 		Collections.sort(anns, Annotation.COMPARATOR);
 		return anns;

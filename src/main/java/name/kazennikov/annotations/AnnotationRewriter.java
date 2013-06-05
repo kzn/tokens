@@ -1,16 +1,13 @@
 package name.kazennikov.annotations;
 
 /**
- * Created with IntelliJ IDEA.
- * User: kzn
- * Date: 23.09.12
- * Time: 22:28
- * To change this template use File | Settings | File Templates.
+ * Annotation rewriter
+ * 
  */
 public interface AnnotationRewriter {
     /**
      * Rewrite given annotation. Doesn't guarantees that
-     * the result will be a fresh annotation (may be side-effects)
+     * the result will be a fresh annotation (allows side-effects)
      * @param a source annotation
      * @return result annotation
      */

@@ -1,9 +1,11 @@
 package name.kazennikov.annotations;
 
-import com.google.common.base.CharMatcher;
-import name.kazennikov.tokens.TokenType;
 
-
+/**
+ * Tokenizer with separators defined by unicode types
+ * @author kzn
+ *
+ */
 public class UnicodeTokenizer extends AbstractTokenizer {
 
 
