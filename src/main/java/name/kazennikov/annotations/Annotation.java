@@ -1,5 +1,7 @@
 package name.kazennikov.annotations;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
 
 import java.util.Comparator;
@@ -192,6 +194,10 @@ public class Annotation implements CharSequence, Comparable<Annotation>{
 		return COMPARATOR.compare(this, o);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public AnnotationList get(Predicate<Annotation>... predicates) {
+		return doc.get(Predicates.and(AnnotationPredicates.within(this), Predicates.and(predicates)));
+	}
 
 
 
