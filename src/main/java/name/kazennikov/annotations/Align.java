@@ -11,11 +11,13 @@ public class Align {
 
 
     /**
-     * Get aligned groups from given list of annotations
-     * @param left
-     * @param right
-     * @param leftAligned
-     * @param rightAligned
+     * Get aligned groups from given list of annotations.
+     * Returns lists of annotations, where the groups in each list are aligned to each other
+     * 
+     * @param left first list of annotations
+     * @param right second list of annotation
+     * @param leftAligned lists of aligned annotations from 'left' list
+     * @param rightAligned list of aligned annotations from 'right' list
      */
     public static void getAligned(List<Annotation> left, List<Annotation> right,
                                         List<List<Annotation>> leftAligned, List<List<Annotation>> rightAligned) {
