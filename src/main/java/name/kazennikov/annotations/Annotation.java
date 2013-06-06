@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class Annotation implements CharSequence, Comparable<Annotation>{
-    public static final String TOKEN = "token";
+
+	public static final String TOKEN = "token";
     public static final String WORD = "word";
     public static final String SENT = "sent";
     public static final String DOC = "doc";
@@ -27,18 +28,20 @@ public class Annotation implements CharSequence, Comparable<Annotation>{
 			return res != 0? res : o2.end - o1.end;
 		}
 	};
-	
-	String name;
+
+	int id;
+	String type;
 	int start;
 	int end;
+
 	
 	Object data;
 	
 	Map<String, Object> features = Maps.newHashMap();
 	
-	public Annotation(Document doc, String name, int start, int end) {
+	public Annotation(Document doc, String type, int start, int end) {
 		this.doc = doc;
-		this.name = name;
+		this.type = type;
 		this.start = start;
 		this.end = end;
 	}
@@ -51,8 +54,8 @@ public class Annotation implements CharSequence, Comparable<Annotation>{
 		this.doc = doc;
 	}
 	
-	public String getName() {
-		return name;
+	public String getType() {
+		return type;
 	}
 	
 	public int getStart() {
@@ -95,7 +98,7 @@ public class Annotation implements CharSequence, Comparable<Annotation>{
 	
 	@Override
 	public String toString() {
-		return String.format("'%s'@%s[%d,%d]%s%s", getText(), name, start, end, features, data);
+		return String.format("'%s'@%s[%d,%d]%s%s", getText(), type, start, end, features, data);
 	}
 	
 	
@@ -185,8 +188,8 @@ public class Annotation implements CharSequence, Comparable<Annotation>{
 		this.data = data;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	@Override
@@ -197,6 +200,10 @@ public class Annotation implements CharSequence, Comparable<Annotation>{
 	@SuppressWarnings("unchecked")
 	public AnnotationList get(Predicate<Annotation>... predicates) {
 		return doc.get(Predicates.and(AnnotationPredicates.within(this), Predicates.and(predicates)));
+	}
+		
+    public int getId() {
+		return id;
 	}
 
 

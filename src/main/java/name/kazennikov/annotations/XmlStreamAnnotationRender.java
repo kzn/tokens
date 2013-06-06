@@ -23,7 +23,7 @@ public class XmlStreamAnnotationRender extends AbstractAnnotationRender {
 	@Override
 	public void onAnnotationStart(Annotation annotation) throws AnnotationRenderException {
 		try {
-			writer.writeStartElement(annotation.getName());
+			writer.writeStartElement(annotation.getType());
 			Map<String, Object> featMap = annotation.getFeatureMap();
 			for(Map.Entry<String, Object> feat : featMap.entrySet()) {
                 Object value = feat.getValue();

@@ -15,6 +15,7 @@ public class Document extends Annotation implements CharSequence {
 	
 	//Map<String, List<Annotation>> annotations = Maps.newHashMap();
 	AnnotationList annotations = new AnnotationList();
+	int nextID = 0;
 	
 	public Document() {	
 		this("");
@@ -42,16 +43,16 @@ public class Document extends Annotation implements CharSequence {
 	}
 
     /**
-     * Get annotations by name
-     * @param names annotations names
+     * Get annotations by type
+     * @param types annotations types
      * @return
      */
-	public AnnotationList get(String... names) {
+	public AnnotationList get(String... types) {
         AnnotationList anns = new AnnotationList();
         
         for(Annotation a : annotations) {
-        	for(String name : names) {
-        		if(a.getName().equals(name)) {
+        	for(String type : types) {
+        		if(a.getType().equals(type)) {
         			anns.add(a);
         			break;
         		}
@@ -85,7 +86,7 @@ public class Document extends Annotation implements CharSequence {
 		
 	}
 	
-	public AnnotationList getFiltered(Predicate<Annotation> predicate) {
+	public AnnotationList get(Predicate<Annotation> predicate) {
 		AnnotationList anns = new AnnotationList();
 		
 		for(Annotation a : getAll()) {
@@ -119,12 +120,12 @@ public class Document extends Annotation implements CharSequence {
 
     /**
      * Checks if document has any of this annotations
-     * @param annotationNames annotation names
+     * @param annotationTypes annotation names
      */
-    public boolean contains(String... annotationNames) {
+    public boolean contains(String... annotationTypes) {
     	for(Annotation a : annotations) {
-    		for(String s : annotationNames) {
-    			if(a.getName().equals(s))
+    		for(String s : annotationTypes) {
+    			if(a.getType().equals(s))
     				return true;
     		}
     	}
@@ -141,6 +142,7 @@ public class Document extends Annotation implements CharSequence {
 	public void addAnnotation(Annotation ann) {
 		ann.setDoc(this);
 		annotations.add(ann);
+		ann.id = nextID++;
 	}
 	
 	public void addAnnotation(String name, int start, int end) {
@@ -227,7 +229,7 @@ public class Document extends Annotation implements CharSequence {
 		AnnotationList anns = new AnnotationList();
 		
 		for(Annotation a : anns) {
-			if(a.getName().equals(type) && predicate.apply(a))
+			if(a.getType().equals(type) && predicate.apply(a))
 				anns.add(a);
 		}
 		
@@ -244,12 +246,12 @@ public class Document extends Annotation implements CharSequence {
 	public void toXml(XMLStreamWriter writer, Map<String, XmlWritable<Map<String, Object>>> anWriters) throws XMLStreamException {
 		writer.writeStartElement(DOC);
 		writer.writeAttribute("text", getText());
-		writer.writeAttribute("type", getName()); // get root annotation
+		writer.writeAttribute("type", getType()); // get root annotation
 
 		for(Annotation a : getAll()) {
-			XmlWritable<Map<String, Object>> featWriter = anWriters != null? anWriters.get(a.getName()) : null;
+			XmlWritable<Map<String, Object>> featWriter = anWriters != null? anWriters.get(a.getType()) : null;
 			writer.writeStartElement("annotation");
-			writer.writeAttribute("type", a.getName());
+			writer.writeAttribute("type", a.getType());
 			writer.writeAttribute("start", Integer.toString(a.getStart()));
 			writer.writeAttribute("end", Integer.toString(a.getEnd()));
 
@@ -303,7 +305,7 @@ public class Document extends Annotation implements CharSequence {
 					Annotation a = loader.load(stream);
 					if(anType.equals(anDoc)) {
 						// load root annotation
-						doc.name = anType;
+						doc.type = anType;
 						doc.features = a.features;
 						doc.data = a.data;
 					} else {

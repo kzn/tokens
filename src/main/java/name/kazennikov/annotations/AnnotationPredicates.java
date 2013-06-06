@@ -16,7 +16,7 @@ public class AnnotationPredicates {
         return new Predicate<Annotation>() {
             @Override
             public boolean apply(@Nullable Annotation annotation) {
-                return annotation.getName().equals(name);
+                return annotation.getType().equals(name);
             }
         };
     }
