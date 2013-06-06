@@ -3,6 +3,9 @@ package name.kazennikov.tokens;
 import java.util.HashMap;
 import java.util.Map;
 
+import name.kazennikov.annotations.TokenType;
+
+@Deprecated
 public abstract class AbstractToken {
 	Map<String, Object> properties;
 	TokenType type;

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import name.kazennikov.annotations.BaseTokenType;
+import name.kazennikov.annotations.TokenType;
+@Deprecated
 public class BaseToken extends AbstractToken {
 	List<AbstractToken> childs;
 	Map<String, Object> properties;

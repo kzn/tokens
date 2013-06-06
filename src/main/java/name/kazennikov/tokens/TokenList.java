@@ -20,6 +20,7 @@ import java.util.List;
  *
  * @param <E> type of the token
  */
+@Deprecated
 public class TokenList<E extends AbstractToken> implements CharSequence {
 	List<E> tokens = new ArrayList<E>();
 	E nullObject;

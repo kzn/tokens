@@ -3,7 +3,10 @@ package name.kazennikov.tokens;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.kazennikov.annotations.SequenceStream;
+import name.kazennikov.annotations.TokenType;
 
+@Deprecated
 public class TokenStream extends SequenceStream<AbstractToken> {
 		public TokenStream(List<AbstractToken> tokens) {
 			super(TextToken.NULL, tokens);

@@ -2,6 +2,8 @@ package name.kazennikov.tokens;
 
 import java.util.List;
 
+import name.kazennikov.annotations.TokenType;
+@Deprecated
 public class TaggedToken<E> extends BaseToken {
 	E tag;
 	List<E> possibleTags;

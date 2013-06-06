@@ -1,6 +1,9 @@
 package name.kazennikov.tokens;
 
+import name.kazennikov.annotations.BaseTokenType;
+import name.kazennikov.annotations.TokenType;
 
+@Deprecated
 public class TextToken extends AbstractToken {
 
 	

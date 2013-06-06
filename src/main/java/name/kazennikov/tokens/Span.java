@@ -1,5 +1,6 @@
 package name.kazennikov.tokens;
 
+@Deprecated
 public class Span{
 	public static final Span NULL = new Span(null, 0, 0);
 	String text;

@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import name.kazennikov.annotations.BaseTokenType;
+import name.kazennikov.annotations.NLPTokenType;
+@Deprecated
 public class SentenceSplitter {
 		Set<String> abbrev;
 		boolean splitOnLower;
@@ -37,7 +40,7 @@ public class SentenceSplitter {
 		public List<AbstractToken> split(TokenStream in) {
 			List<AbstractToken> tokens = new ArrayList<AbstractToken>();
 			
-			while(in.current() != in.nullObject && in.current().is(BaseTokenType.WHITESPACE))
+			while(in.isNull() && in.current().is(BaseTokenType.WHITESPACE))
 				in.next();
 
 			int sentenceStart = in.pos();
@@ -47,7 +50,7 @@ public class SentenceSplitter {
 				if(isSentenceEnd(in, splitOnLower)) {
 					tokens.add(in.getSequence(sentenceStart, in.pos(), NLPTokenType.SENTENCE).trim());
 					
-					while(in.current() != in.nullObject && in.current().is(BaseTokenType.WHITESPACE))
+					while(in.isNull() && in.current().is(BaseTokenType.WHITESPACE))
 						in.next();
 					
 					sentenceStart = in.pos();

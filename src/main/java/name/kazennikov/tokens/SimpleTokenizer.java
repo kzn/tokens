@@ -3,7 +3,11 @@ package name.kazennikov.tokens;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.kazennikov.annotations.BaseTokenType;
+import name.kazennikov.annotations.NLPTokenType;
+import name.kazennikov.annotations.TokenType;
 
+@Deprecated
 public class SimpleTokenizer {
 
 	/**
