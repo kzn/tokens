@@ -8,7 +8,13 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
-public class Annotation implements CharSequence, Comparable<Annotation>{
+/**
+ * Central class for annotation framework. Annotation is a typed span in the document.
+ * 
+ * @author Anton Kazennikov
+ *
+ */
+public class Annotation implements CharSequence, Comparable<Annotation> {
 
 	public static final String TOKEN = "token";
     public static final String WORD = "word";
@@ -18,8 +24,15 @@ public class Annotation implements CharSequence, Comparable<Annotation>{
     public static final String KIND = "kind";
     public static final String DATA = "data";
 
-	Document doc;
-	
+	/**
+	 * Basic comparator for natural order. Sorts by:
+	 * <ul>
+	 * <li> start offset (ascending)
+	 * <li> length (descending)
+	 * </ul>
+	 * 
+	 * 
+	 */
 	public final static Comparator<Annotation> COMPARATOR = new Comparator<Annotation>() {
 		
 		@Override
@@ -29,6 +42,7 @@ public class Annotation implements CharSequence, Comparable<Annotation>{
 		}
 	};
 
+	Document doc;
 	int id;
 	String type;
 	int start;
@@ -98,7 +112,7 @@ public class Annotation implements CharSequence, Comparable<Annotation>{
 	
 	@Override
 	public String toString() {
-		return String.format("'%s'@%s[%d,%d]%s%s", getText(), type, start, end, features, data);
+		return String.format("'%s'@%s[%d,%d]{#%d,%s,%s}", getText(), type, start, end, id, features, data);
 	}
 	
 	
