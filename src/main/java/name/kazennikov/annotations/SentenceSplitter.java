@@ -1,8 +1,6 @@
 package name.kazennikov.annotations;
 
 import com.google.common.collect.Sets;
-import name.kazennikov.tokens.BaseTokenType;
-import name.kazennikov.tokens.TokenType;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

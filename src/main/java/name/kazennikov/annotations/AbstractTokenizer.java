@@ -1,7 +1,5 @@
 package name.kazennikov.annotations;
 
-import name.kazennikov.tokens.BaseTokenType;
-import name.kazennikov.tokens.TokenType;
 
 /**
  * Tokenizer that splits input string into tokens.
