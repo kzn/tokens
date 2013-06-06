@@ -50,11 +50,11 @@ public interface XmlWriter {
 
     		writer.writeStartElement("doc");
     		writer.writeAttribute("text", doc.getText());
-    		writer.writeAttribute("root", doc.getName()); // get root annotation
+    		writer.writeAttribute("root", doc.getType()); // get root annotation
 
     		for(Annotation a : doc.getAllAnnotations()) {
     			writer.writeStartElement("annotation");
-    			writer.writeAttribute("type", a.getName());
+    			writer.writeAttribute("type", a.getType());
     			writer.writeAttribute("start", Integer.toString(a.getStart()));
     			writer.writeAttribute("end", Integer.toString(a.getEnd()));
 
