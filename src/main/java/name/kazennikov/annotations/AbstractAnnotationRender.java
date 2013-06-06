@@ -5,33 +5,51 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
-
+/**
+ * Abstract annotation renderer. 
+ * <p>
+ * Emits events in SAX-like fashion
+ * 
+ * @author Anton Kazennikov
+ *
+ */
 public abstract class AbstractAnnotationRender {
-	
-	public static class OffsetComparator implements Comparator<Annotation> {
-
-		@Override
-		public int compare(Annotation o1, Annotation o2) {
-			int res = o1.getStart() - o2.getStart();
-			if(res != 0)
-				return res;
-
-			return o2.getEnd() - o1.getEnd();
-		}
-	}
-	
-	public static final Comparator<Annotation> COMPARATOR = new OffsetComparator();
-	
+	/**
+	 * Called on content start (before any annotations start)
+	 * @throws AnnotationRenderException
+	 */
 	public abstract void onStartContent() throws AnnotationRenderException;
+	/**
+	 * Called on content end (after any annotations end)
+	 * @throws AnnotationRenderException
+	 */
 	public abstract void onEndContent() throws AnnotationRenderException;
 	
+	/**
+	 * Called on annotation start
+	 * @param annotation source annotation
+	 * @throws AnnotationRenderException
+	 */
 	public abstract void onAnnotationStart(Annotation annotation) throws AnnotationRenderException;
+	
+	/**
+	 * Called on annotation end
+	 * @param annotation
+	 * @throws AnnotationRenderException
+	 */
 	public abstract void onAnnotationEnd(Annotation annotation) throws AnnotationRenderException;
+
+	
+	/**
+	 * Called on annotation text
+	 * @param text text of the annotation
+	 * @throws AnnotationRenderException
+	 */
 	public abstract void onText(String text) throws AnnotationRenderException;
 	
 	
 	public void render(List<Annotation> annotations) throws AnnotationRenderException {
-		Collections.sort(annotations, COMPARATOR);
+		Collections.sort(annotations, Annotation.COMPARATOR);
         Stack<Annotation> stack = new Stack<Annotation>();
         
         String content = annotations.get(0).getText();

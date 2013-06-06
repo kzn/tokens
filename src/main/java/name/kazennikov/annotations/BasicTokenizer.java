@@ -2,9 +2,19 @@ package name.kazennikov.annotations;
 
 import com.google.common.base.CharMatcher;
 
-
-public class BasicTokenizer extends UnicodeTokenizer {
-    CharMatcher sep;
+/**
+ * Basic tokenizer that splits tokens on given 
+ * closed set of separator characters.
+ * 
+ * <p>
+ * Default separator set is : <b><pre>,.!?()[]\"'$%^&*#{}\|/</pre></b>
+ * 
+ * 
+ * @author Anton Kazennikov
+ *
+ */
+public class BasicTokenizer extends AbstractTokenizer {
+    CharMatcher sep = CharMatcher.anyOf(",.!?()[]\"'$%^&*#{}\\|/");
 
     public void setSeparator(String sepSet) {
         sep = CharMatcher.anyOf(sepSet);

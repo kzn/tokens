@@ -2,7 +2,12 @@ package name.kazennikov.annotations;
 
 import java.util.HashMap;
 
-
+/**
+ * Base type hierarchy for tokens 
+ * 
+ * @author Anton Kazennikov
+ *
+ */
 public class BaseTokenType implements TokenType {
 	final TokenType parent;
 	final String name;
@@ -44,17 +49,20 @@ public class BaseTokenType implements TokenType {
 	/**
 	 * Check if given token type is equivalent to this
 	 * 'true, if <b>this</b> is t'
-	 * @param t give token type
+	 * @param type given token type
 	 * @return
 	 */
-	public boolean is(TokenType t) {
-		if(this == t)
+	@Override
+	public boolean is(TokenType type) {
+		if(this == type)
 			return true;
 		
 		TokenType p = this.parent;
+		
 		while(p != null) {
-			if(p == t)
+			if(p == type)
 				return true;
+			
 			p = p.parent();
 		}
 		
@@ -80,8 +88,10 @@ public class BaseTokenType implements TokenType {
 	 */
 	public static TokenType add(String name, TokenType parent) {
 		TokenType t = types.get(name);
+		
 		if(t != null)
 			return t;
+		
 		t = new BaseTokenType(name, parent);
 		types.put(name, t);
 		return t;
@@ -91,9 +101,4 @@ public class BaseTokenType implements TokenType {
 	public TokenType parent() {
 		return parent;
 	}
-	
-
-
-
-
 }

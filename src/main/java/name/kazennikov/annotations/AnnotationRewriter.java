@@ -1,7 +1,7 @@
 package name.kazennikov.annotations;
 
 /**
- * Annotation rewriter
+ * Annotation rewriter (transformation)
  * 
  */
 public interface AnnotationRewriter {

@@ -2,7 +2,11 @@ package name.kazennikov.annotations;
 
 import java.util.List;
 
-
+/**
+ * Stream of annotations
+ * @author Anton Kazennikov
+ *
+ */
 public class AnnotationStream extends SequenceStream<Annotation> {
 
 	public AnnotationStream(Annotation nullObject,
