@@ -138,22 +138,25 @@ public class Document extends Annotation implements CharSequence {
     /**
      * Add single annotation to the document
      * @param ann
+     * @return generated annotation id
      */
-	public void addAnnotation(Annotation ann) {
+	public int addAnnotation(Annotation ann) {
 		ann.setDoc(this);
 		annotations.add(ann);
 		ann.id = nextID++;
+		
+		return ann.id;
 	}
 	
-	public void addAnnotation(String name, int start, int end) {
+	public int addAnnotation(String name, int start, int end) {
 		Annotation a = new Annotation(this, name, start, end);
-		addAnnotation(a);
+		return addAnnotation(a);
 	}
 	
-	public void addAnnotation(String name, int start, int end, Map<String, Object> features) {
+	public int addAnnotation(String name, int start, int end, Map<String, Object> features) {
 		Annotation a = new Annotation(this, name, start, end);
 		a.features = features;
-		addAnnotation(a);
+		return addAnnotation(a);
 	}
 
     /**
