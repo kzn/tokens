@@ -1,20 +1,32 @@
 package name.kazennikov.annotations;
 
 import com.google.common.base.Predicate;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import name.kazennikov.xml.XmlWritable;
 
+import javax.annotation.Nullable;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Document is a representation of a text in the annotation framework.
+ * It stores the text and all annotations assosiated with it
+ * <p>
+ * A document also extends {@link Annotation}, so it has all properties of an annotation
+ * @author Anton Kazennikov
+ *
+ */
 public class Document extends Annotation implements CharSequence {
+
 	String text;
 	
-	//Map<String, List<Annotation>> annotations = Maps.newHashMap();
 	AnnotationList annotations = new AnnotationList();
+    TIntObjectHashMap<Annotation> annotationById = new TIntObjectHashMap<Annotation>();
 	int nextID = 0;
 	
 	public Document() {	
@@ -34,7 +46,7 @@ public class Document extends Annotation implements CharSequence {
 		super(null, annotName, 0, text.length());
 		this.text = text;
 		setDoc(this);
-		annotations.add(this);
+		addAnnotation(this);
 	}
 
 	@Override
@@ -144,7 +156,7 @@ public class Document extends Annotation implements CharSequence {
 		ann.setDoc(this);
 		annotations.add(ann);
 		ann.id = nextID++;
-		
+		annotationById.put(ann.id, ann);
 		return ann.id;
 	}
 	
@@ -281,7 +293,7 @@ public class Document extends Annotation implements CharSequence {
 	private static AnnotationXmlLoader BASE_LOADER = new AnnotationXmlLoader.Base();
 	/**
 	 * Reads document from STAX stream
-	 * @param reader xml stream
+	 * @param stream xml stream
 	 * @param anLoaders annotation parsers
 	 * @return
 	 */
@@ -337,16 +349,35 @@ public class Document extends Annotation implements CharSequence {
     }
     
     public void removeIf(Predicate<Annotation> p) {
-    	annotations.removeIf(p);
+
+        Iterator<Annotation> it = annotations.iterator();
+
+        while(it.hasNext()) {
+            Annotation a = it.next();
+            if(p.apply(a)) {
+                it.remove();
+                annotationById.remove(a.getId());
+            }
+        }
     }
     
-    public void removeIfNot(Predicate<Annotation> p) {
-    	annotations.removeIfNot(p);
+    public void removeIfNot(final Predicate<Annotation> p) {
+    	annotations.removeIfNot(new Predicate<Annotation>() {
+            @Override
+            public boolean apply(@Nullable Annotation annotation) {
+                return !p.apply(annotation);
+            }
+        });
     }
 
 	public void remove(Annotation a) {
 		annotations.remove(a);
+        annotationById.remove(a.getId());
 	}
+
+    public Annotation getById(int id) {
+        return annotationById.get(id);
+    }
 
     
 	
