@@ -5,46 +5,75 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Generic version of TokenStream
- * @author ant
+ * Sequence Stream. It is an extension of List that supports current position in the stream.
+ * <p>
+ * It could be implemented using List, but it has following distictions:
+ * <ul>
+ * <li> it is positional: it has current postion and operations to change positions
+ * <li> there is a user-specified null object (if not specified, ordinary null value is used)
+ * <li> null object is returned on out-of-bounds operations
+ * <li> implementation of relative operations: current(), next(), prev(), peek(). So one can query for elements relative
+ * to current positon. It is handy for sequence oprations
+ * <li> null checking is done by isNull() methods
+ * </ul>
+ * 
+ * 
+ * @author Anton Kazennikov
  *
- * @param <E>
+ * @param <E> stream element type
  */
 public class SequenceStream<E> {
-	List<E> tokens;
+	List<E> elements;
 	E nullObject;
 	int pos;
-	
-	public SequenceStream(E nullObject, List<? extends E> tokens) {
-		this.tokens = new ArrayList<E>(tokens);
+	/**
+	 * Construct a sequence stream
+	 * @param nullObject null object
+	 * @param elements list of elements (assumed that they are sorted in ascending order)
+	 */
+	public SequenceStream(E nullObject, List<? extends E> elements) {
+		this.elements = new ArrayList<E>(elements);
 		this.nullObject = nullObject;
 		this.pos = 0;
 	}
 	
+	/**
+	 * Checks if current position is null object
+	 * @return
+	 */
 	public boolean isNull() {
 		return current() == nullObject;
 	}
 	
+	/**
+	 * Checks if given object is null object
+	 * @param object
+	 * @return
+	 */
 	public boolean isNull(E object) {
 		return object == nullObject;
 	}
 	
+	/**
+	 * Get null object of this sequence stream
+	 * @return
+	 */
 	public E getNull() {
 		return nullObject;
 	}
 
 	/**
-	 * Return current token
+	 * Return current element
 	 */
 	public E current() {
-		if(pos >= 0 && pos < tokens.size())
-			return tokens.get(pos);
+		if(pos >= 0 && pos < elements.size())
+			return elements.get(pos);
 		return nullObject;
 	}
 
 
 	/**
-	 * Move to previous token and return it
+	 * Move to previous element and return it
 	 */
 	public E prev() {
 		pos--; 
@@ -52,7 +81,7 @@ public class SequenceStream<E> {
 	}
 
 	/**
-	 * Move to next token and return it
+	 * Move to next element and return it
 	 */
 	public E next() {
 		pos++;
@@ -60,15 +89,15 @@ public class SequenceStream<E> {
 	}
 
 	/**
-	 * Return total size of the token stream
+	 * Return total size of elements in the stream
 	 * @return
 	 */
 	public int size() {
-		return tokens.size();
+		return elements.size();
 	}
 
 	/**
-	 * Return current position
+	 * Get current position in the sequence
 	 * @return
 	 */
 	public int pos() {
@@ -77,34 +106,34 @@ public class SequenceStream<E> {
 
 
 	/**
-	 * Peek next token, equivalent of current(1)
+	 * Peek next element, equivalent of current(1)
 	 * @return
 	 */
 	public E peek() {
 		int p = pos + 1;
-		if(p >= 0 && p < tokens.size())
-			return tokens.get(p);
+		if(p >= 0 && p < elements.size())
+			return elements.get(p);
 		
 		return nullObject;
 	}
 	
 
 	/**
-	 * Get a token wrt offset from the current position
-	 * @param offset offset of the token wrt current position
-	 * @return actual token from the stream, or Token.NULL if position is out of bounds
+	 * Get element given offset relative to current position
+	 * @param offset relative offset of the element
+	 * @return actual element from the stream, or null object if position is out of bounds
 	 */
 	public E current(int offset) {
 		int p = pos + offset;
-		if(p >= 0 && p < tokens.size())
-			return tokens.get(p);
+		if(p >= 0 && p < elements.size())
+			return elements.get(p);
 		
 		return nullObject;
 	}
 
 
 	/**
-	 * Reset to the start of the stream
+	 * Reset position to the start of the stream
 	 */
 	public void reset() {
 		pos = 0;
@@ -120,11 +149,11 @@ public class SequenceStream<E> {
 	}
 	
 	/**
-	 * Return stream content as a list of tokens
+	 * Return stream content as a list of elements
 	 * @return
 	 */
-	public List<E> tokens() {
-		return tokens;
+	public List<E> elements() {
+		return elements;
 	}
 
 
@@ -133,7 +162,7 @@ public class SequenceStream<E> {
 	 * @return
 	 */
 	public boolean isEmpty() {
-		return pos >= tokens.size();
+		return pos >= elements.size();
 	}
 
 
@@ -153,40 +182,40 @@ public class SequenceStream<E> {
 	}
 	
 	/**
-	 * Replace current token with given
-	 * @param current replacement token
+	 * Replace current element
+	 * @param current replacement element
 	 */
 	public void setCurrent(E current) {
-		if(pos >= 0 && pos < tokens.size())
-			tokens.set(pos, current);
+		if(pos >= 0 && pos < elements.size())
+			elements.set(pos, current);
 	}
 	
 	/**
-	 * Append new token to the last token of this stream
-	 * @param token token to append
+	 * Append new element at the end of the sequence
+	 * @param element new element to append
 	 */
-	public void append(E token) {
-		tokens.add(token);
+	public void append(E element) {
+		elements.add(element);
 	}
 	
 	/**
-	 * Return reversed sequence of tokens
+	 * Return reversed sequence
 	 * @return
 	 */
 	public SequenceStream<E> reverse() {
-		List<E> tokens = new ArrayList<E>(this.tokens);
-		Collections.reverse(tokens);
-		return new SequenceStream<E>(nullObject, tokens);
+		List<E> elements = new ArrayList<E>(this.elements);
+		Collections.reverse(elements);
+		return new SequenceStream<E>(nullObject, elements);
 	}
 	
 	/**
-	 * Get token at absolute position
-	 * @param index index of the token
+	 * Get element at absolute position
+	 * @param index index of the element
 	 */
 	public E get(int index) {
-		if(index < 0 || index >= tokens.size())
+		if(index < 0 || index >= elements.size())
 			return nullObject;
 		
-		return tokens.get(index);
+		return elements.get(index);
 	}
 }
