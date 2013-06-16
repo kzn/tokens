@@ -1,7 +1,9 @@
 package name.kazennikov.annotations;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -26,19 +28,37 @@ public class SequenceStream<E> {
 	List<E> elements;
 	E nullObject;
 	int pos;
+
 	/**
 	 * Construct a sequence stream
+	 * 
 	 * @param nullObject null object
 	 * @param elements list of elements (assumed that they are sorted in ascending order)
 	 */
-	public SequenceStream(E nullObject, List<? extends E> elements) {
+	public SequenceStream(E nullObject, Collection<? extends E> elements) {
+		this(nullObject, elements, null);
+	}
+	
+	/**
+	 * Generic constuctor for sequence stream
+	 * 
+	 * @param nullObject null object
+	 * @param elements elements of the sequence
+	 * @param comparator comparator to sort elements in desired order, or null, if sorting is not needed
+	 */
+	public SequenceStream(E nullObject, Collection<? extends E> elements, Comparator<E> comparator) {
 		this.elements = new ArrayList<E>(elements);
 		this.nullObject = nullObject;
 		this.pos = 0;
+		
+		if(comparator != null) {
+			Collections.sort(this.elements, comparator);
+		}
 	}
 	
 	/**
 	 * Checks if current position is null object
+	 * 
 	 * @return
 	 */
 	public boolean isNull() {
@@ -47,6 +67,7 @@ public class SequenceStream<E> {
 	
 	/**
 	 * Checks if given object is null object
+	 * 
 	 * @param object
 	 * @return
 	 */
@@ -90,6 +111,7 @@ public class SequenceStream<E> {
 
 	/**
 	 * Return total size of elements in the stream
+	 * 
 	 * @return
 	 */
 	public int size() {
@@ -98,6 +120,7 @@ public class SequenceStream<E> {
 
 	/**
 	 * Get current position in the sequence
+	 * 
 	 * @return
 	 */
 	public int pos() {
@@ -107,6 +130,7 @@ public class SequenceStream<E> {
 
 	/**
 	 * Peek next element, equivalent of current(1)
+	 * 
 	 * @return
 	 */
 	public E peek() {
@@ -120,6 +144,7 @@ public class SequenceStream<E> {
 
 	/**
 	 * Get element given offset relative to current position
+	 * 
 	 * @param offset relative offset of the element
 	 * @return actual element from the stream, or null object if position is out of bounds
 	 */
@@ -142,6 +167,7 @@ public class SequenceStream<E> {
 
 	/**
 	 * Set absolute position in the stream
+	 * 
 	 * @param pos position to set
 	 */
 	public void setPos(int pos) {
@@ -150,6 +176,7 @@ public class SequenceStream<E> {
 	
 	/**
 	 * Return stream content as a list of elements
+	 * 
 	 * @return
 	 */
 	public List<E> elements() {
@@ -183,6 +210,7 @@ public class SequenceStream<E> {
 	
 	/**
 	 * Replace current element
+	 * 
 	 * @param current replacement element
 	 */
 	public void setCurrent(E current) {
@@ -200,6 +228,7 @@ public class SequenceStream<E> {
 	
 	/**
 	 * Return reversed sequence
+	 * 
 	 * @return
 	 */
 	public SequenceStream<E> reverse() {
@@ -210,6 +239,7 @@ public class SequenceStream<E> {
 	
 	/**
 	 * Get element at absolute position
+	 * 
 	 * @param index index of the element
 	 */
 	public E get(int index) {
