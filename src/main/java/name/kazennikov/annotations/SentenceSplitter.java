@@ -108,19 +108,26 @@ public class SentenceSplitter implements Annotator {
 		
 		Annotation prev = s.current(-1);
 		Annotation next = s.current(1);
-
-        if(prev == null)
-            return false;
 		
 		if(s.isNull(next)) {
 			s.next();
 			return true;
 		}
-		
+
+
+
+        if(prev == null)
+            return false;
+				
 		// skip all punctuation after current position
-		while(s.current().getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.PUNC)) {
+		while(!s.isNull() && s.current().getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.PUNC)) {
 			s.next();
 		}
+		
+		if(s.isNull())
+			return true;
+		
+		
 		
 		if(!s.current().getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.WHITESPACE))
 			return false;
