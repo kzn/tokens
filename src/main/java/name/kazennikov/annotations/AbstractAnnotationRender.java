@@ -53,7 +53,7 @@ public abstract class AbstractAnnotationRender {
         Stack<Annotation> stack = new Stack<Annotation>();
         
         String content = annotations.get(0).getText();
-        int offset = annotations.get(0).getStart();
+        int offset = annotations.get(0).getStart().getOffset();
         int charIndex = 0;
         int targetIndex = 0;
         
@@ -63,8 +63,8 @@ public abstract class AbstractAnnotationRender {
             Annotation open = targetIndex < annotations.size()? annotations.get(targetIndex) : null;
             Annotation close = !stack.isEmpty()? stack.peek() : null;
            
-            int openStart = open != null? open.getStart() - offset : content.length();
-            int closeEnd = close != null? close.getEnd() - offset : content.length();
+            int openStart = open != null? open.getStart().getOffset() - offset : content.length();
+            int closeEnd = close != null? close.getEnd().getOffset() - offset : content.length();
            
             if((int)closeEnd == charIndex && close != null) {
                 onAnnotationEnd(close);

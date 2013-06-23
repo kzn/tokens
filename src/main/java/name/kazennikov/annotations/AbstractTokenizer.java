@@ -1,5 +1,8 @@
 package name.kazennikov.annotations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Tokenizer that splits input string into tokens.
@@ -139,13 +142,9 @@ public abstract class AbstractTokenizer implements Annotator {
         }
     }
 
-    Annotation makeAnnotation(Document doc, int start, int end, TokenType type) {
-        Annotation ann = new Annotation(doc, Annotation.TOKEN, start, end);
-        ann.setFeature(Annotation.TYPE, type);
-        return ann;
-    }
-
     void add(Document d, int start, int end, TokenType type) {
-        d.addAnnotation(makeAnnotation(d, start, end, type));
+    	Map<String, Object> feats = new HashMap<String, Object>();
+    	feats.put(Annotation.TYPE, type);
+        d.addAnnotation(Annotation.TOKEN, start, end, feats);
     }
 }

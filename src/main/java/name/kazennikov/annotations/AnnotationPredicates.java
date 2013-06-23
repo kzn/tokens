@@ -26,38 +26,38 @@ public class AnnotationPredicates {
         return new Predicate<Annotation>() {
             @Override
             public boolean apply(@Nullable Annotation a) {
-                return a.getStart() == start && a.getEnd() == end;
+                return a.getStart().getOffset() == start && a.getEnd().getOffset() == end;
             }
         };
     }
 
     public static Predicate<Annotation> coextensive(Annotation a) {
-        return coextensive(a.getStart(), a.getEnd());
+        return coextensive(a.getStart().getOffset(), a.getEnd().getOffset());
     }
 
     public static Predicate<Annotation> within(final int start, final int end) {
         return new Predicate<Annotation>() {
             @Override
             public boolean apply(@Nullable Annotation a) {
-                return a.getStart() >= start && a.getEnd() <= end;
+                return a.getStart().getOffset() >= start && a.getEnd().getOffset() <= end;
             }
         };
     }
     public static Predicate<Annotation> within(Annotation a) {
-        return within(a.getStart(), a.getEnd());
+        return within(a.getStart().getOffset(), a.getEnd().getOffset());
     }
 
     public static Predicate<Annotation> covers(final int start, final int end) {
         return new Predicate<Annotation>() {
             @Override
             public boolean apply(@Nullable Annotation a) {
-                return a.getStart() <= start && a.getEnd() >= end;
+                return a.getStart().getOffset() <= start && a.getEnd().getOffset() >= end;
             }
         };
     }
 
     public static Predicate<Annotation> covers(Annotation a) {
-        return covers(a.getStart(), a.getEnd());
+        return covers(a.getStart().getOffset(), a.getEnd().getOffset());
     }
 
 
@@ -65,13 +65,13 @@ public class AnnotationPredicates {
         return new Predicate<Annotation>() {
             @Override
             public boolean apply(@Nullable Annotation a) {
-                return (a.getStart() >= start && a.getStart() <= end) || (a.getEnd() >= start && a.getEnd() <= end);
+                return (a.getStart().getOffset() >= start && a.getStart().getOffset() <= end) || (a.getEnd().getOffset() >= start && a.getEnd().getOffset() <= end);
             }
         };
     }
 
     public static Predicate<Annotation> overlaps(Annotation a) {
-        return overlaps(a.getStart(), a.getEnd());
+        return overlaps(a.getStart().getOffset(), a.getEnd().getOffset());
     }
 
 

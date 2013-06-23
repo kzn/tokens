@@ -14,7 +14,7 @@ import java.util.Set;
  * @author Anton Kazennikov
  *
  */
-public class Annotation implements CharSequence, Comparable<Annotation> {
+public class Annotation implements IdBearer, CharSequence, Comparable<Annotation> {
 
 	public static final String TOKEN = "token";
     public static final String WORD = "word";
@@ -37,23 +37,27 @@ public class Annotation implements CharSequence, Comparable<Annotation> {
 		
 		@Override
 		public int compare(Annotation o1, Annotation o2) {
-			int res = o1.start - o2.start;
-			return res != 0? res : o2.end - o1.end;
+			int res = o1.start.getOffset() - o2.start.getOffset();
+			return res != 0? res : o2.end.getOffset() - o1.end.getOffset();
 		}
 	};
 
 	Document doc;
 	int id;
 	String type;
-	int start;
-	int end;
+	Node start;
+	Node end;
 
 	
 	Object data;
 	
 	Map<String, Object> features = Maps.newHashMap();
+
+	Annotation() {
+		
+	}
 	
-	public Annotation(Document doc, String type, int start, int end) {
+	protected Annotation(Document doc, String type, Node start, Node end) {
 		this.doc = doc;
 		this.type = type;
 		this.start = start;
@@ -72,19 +76,19 @@ public class Annotation implements CharSequence, Comparable<Annotation> {
 		return type;
 	}
 	
-	public int getStart() {
+	public Node getStart() {
 		return start;
 	}
 	
-	public int getEnd() {
+	public Node getEnd() {
 		return end;
 	}
 	
-	public void setStart(int start) {
+	public void setStart(Node start) {
 		this.start = start;
 	}
 
-	public void setEnd(int end) {
+	public void setEnd(Node end) {
 		this.end = end;
 	}
 
@@ -117,7 +121,7 @@ public class Annotation implements CharSequence, Comparable<Annotation> {
 	
 	
 	public String getText() {
-		return doc.getText().substring(start, end);
+		return doc.getText().substring(start.getOffset(), end.getOffset());
 	}
 	
 	public boolean isEmpty() {
@@ -129,19 +133,19 @@ public class Annotation implements CharSequence, Comparable<Annotation> {
 	}
 	
 	public boolean contains(Annotation other) {
-		return start <= other.getStart() && end >= other.getEnd();
+		return start.getOffset() <= other.getStart().getOffset() && end.getOffset() >= other.getEnd().getOffset();
 	}
 	
 	public boolean overlaps(Annotation other) {
-		return end > other.getStart() || start <= other.getEnd();
+		return end.getOffset() > other.getStart().getOffset() || start.getOffset() <= other.getEnd().getOffset();
 	}
 	
 	public boolean isLeftOf(Annotation other) {
-		return start > other.start;
+		return start.getOffset() > other.start.getOffset();
 	}
 	
 	public boolean isRightOf(Annotation other) {
-		return start < other.start;
+		return start.getOffset() < other.start.getOffset();
 	}
 	
 	public boolean contained(Annotation other) {
@@ -150,40 +154,40 @@ public class Annotation implements CharSequence, Comparable<Annotation> {
 	
 	
 	public boolean contains(int start, int end) {
-		return this.start <= start && this.end >= end;
+		return this.start.getOffset() <= start && this.end.getOffset() >= end;
 	}
 	
 	public boolean overlaps(int start, int end) {
-		return this.end > start || this.start <= end;
+		return this.end.getOffset() > start || this.start.getOffset() <= end;
 	}
 	
 	public boolean isLeftOf(int position) {
-		return start > position;
+		return start.getOffset() > position;
 	}
 	
 	public boolean isRightOf(int position) {
-		return start < position;
+		return start.getOffset() < position;
 	}
 	
 	public boolean contained(int start, int end) {
-		return start <= this.start && end >= this.end;
+		return start <= this.start.getOffset() && end >= this.end.getOffset();
 	}
 
 
 	@Override
 	public int length() {
-		return end - start;
+		return end.getOffset() - start.getOffset();
 	}
 
 
 	@Override
 	public char charAt(int index) {
-		return doc.getText().charAt(start + index);
+		return doc.getText().charAt(start.getOffset() + index);
 	}
 
 	@Override
 	public CharSequence subSequence(int start, int end) {
-		return doc.getText().subSequence(this.start + start, this.start + end);
+		return doc.getText().subSequence(this.start.getOffset() + start, this.start.getOffset() + end);
 	}
 	
 	public boolean isCoextensive(Annotation ann) {
@@ -215,7 +219,8 @@ public class Annotation implements CharSequence, Comparable<Annotation> {
 	public AnnotationList get(Predicate<Annotation>... predicates) {
 		return doc.get(Predicates.and(AnnotationPredicates.within(this), Predicates.and(predicates)));
 	}
-		
+	
+	@Override
     public int getId() {
 		return id;
 	}

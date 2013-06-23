@@ -8,9 +8,12 @@ import javax.annotation.Nullable;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +30,9 @@ public class Document extends Annotation implements CharSequence {
 	
 	AnnotationList annotations = new AnnotationList();
     TIntObjectHashMap<Annotation> annotationById = new TIntObjectHashMap<Annotation>();
+    List<Node> nodes = new ArrayList<Node>();
+    TIntObjectHashMap<Node> nodeByOffset = new TIntObjectHashMap<Node>();
+    
 	int nextID = 0;
 	
 	public Document() {	
@@ -43,10 +49,24 @@ public class Document extends Annotation implements CharSequence {
      * @param text document text
      */
 	public Document(String annotName, String text) {
-		super(null, annotName, 0, text.length());
+		super();
+		this.type = annotName;
+		this.start = getNode(0);
+		this.end = getNode(text.length());
 		this.text = text;
 		setDoc(this);
 		addAnnotation(this);
+	}
+	
+	public Node getNode(int offset) {
+		Node node = nodeByOffset.get(offset);
+		if(node == null) {
+			node = new Node(nodes.size() + 1, offset);
+			nodes.add(node);
+			nodeByOffset.put(offset, node);
+		}
+		
+		return node;
 	}
 
 	@Override
@@ -90,7 +110,7 @@ public class Document extends Annotation implements CharSequence {
 		AnnotationList anns = new AnnotationList();
 		
 		for(Annotation a : getAll()) {
-			if(a.getStart() <= start && a.getEnd() >= end)
+			if(a.getStart().getOffset() <= start && a.getEnd().getOffset() >= end)
 				anns.add(a);
 		}
 		
@@ -119,7 +139,7 @@ public class Document extends Annotation implements CharSequence {
 		AnnotationList anns = new AnnotationList();
 		
 		for(Annotation a : getAll()) {
-			if(a.getStart() <= start && a.getEnd() >= end)
+			if(a.getStart().getOffset() <= start && a.getEnd().getOffset() >= end)
 				anns.add(a);
 		}
 		
@@ -161,15 +181,22 @@ public class Document extends Annotation implements CharSequence {
 	}
 	
 	public int addAnnotation(String name, int start, int end) {
-		Annotation a = new Annotation(this, name, start, end);
+		Annotation a = new Annotation(this, name, getNode(start), getNode(end));
 		return addAnnotation(a);
 	}
 	
 	public int addAnnotation(String name, int start, int end, Map<String, Object> features) {
+		Annotation a = new Annotation(this, name, getNode(start), getNode(end));
+		a.features = features;
+		return addAnnotation(a);
+	}
+	
+	public int addAnnotation(String name, Node start, Node end, Map<String, Object> features) {
 		Annotation a = new Annotation(this, name, start, end);
 		a.features = features;
 		return addAnnotation(a);
 	}
+
 
     /**
      * Add all annotations from annotation list
@@ -262,13 +289,19 @@ public class Document extends Annotation implements CharSequence {
 		writer.writeStartElement(DOC);
 		writer.writeAttribute("text", getText());
 		writer.writeAttribute("type", getType()); // get root annotation
+		
+		for(Node n : nodes) {
+			writer.writeEmptyElement("node");
+			writer.writeAttribute("id", Integer.toString(n.getId()));
+			writer.writeAttribute("offset", Integer.toString(n.getOffset()));
+		}
 
 		for(Annotation a : getAll()) {
 			XmlWritable<Map<String, Object>> featWriter = anWriters != null? anWriters.get(a.getType()) : null;
 			writer.writeStartElement("annotation");
 			writer.writeAttribute("type", a.getType());
-			writer.writeAttribute("start", Integer.toString(a.getStart()));
-			writer.writeAttribute("end", Integer.toString(a.getEnd()));
+			writer.writeAttribute("start", Integer.toString(a.getStart().getId()));
+			writer.writeAttribute("end", Integer.toString(a.getEnd().getId()));
 
 			if(featWriter != null) {
 				featWriter.write(writer, a.getFeatureMap());

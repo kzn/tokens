@@ -73,9 +73,9 @@ public class Align {
                 rightAligned.add(new ArrayList<Annotation>(right.subList(rightStart, rightPos)));
 
 
-            } else if(leftAnn.getStart() > rightAnn.getStart() || leftAnn.getEnd() > rightAnn.getEnd()) {
+            } else if(leftAnn.getStart().getOffset() > rightAnn.getStart().getOffset() || leftAnn.getEnd().getOffset() > rightAnn.getEnd().getOffset()) {
                 rightPos++;
-            } else if(leftAnn.getStart() < rightAnn.getStart() || rightAnn.getEnd() > leftAnn.getEnd()) {
+            } else if(leftAnn.getStart().getOffset() < rightAnn.getStart().getOffset() || rightAnn.getEnd().getOffset() > leftAnn.getEnd().getOffset()) {
                 leftPos++;
             } else {
                 throw new IllegalStateException();
