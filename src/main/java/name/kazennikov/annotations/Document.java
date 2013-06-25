@@ -1,17 +1,20 @@
 package name.kazennikov.annotations;
 
-import com.google.common.base.Predicate;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import name.kazennikov.xml.XmlWritable;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
+
+import name.kazennikov.xml.XmlWritable;
+
+import com.google.common.base.Predicate;
 
 /**
  * Document is a representation of a text in the annotation framework.
@@ -152,20 +155,20 @@ public class Document extends Annotation implements CharSequence {
      * @param ann
      * @return generated annotation id
      */
-	public int addAnnotation(Annotation ann) {
+	protected Annotation addAnnotation(Annotation ann) {
 		ann.setDoc(this);
 		annotations.add(ann);
 		ann.id = nextID++;
 		annotationById.put(ann.id, ann);
-		return ann.id;
+		return ann;
 	}
 	
-	public int addAnnotation(String name, int start, int end) {
+	public Annotation addAnnotation(String name, int start, int end) {
 		Annotation a = new Annotation(this, name, start, end);
 		return addAnnotation(a);
 	}
 	
-	public int addAnnotation(String name, int start, int end, Map<String, Object> features) {
+	public Annotation addAnnotation(String name, int start, int end, Map<String, Object> features) {
 		Annotation a = new Annotation(this, name, start, end);
 		a.features = features;
 		return addAnnotation(a);
@@ -228,6 +231,7 @@ public class Document extends Annotation implements CharSequence {
 	 * @param predicate
 	 * @return
 	 */
+	@Override
 	public AnnotationList get(Predicate<Annotation>... predicate) {
 		AnnotationList anns = annotations.get(predicate);
 		Collections.sort(anns, Annotation.COMPARATOR);

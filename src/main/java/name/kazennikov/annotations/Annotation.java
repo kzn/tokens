@@ -1,12 +1,12 @@
 package name.kazennikov.annotations;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Maps;
-
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * Central class for annotation framework. Annotation is a typed span in the document.
@@ -51,13 +51,18 @@ public class Annotation implements CharSequence, Comparable<Annotation> {
 	
 	Object data;
 	
-	Map<String, Object> features = Maps.newHashMap();
+	Map<String, Object> features;
 	
-	public Annotation(Document doc, String type, int start, int end) {
+	Annotation(Document doc, String type, int start, int end, Map<String, Object> features) {
 		this.doc = doc;
 		this.type = type;
 		this.start = start;
 		this.end = end;
+		this.features = features;
+	}
+	
+	Annotation(Document doc, String type, int start, int end) {
+		this(doc, type, start, end, new HashMap<String, Object>());
 	}
 	
 	public Document getDoc() {
