@@ -1,4 +1,8 @@
-package name.kazennikov.annotations;
+package name.kazennikov.annotations.annotators;
+
+import name.kazennikov.annotations.Annotation;
+import name.kazennikov.annotations.Annotator;
+import name.kazennikov.annotations.Document;
 
 import com.google.common.base.CharMatcher;
 

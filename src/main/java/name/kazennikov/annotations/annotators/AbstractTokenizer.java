@@ -1,4 +1,13 @@
-package name.kazennikov.annotations;
+package name.kazennikov.annotations.annotators;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import name.kazennikov.annotations.Annotation;
+import name.kazennikov.annotations.Annotator;
+import name.kazennikov.annotations.BaseTokenType;
+import name.kazennikov.annotations.Document;
+import name.kazennikov.annotations.TokenType;
 
 
 /**
@@ -139,13 +148,9 @@ public abstract class AbstractTokenizer implements Annotator {
         }
     }
 
-    Annotation makeAnnotation(Document doc, int start, int end, TokenType type) {
-        Annotation ann = new Annotation(doc, Annotation.TOKEN, start, end);
-        ann.setFeature(Annotation.TYPE, type);
-        return ann;
-    }
-
     void add(Document d, int start, int end, TokenType type) {
-        d.addAnnotation(makeAnnotation(d, start, end, type));
+    	Map<String, Object> feats = new HashMap<String, Object>();
+    	feats.put(Annotation.TYPE, type);
+        d.addAnnotation(Annotation.TOKEN, start, end, feats);
     }
 }

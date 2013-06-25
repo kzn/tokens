@@ -1,4 +1,4 @@
-package name.kazennikov.annotations;
+package name.kazennikov.annotations.annotators;
 
 
 /**
