@@ -224,6 +224,10 @@ public class Annotation implements CharSequence, Comparable<Annotation> {
     public int getId() {
 		return id;
 	}
+    
+    public static Annotation newAnnotation(String type, int start, int end) {
+    	return new Annotation(null, type, start, end);
+    }
 
 
 
