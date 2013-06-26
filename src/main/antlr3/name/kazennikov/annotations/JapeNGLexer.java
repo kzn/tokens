@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g 2013-06-26 16:56:29
+// $ANTLR 3.4 /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g 2013-06-26 22:21:47
 
   package name.kazennikov.annotations;
 
@@ -51,15 +51,15 @@ public class JapeNGLexer extends Lexer {
     public JapeNGLexer(CharStream input, RecognizerSharedState state) {
         super(input,state);
     }
-    public String getGrammarFileName() { return "/home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g"; }
+    public String getGrammarFileName() { return "/home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g"; }
 
     // $ANTLR start "T__13"
     public final void mT__13() throws RecognitionException {
         try {
             int _type = T__13;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:11:7: ( '!=' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:11:9: '!='
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:11:7: ( '!=' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:11:9: '!='
             {
             match("!="); 
 
@@ -81,8 +81,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__14;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:12:7: ( '(' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:12:9: '('
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:12:7: ( '(' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:12:9: '('
             {
             match('('); 
 
@@ -102,8 +102,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__15;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:13:7: ( ')' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:13:9: ')'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:13:7: ( ')' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:13:9: ')'
             {
             match(')'); 
 
@@ -123,8 +123,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__16;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:14:7: ( '*' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:14:9: '*'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:14:7: ( '*' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:14:9: '*'
             {
             match('*'); 
 
@@ -144,8 +144,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__17;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:15:7: ( '+' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:15:9: '+'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:15:7: ( '+' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:15:9: '+'
             {
             match('+'); 
 
@@ -165,8 +165,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__18;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:16:7: ( ',' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:16:9: ','
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:16:7: ( ',' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:16:9: ','
             {
             match(','); 
 
@@ -186,8 +186,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__19;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:17:7: ( '.' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:17:9: '.'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:17:7: ( '.' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:17:9: '.'
             {
             match('.'); 
 
@@ -207,8 +207,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__20;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:18:7: ( ':' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:18:9: ':'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:18:7: ( ':' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:18:9: ':'
             {
             match(':'); 
 
@@ -228,8 +228,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__21;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:19:7: ( '=' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:19:9: '='
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:19:7: ( '=' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:19:9: '='
             {
             match('='); 
 
@@ -249,8 +249,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__22;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:20:7: ( '==' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:20:9: '=='
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:20:7: ( '==' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:20:9: '=='
             {
             match("=="); 
 
@@ -272,8 +272,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__23;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:21:7: ( '?' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:21:9: '?'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:21:7: ( '?' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:21:9: '?'
             {
             match('?'); 
 
@@ -293,8 +293,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__24;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:22:7: ( 'Input:' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:22:9: 'Input:'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:22:7: ( 'Input:' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:22:9: 'Input:'
             {
             match("Input:"); 
 
@@ -316,8 +316,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__25;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:23:7: ( 'Options:' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:23:9: 'Options:'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:23:7: ( 'Options:' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:23:9: 'Options:'
             {
             match("Options:"); 
 
@@ -339,8 +339,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__26;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:24:7: ( 'Phase:' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:24:9: 'Phase:'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:24:7: ( 'Phase:' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:24:9: 'Phase:'
             {
             match("Phase:"); 
 
@@ -362,8 +362,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__27;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:25:7: ( 'Rule:' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:25:9: 'Rule:'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:25:7: ( 'Rule:' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:25:9: 'Rule:'
             {
             match("Rule:"); 
 
@@ -385,8 +385,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__28;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:7: ( '{' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:9: '{'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:7: ( '{' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:9: '{'
             {
             match('{'); 
 
@@ -406,8 +406,8 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = T__29;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:7: ( '}' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:9: '}'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:7: ( '}' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:9: '}'
             {
             match('}'); 
 
@@ -427,10 +427,10 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:38:3: ( ( ' ' | '\\t' | '\\n' | '\\r' )+ )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:38:5: ( ' ' | '\\t' | '\\n' | '\\r' )+
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:38:3: ( ( ' ' | '\\t' | '\\n' | '\\r' )+ )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:38:5: ( ' ' | '\\t' | '\\n' | '\\r' )+
             {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:38:5: ( ' ' | '\\t' | '\\n' | '\\r' )+
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:38:5: ( ' ' | '\\t' | '\\n' | '\\r' )+
             int cnt1=0;
             loop1:
             do {
@@ -444,7 +444,7 @@ public class JapeNGLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:
+            	    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:
             	    {
             	    if ( (input.LA(1) >= '\t' && input.LA(1) <= '\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
             	        input.consume();
@@ -487,14 +487,14 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = SINGLE_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:39:15: ( '//' (~ ( '\\r' | '\\n' ) )* )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:39:17: '//' (~ ( '\\r' | '\\n' ) )*
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:39:15: ( '//' (~ ( '\\r' | '\\n' ) )* )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:39:17: '//' (~ ( '\\r' | '\\n' ) )*
             {
             match("//"); 
 
 
 
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:39:22: (~ ( '\\r' | '\\n' ) )*
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:39:22: (~ ( '\\r' | '\\n' ) )*
             loop2:
             do {
                 int alt2=2;
@@ -507,7 +507,7 @@ public class JapeNGLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:
+            	    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:
             	    {
             	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '\t')||(input.LA(1) >= '\u000B' && input.LA(1) <= '\f')||(input.LA(1) >= '\u000E' && input.LA(1) <= '\uFFFF') ) {
             	        input.consume();
@@ -546,14 +546,14 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:40:8: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:40:12: '/*' ( options {greedy=false; } : . )* '*/'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:40:8: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:40:12: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
 
 
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:40:17: ( options {greedy=false; } : . )*
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:40:17: ( options {greedy=false; } : . )*
             loop3:
             do {
                 int alt3=2;
@@ -578,7 +578,7 @@ public class JapeNGLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:40:45: .
+            	    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:40:45: .
             	    {
             	    matchAny(); 
 
@@ -613,12 +613,12 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:42:8: ( '\"' (~ ( '\"' | '\\\\' ) | '\\\\' . )* '\"' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:42:10: '\"' (~ ( '\"' | '\\\\' ) | '\\\\' . )* '\"'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:42:8: ( '\"' (~ ( '\"' | '\\\\' ) | '\\\\' . )* '\"' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:42:10: '\"' (~ ( '\"' | '\\\\' ) | '\\\\' . )* '\"'
             {
             match('\"'); 
 
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:42:14: (~ ( '\"' | '\\\\' ) | '\\\\' . )*
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:42:14: (~ ( '\"' | '\\\\' ) | '\\\\' . )*
             loop4:
             do {
                 int alt4=3;
@@ -634,7 +634,7 @@ public class JapeNGLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:42:15: ~ ( '\"' | '\\\\' )
+            	    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:42:15: ~ ( '\"' | '\\\\' )
             	    {
             	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '!')||(input.LA(1) >= '#' && input.LA(1) <= '[')||(input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) {
             	        input.consume();
@@ -649,7 +649,7 @@ public class JapeNGLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:42:31: '\\\\' .
+            	    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:42:31: '\\\\' .
             	    {
             	    match('\\'); 
 
@@ -682,10 +682,10 @@ public class JapeNGLexer extends Lexer {
         try {
             int _type = SIMPLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:43:7: ( (~ ( '(' | ')' | ' ' | ',' | '<' | '>' | '\\t' | '\\r' | '\\n' | '{' | '}' | '[' | ']' ) )+ )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:43:9: (~ ( '(' | ')' | ' ' | ',' | '<' | '>' | '\\t' | '\\r' | '\\n' | '{' | '}' | '[' | ']' ) )+
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:43:7: ( (~ ( '(' | ')' | ' ' | ',' | '<' | '>' | '\\t' | '\\r' | '\\n' | '{' | '}' | '[' | ']' ) )+ )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:43:9: (~ ( '(' | ')' | ' ' | ',' | '<' | '>' | '\\t' | '\\r' | '\\n' | '{' | '}' | '[' | ']' ) )+
             {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:43:9: (~ ( '(' | ')' | ' ' | ',' | '<' | '>' | '\\t' | '\\r' | '\\n' | '{' | '}' | '[' | ']' ) )+
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:43:9: (~ ( '(' | ')' | ' ' | ',' | '<' | '>' | '\\t' | '\\r' | '\\n' | '{' | '}' | '[' | ']' ) )+
             int cnt5=0;
             loop5:
             do {
@@ -699,7 +699,7 @@ public class JapeNGLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:
+            	    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:
             	    {
             	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '\b')||(input.LA(1) >= '\u000B' && input.LA(1) <= '\f')||(input.LA(1) >= '\u000E' && input.LA(1) <= '\u001F')||(input.LA(1) >= '!' && input.LA(1) <= '\'')||(input.LA(1) >= '*' && input.LA(1) <= '+')||(input.LA(1) >= '-' && input.LA(1) <= ';')||input.LA(1)=='='||(input.LA(1) >= '?' && input.LA(1) <= 'Z')||input.LA(1)=='\\'||(input.LA(1) >= '^' && input.LA(1) <= 'z')||input.LA(1)=='|'||(input.LA(1) >= '~' && input.LA(1) <= '\uFFFF') ) {
             	        input.consume();
@@ -736,12 +736,12 @@ public class JapeNGLexer extends Lexer {
     // $ANTLR end "SIMPLE"
 
     public void mTokens() throws RecognitionException {
-        // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:8: ( T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | WS | SINGLE_COMMENT | COMMENT | STRING | SIMPLE )
+        // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:8: ( T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | WS | SINGLE_COMMENT | COMMENT | STRING | SIMPLE )
         int alt6=22;
         alt6 = dfa6.predict(input);
         switch (alt6) {
             case 1 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:10: T__13
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:10: T__13
                 {
                 mT__13(); 
 
@@ -749,7 +749,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 2 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:16: T__14
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:16: T__14
                 {
                 mT__14(); 
 
@@ -757,7 +757,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 3 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:22: T__15
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:22: T__15
                 {
                 mT__15(); 
 
@@ -765,7 +765,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 4 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:28: T__16
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:28: T__16
                 {
                 mT__16(); 
 
@@ -773,7 +773,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 5 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:34: T__17
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:34: T__17
                 {
                 mT__17(); 
 
@@ -781,7 +781,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 6 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:40: T__18
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:40: T__18
                 {
                 mT__18(); 
 
@@ -789,7 +789,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 7 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:46: T__19
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:46: T__19
                 {
                 mT__19(); 
 
@@ -797,7 +797,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 8 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:52: T__20
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:52: T__20
                 {
                 mT__20(); 
 
@@ -805,7 +805,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 9 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:58: T__21
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:58: T__21
                 {
                 mT__21(); 
 
@@ -813,7 +813,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 10 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:64: T__22
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:64: T__22
                 {
                 mT__22(); 
 
@@ -821,7 +821,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 11 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:70: T__23
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:70: T__23
                 {
                 mT__23(); 
 
@@ -829,7 +829,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 12 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:76: T__24
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:76: T__24
                 {
                 mT__24(); 
 
@@ -837,7 +837,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 13 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:82: T__25
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:82: T__25
                 {
                 mT__25(); 
 
@@ -845,7 +845,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 14 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:88: T__26
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:88: T__26
                 {
                 mT__26(); 
 
@@ -853,7 +853,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 15 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:94: T__27
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:94: T__27
                 {
                 mT__27(); 
 
@@ -861,7 +861,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 16 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:100: T__28
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:100: T__28
                 {
                 mT__28(); 
 
@@ -869,7 +869,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 17 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:106: T__29
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:106: T__29
                 {
                 mT__29(); 
 
@@ -877,7 +877,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 18 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:112: WS
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:112: WS
                 {
                 mWS(); 
 
@@ -885,7 +885,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 19 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:115: SINGLE_COMMENT
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:115: SINGLE_COMMENT
                 {
                 mSINGLE_COMMENT(); 
 
@@ -893,7 +893,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 20 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:130: COMMENT
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:130: COMMENT
                 {
                 mCOMMENT(); 
 
@@ -901,7 +901,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 21 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:138: STRING
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:138: STRING
                 {
                 mSTRING(); 
 
@@ -909,7 +909,7 @@ public class JapeNGLexer extends Lexer {
                 }
                 break;
             case 22 :
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:145: SIMPLE
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:1:145: SIMPLE
                 {
                 mSIMPLE(); 
 

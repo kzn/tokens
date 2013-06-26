@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g 2013-06-26 16:56:28
+// $ANTLR 3.4 /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g 2013-06-26 22:21:47
 
   package name.kazennikov.annotations;
 
@@ -69,7 +69,7 @@ public TreeAdaptor getTreeAdaptor() {
     return adaptor;
 }
     public String[] getTokenNames() { return JapeNGParser.tokenNames; }
-    public String getGrammarFileName() { return "/home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g"; }
+    public String getGrammarFileName() { return "/home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g"; }
 
 
     public static class jape_return extends ParserRuleReturnScope {
@@ -79,7 +79,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "jape"
-    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:1: jape : phase input opts ( rule )+ ;
+    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:1: jape : phase input opts ( rule )+ ;
     public final JapeNGParser.jape_return jape() throws RecognitionException {
         JapeNGParser.jape_return retval = new JapeNGParser.jape_return();
         retval.start = input.LT(1);
@@ -98,8 +98,8 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:5: ( phase input opts ( rule )+ )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:7: phase input opts ( rule )+
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:5: ( phase input opts ( rule )+ )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:7: phase input opts ( rule )+
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -125,7 +125,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             adaptor.addChild(root_0, opts3.getTree());
 
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:24: ( rule )+
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:24: ( rule )+
             int cnt1=0;
             loop1:
             do {
@@ -139,7 +139,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt1) {
             	case 1 :
-            	    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:24: rule
+            	    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:26:24: rule
             	    {
             	    pushFollow(FOLLOW_rule_in_jape97);
             	    rule4=rule();
@@ -192,7 +192,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "phase"
-    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:1: phase : 'Phase:' SIMPLE -> ^( PHASE SIMPLE ) ;
+    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:1: phase : 'Phase:' SIMPLE -> ^( PHASE SIMPLE ) ;
     public final JapeNGParser.phase_return phase() throws RecognitionException {
         JapeNGParser.phase_return retval = new JapeNGParser.phase_return();
         retval.start = input.LT(1);
@@ -209,8 +209,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_SIMPLE=new RewriteRuleTokenStream(adaptor,"token SIMPLE");
 
         try {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:6: ( 'Phase:' SIMPLE -> ^( PHASE SIMPLE ) )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:8: 'Phase:' SIMPLE
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:6: ( 'Phase:' SIMPLE -> ^( PHASE SIMPLE ) )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:8: 'Phase:' SIMPLE
             {
             string_literal5=(Token)match(input,26,FOLLOW_26_in_phase104);  
             stream_26.add(string_literal5);
@@ -233,7 +233,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 27:24: -> ^( PHASE SIMPLE )
             {
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:27: ^( PHASE SIMPLE )
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:27:27: ^( PHASE SIMPLE )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
@@ -283,7 +283,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "input"
-    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:1: input : 'Input:' ( SIMPLE )+ -> ^( INPUT ( SIMPLE )+ ) ;
+    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:1: input : 'Input:' ( SIMPLE )+ -> ^( INPUT ( SIMPLE )+ ) ;
     public final JapeNGParser.input_return input() throws RecognitionException {
         JapeNGParser.input_return retval = new JapeNGParser.input_return();
         retval.start = input.LT(1);
@@ -300,14 +300,14 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_SIMPLE=new RewriteRuleTokenStream(adaptor,"token SIMPLE");
 
         try {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:6: ( 'Input:' ( SIMPLE )+ -> ^( INPUT ( SIMPLE )+ ) )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:8: 'Input:' ( SIMPLE )+
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:6: ( 'Input:' ( SIMPLE )+ -> ^( INPUT ( SIMPLE )+ ) )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:8: 'Input:' ( SIMPLE )+
             {
             string_literal7=(Token)match(input,24,FOLLOW_24_in_input120);  
             stream_24.add(string_literal7);
 
 
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:17: ( SIMPLE )+
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:17: ( SIMPLE )+
             int cnt2=0;
             loop2:
             do {
@@ -321,7 +321,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt2) {
             	case 1 :
-            	    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:17: SIMPLE
+            	    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:17: SIMPLE
             	    {
             	    SIMPLE8=(Token)match(input,SIMPLE,FOLLOW_SIMPLE_in_input122);  
             	    stream_SIMPLE.add(SIMPLE8);
@@ -353,7 +353,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 28:25: -> ^( INPUT ( SIMPLE )+ )
             {
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:28: ^( INPUT ( SIMPLE )+ )
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:28:28: ^( INPUT ( SIMPLE )+ )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
@@ -410,7 +410,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "opts"
-    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:1: opts : 'Options:' option ( ',' option )* -> ^( OPTIONS ( option )+ ) ;
+    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:1: opts : 'Options:' option ( ',' option )* -> ^( OPTIONS ( option )+ ) ;
     public final JapeNGParser.opts_return opts() throws RecognitionException {
         JapeNGParser.opts_return retval = new JapeNGParser.opts_return();
         retval.start = input.LT(1);
@@ -431,8 +431,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_25=new RewriteRuleTokenStream(adaptor,"token 25");
         RewriteRuleSubtreeStream stream_option=new RewriteRuleSubtreeStream(adaptor,"rule option");
         try {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:5: ( 'Options:' option ( ',' option )* -> ^( OPTIONS ( option )+ ) )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:7: 'Options:' option ( ',' option )*
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:5: ( 'Options:' option ( ',' option )* -> ^( OPTIONS ( option )+ ) )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:7: 'Options:' option ( ',' option )*
             {
             string_literal9=(Token)match(input,25,FOLLOW_25_in_opts138);  
             stream_25.add(string_literal9);
@@ -445,7 +445,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             stream_option.add(option10.getTree());
 
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:25: ( ',' option )*
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:25: ( ',' option )*
             loop3:
             do {
                 int alt3=2;
@@ -458,7 +458,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt3) {
             	case 1 :
-            	    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:26: ',' option
+            	    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:26: ',' option
             	    {
             	    char_literal11=(Token)match(input,18,FOLLOW_18_in_opts143);  
             	    stream_18.add(char_literal11);
@@ -493,7 +493,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 29:39: -> ^( OPTIONS ( option )+ )
             {
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:42: ^( OPTIONS ( option )+ )
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:29:42: ^( OPTIONS ( option )+ )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
@@ -548,7 +548,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "option"
-    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:30:1: option : SIMPLE '=' SIMPLE -> ^( OPTION SIMPLE SIMPLE ) ;
+    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:30:1: option : SIMPLE '=' SIMPLE -> ^( OPTION SIMPLE SIMPLE ) ;
     public final JapeNGParser.option_return option() throws RecognitionException {
         JapeNGParser.option_return retval = new JapeNGParser.option_return();
         retval.start = input.LT(1);
@@ -567,8 +567,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_SIMPLE=new RewriteRuleTokenStream(adaptor,"token SIMPLE");
 
         try {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:30:7: ( SIMPLE '=' SIMPLE -> ^( OPTION SIMPLE SIMPLE ) )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:30:9: SIMPLE '=' SIMPLE
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:30:7: ( SIMPLE '=' SIMPLE -> ^( OPTION SIMPLE SIMPLE ) )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:30:9: SIMPLE '=' SIMPLE
             {
             SIMPLE13=(Token)match(input,SIMPLE,FOLLOW_SIMPLE_in_option162);  
             stream_SIMPLE.add(SIMPLE13);
@@ -595,7 +595,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 30:27: -> ^( OPTION SIMPLE SIMPLE )
             {
-                // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:30:30: ^( OPTION SIMPLE SIMPLE )
+                // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:30:30: ^( OPTION SIMPLE SIMPLE )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
@@ -649,7 +649,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "rule"
-    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:32:1: rule : rule_header matcher_group ;
+    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:32:1: rule : rule_header matcher_group ;
     public final JapeNGParser.rule_return rule() throws RecognitionException {
         JapeNGParser.rule_return retval = new JapeNGParser.rule_return();
         retval.start = input.LT(1);
@@ -664,8 +664,8 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:32:5: ( rule_header matcher_group )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:32:7: rule_header matcher_group
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:32:5: ( rule_header matcher_group )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:32:7: rule_header matcher_group
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -715,7 +715,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "rule_header"
-    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:33:1: rule_header : 'Rule:' SIMPLE ;
+    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:33:1: rule_header : 'Rule:' SIMPLE ;
     public final JapeNGParser.rule_header_return rule_header() throws RecognitionException {
         JapeNGParser.rule_header_return retval = new JapeNGParser.rule_header_return();
         retval.start = input.LT(1);
@@ -730,8 +730,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree SIMPLE19_tree=null;
 
         try {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:33:12: ( 'Rule:' SIMPLE )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:33:14: 'Rule:' SIMPLE
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:33:12: ( 'Rule:' SIMPLE )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:33:14: 'Rule:' SIMPLE
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -781,7 +781,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "matcher_element"
-    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:1: matcher_element : '{' SIMPLE ( '.' SIMPLE )? ( op ( SIMPLE | STRING ) )? '}' ;
+    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:1: matcher_element : '{' SIMPLE ( '.' SIMPLE )? ( op ( SIMPLE | STRING ) )? '}' ;
     public final JapeNGParser.matcher_element_return matcher_element() throws RecognitionException {
         JapeNGParser.matcher_element_return retval = new JapeNGParser.matcher_element_return();
         retval.start = input.LT(1);
@@ -806,8 +806,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree char_literal26_tree=null;
 
         try {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:16: ( '{' SIMPLE ( '.' SIMPLE )? ( op ( SIMPLE | STRING ) )? '}' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:18: '{' SIMPLE ( '.' SIMPLE )? ( op ( SIMPLE | STRING ) )? '}'
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:16: ( '{' SIMPLE ( '.' SIMPLE )? ( op ( SIMPLE | STRING ) )? '}' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:18: '{' SIMPLE ( '.' SIMPLE )? ( op ( SIMPLE | STRING ) )? '}'
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -826,7 +826,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, SIMPLE21_tree);
 
 
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:29: ( '.' SIMPLE )?
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:29: ( '.' SIMPLE )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -835,7 +835,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt4) {
                 case 1 :
-                    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:30: '.' SIMPLE
+                    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:30: '.' SIMPLE
                     {
                     char_literal22=(Token)match(input,19,FOLLOW_19_in_matcher_element204); 
                     char_literal22_tree = 
@@ -857,7 +857,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:43: ( op ( SIMPLE | STRING ) )?
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:43: ( op ( SIMPLE | STRING ) )?
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -866,7 +866,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt5) {
                 case 1 :
-                    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:44: op ( SIMPLE | STRING )
+                    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:34:44: op ( SIMPLE | STRING )
                     {
                     pushFollow(FOLLOW_op_in_matcher_element211);
                     op24=op();
@@ -934,7 +934,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "op"
-    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:35:1: op : ( '!=' | '==' );
+    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:35:1: op : ( '!=' | '==' );
     public final JapeNGParser.op_return op() throws RecognitionException {
         JapeNGParser.op_return retval = new JapeNGParser.op_return();
         retval.start = input.LT(1);
@@ -947,8 +947,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree set27_tree=null;
 
         try {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:35:3: ( '!=' | '==' )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:35:3: ( '!=' | '==' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -999,7 +999,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "matcher_group"
-    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:1: matcher_group : '(' ( matcher_group | matcher_element )+ ')' ( ( ':' SIMPLE ) | '?' | '*' | '+' ) ;
+    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:1: matcher_group : '(' ( matcher_group | matcher_element )+ ')' ( ( ':' SIMPLE ) | '?' | '*' | '+' ) ;
     public final JapeNGParser.matcher_group_return matcher_group() throws RecognitionException {
         JapeNGParser.matcher_group_return retval = new JapeNGParser.matcher_group_return();
         retval.start = input.LT(1);
@@ -1028,8 +1028,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree char_literal36_tree=null;
 
         try {
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:14: ( '(' ( matcher_group | matcher_element )+ ')' ( ( ':' SIMPLE ) | '?' | '*' | '+' ) )
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:16: '(' ( matcher_group | matcher_element )+ ')' ( ( ':' SIMPLE ) | '?' | '*' | '+' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:14: ( '(' ( matcher_group | matcher_element )+ ')' ( ( ':' SIMPLE ) | '?' | '*' | '+' ) )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:16: '(' ( matcher_group | matcher_element )+ ')' ( ( ':' SIMPLE ) | '?' | '*' | '+' )
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -1041,7 +1041,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, char_literal28_tree);
 
 
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:20: ( matcher_group | matcher_element )+
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:20: ( matcher_group | matcher_element )+
             int cnt6=0;
             loop6:
             do {
@@ -1058,7 +1058,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt6) {
             	case 1 :
-            	    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:21: matcher_group
+            	    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:21: matcher_group
             	    {
             	    pushFollow(FOLLOW_matcher_group_in_matcher_group241);
             	    matcher_group29=matcher_group();
@@ -1070,7 +1070,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
             	    break;
             	case 2 :
-            	    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:37: matcher_element
+            	    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:37: matcher_element
             	    {
             	    pushFollow(FOLLOW_matcher_element_in_matcher_group245);
             	    matcher_element30=matcher_element();
@@ -1099,7 +1099,7 @@ public TreeAdaptor getTreeAdaptor() {
             adaptor.addChild(root_0, char_literal31_tree);
 
 
-            // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:59: ( ( ':' SIMPLE ) | '?' | '*' | '+' )
+            // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:59: ( ( ':' SIMPLE ) | '?' | '*' | '+' )
             int alt7=4;
             switch ( input.LA(1) ) {
             case 20:
@@ -1132,10 +1132,10 @@ public TreeAdaptor getTreeAdaptor() {
 
             switch (alt7) {
                 case 1 :
-                    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:60: ( ':' SIMPLE )
+                    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:60: ( ':' SIMPLE )
                     {
-                    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:60: ( ':' SIMPLE )
-                    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:61: ':' SIMPLE
+                    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:60: ( ':' SIMPLE )
+                    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:61: ':' SIMPLE
                     {
                     char_literal32=(Token)match(input,20,FOLLOW_20_in_matcher_group253); 
                     char_literal32_tree = 
@@ -1157,7 +1157,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:75: '?'
+                    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:75: '?'
                     {
                     char_literal34=(Token)match(input,23,FOLLOW_23_in_matcher_group260); 
                     char_literal34_tree = 
@@ -1169,7 +1169,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 3 :
-                    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:81: '*'
+                    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:81: '*'
                     {
                     char_literal35=(Token)match(input,16,FOLLOW_16_in_matcher_group264); 
                     char_literal35_tree = 
@@ -1181,7 +1181,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 4 :
-                    // /home/kzn/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:87: '+'
+                    // /home/ant/workspace/tokens/src/main/antlr3/name/kazennikov/annotations/JapeNG.g:36:87: '+'
                     {
                     char_literal36=(Token)match(input,17,FOLLOW_17_in_matcher_group268); 
                     char_literal36_tree = 
