@@ -3,6 +3,9 @@ package name.kazennikov.annotations;
 import java.util.HashSet;
 import java.util.List;
 
+import name.kazennikov.annotations.annotators.SentenceSplitter;
+import name.kazennikov.annotations.annotators.UnicodeTokenizer;
+
 import org.junit.Test;
 
 import com.google.common.base.Predicate;
