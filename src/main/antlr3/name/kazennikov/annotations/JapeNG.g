@@ -11,6 +11,11 @@ tokens {
     PHASE;
     OPTIONS;
     OPTION;
+    MATCHER;
+    GROUP_MATCHER;
+    ANNOT;
+    OP;
+    GROUP_OP;
 }
 
 
@@ -31,14 +36,33 @@ option: SIMPLE '=' SIMPLE -> ^(OPTION SIMPLE SIMPLE);
 
 rule: rule_header matcher_group;
 rule_header: 'Rule:' SIMPLE;
-matcher_element: '{' SIMPLE ('.' SIMPLE)? (op (SIMPLE|STRING))? '}';
-op: '!=' | '==' ;
-matcher_group: '(' (matcher_group | matcher_element)+ ')' ((':' SIMPLE) | '?' | '*' | '+');
+matcher_element: '{' annot  
+                  (op val -> ^(MATCHER op annot val)
+                  | -> ^(MATCHER annot)) '}';
+
+val: SIMPLE | STRING;
+annot: SIMPLE ('.' SIMPLE)? -> ^(ANNOT SIMPLE*);
+op: '!=' -> ^(OP["neq"])
+  | '==' -> ^(OP["eq"]);
+matcher_group: '(' (matcher_group -> ^(matcher_group)| matcher_element -> ^(matcher_element))+ ')' (
+                    group_op -> ^(GROUP_MATCHER group_op)
+                  | -> ^(GROUP_MATCHER));
+
+group_op: (':' SIMPLE) -> ^(GROUP_OP["named"] SIMPLE)
+        | '?' -> ^(GROUP_OP["?"])
+        | '*' -> ^(GROUP_OP["*"])
+        | '+' -> ^(GROUP_OP["+"])
+        | range_op -> ^(range_op)
+        ;
+        
+range_op: '[' DIGITS (',' DIGITS)? ']' -> ^(GROUP_OP["range"] DIGITS+);
+          
 
 WS: (' ' | '\t' | '\n' | '\r')+ { $channel = HIDDEN;};
 SINGLE_COMMENT: '//' ~('\r' | '\n')* {$channel = HIDDEN;};
 COMMENT:   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;};
 
 STRING : '"' (~('"' | '\\') | '\\' .)* '"';
-SIMPLE: ~('(' | ')' | ' ' | ',' | '<' | '>' | '\t' | '\r' | '\n' | '{' | '}' | '[' | ']' )+;
+DIGITS: '0'..'9'+;
+SIMPLE: ~('(' | ')' | ' ' | ',' | '.' | '<' | '>' | '\t' | '\r' | '\n' | '{' | '}' | '[' | ']' | ':')+;
 
