@@ -24,15 +24,11 @@ Options: control = appelt
 Rule: Test
 (
     {AOTSE}
-    ({Foo}):name
+    ({Foo.string == "foobar"}):name
     ({Foo} {Baz})?
+    ({Foo1})[0,10]
     
 )
--->
-{
-	
-}
-
 
 
 
