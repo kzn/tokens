@@ -27,7 +27,7 @@ Rule: Test
     ({Foo.string == "foobar"}):name
     ({Foo} {Baz})?
     ({Foo1})[0,10]
-    
+    ({Foo} | {Bar})   
 )
 
 

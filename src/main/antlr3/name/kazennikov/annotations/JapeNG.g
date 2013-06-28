@@ -44,9 +44,12 @@ val: SIMPLE | STRING;
 annot: SIMPLE ('.' SIMPLE)? -> ^(ANNOT SIMPLE*);
 op: '!=' -> ^(OP["neq"])
   | '==' -> ^(OP["eq"]);
-matcher_group: '(' (matcher_group -> ^(matcher_group)| matcher_element -> ^(matcher_element))+ ')' (
-                    group_op -> ^(GROUP_MATCHER group_op)
-                  | -> ^(GROUP_MATCHER));
+
+
+matcher_group: group group_op? -> ^(GROUP_MATCHER group_op? group);
+group: '('! group_elem+ ('|'^ group_elem+)*')'!;
+
+group_elem: (matcher_group | matcher_element);
 
 group_op: (':' SIMPLE) -> ^(GROUP_OP["named"] SIMPLE)
         | '?' -> ^(GROUP_OP["?"])
