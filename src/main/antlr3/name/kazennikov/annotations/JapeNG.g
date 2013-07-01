@@ -16,6 +16,7 @@ tokens {
     ANNOT;
     OP;
     GROUP_OP;
+    ANNOT;
 }
 
 
@@ -34,31 +35,26 @@ input: 'Input:' SIMPLE+ -> ^(INPUT SIMPLE+);
 opts: 'Options:' option (',' option)* -> ^(OPTIONS option+);
 option: SIMPLE '=' SIMPLE -> ^(OPTION SIMPLE SIMPLE);
 
-rule: rule_header matcher_group;
-rule_header: 'Rule:' SIMPLE;
-matcher_element: '{' annot  
-                  (op val -> ^(MATCHER op annot val)
-                  | -> ^(MATCHER annot)) '}';
+rule: 'Rule:' SIMPLE matcher;
+matcher: group modif? -> ^(GROUP_MATCHER modif? group);
+group: '('! group_elem+ ('|'^ group_elem+)*')'!;
 
+simple_matcher: '{'! annot_spec (','! annot_spec)* '}'!;
+annot_spec: '!'? type=SIMPLE ('.'! SIMPLE (op^ val)?)?;
 val: SIMPLE | STRING;
-annot: SIMPLE ('.' SIMPLE)? -> ^(ANNOT SIMPLE*);
 op: '!=' -> ^(OP["neq"])
   | '==' -> ^(OP["eq"]);
 
 
-matcher_group: group group_op? -> ^(GROUP_MATCHER group_op? group);
-group: '('! group_elem+ ('|'^ group_elem+)*')'!;
+group_elem: matcher | simple_matcher;
 
-group_elem: (matcher_group | matcher_element);
-
-group_op: (':' SIMPLE) -> ^(GROUP_OP["named"] SIMPLE)
+modif: (':' SIMPLE) -> ^(GROUP_OP["named"] SIMPLE)
         | '?' -> ^(GROUP_OP["?"])
         | '*' -> ^(GROUP_OP["*"])
         | '+' -> ^(GROUP_OP["+"])
-        | range_op -> ^(range_op)
+        | '[' DIGITS (',' DIGITS)? ']' -> ^(GROUP_OP["range"] DIGITS+)
         ;
         
-range_op: '[' DIGITS (',' DIGITS)? ']' -> ^(GROUP_OP["range"] DIGITS+);
           
 
 WS: (' ' | '\t' | '\n' | '\r')+ { $channel = HIDDEN;};
