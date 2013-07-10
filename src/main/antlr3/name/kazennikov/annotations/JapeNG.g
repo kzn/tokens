@@ -17,6 +17,7 @@ tokens {
     OP;
     GROUP_OP;
     ANNOT;
+    OR;
 }
 
 
@@ -35,13 +36,13 @@ input: 'Input:' SIMPLE+ -> ^(INPUT SIMPLE+);
 opts: 'Options:' option (',' option)* -> ^(OPTIONS option+);
 option: SIMPLE '=' SIMPLE -> ^(OPTION SIMPLE SIMPLE);
 
-rule: 'Rule:' SIMPLE matcher;
+rule: 'Rule:' SIMPLE matcher '-->' actions;
 matcher: group modif? -> ^(GROUP_MATCHER modif? group);
-group: '('! group_elem+ ('|'^ group_elem+)*')'!;
+group: '(' group_elem+ ('|' group_elem+)*')' -> ^(OR group_elem+);
 
 simple_matcher: '{'! annot_spec (','! annot_spec)* '}'!;
 annot_spec: '!'? type=SIMPLE ('.'! SIMPLE (op^ val)?)?;
-val: SIMPLE | STRING;
+val: SIMPLE | STRING | DIGITS;
 op: '!=' -> ^(OP["neq"])
   | '==' -> ^(OP["eq"]);
 
@@ -54,6 +55,8 @@ modif: (':' SIMPLE) -> ^(GROUP_OP["named"] SIMPLE)
         | '+' -> ^(GROUP_OP["+"])
         | '[' DIGITS (',' DIGITS)? ']' -> ^(GROUP_OP["range"] DIGITS+)
         ;
+actions: java_code+;
+java_code: '{' (SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '!' | java_code)* '}';
         
           
 
