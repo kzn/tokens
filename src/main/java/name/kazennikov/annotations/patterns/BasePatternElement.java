@@ -8,9 +8,11 @@ import java.util.List;
 
 public class BasePatternElement implements PatternElement {
 	Operator op;
+	String name;
 	List<PatternElement> args;
 	
-	public BasePatternElement(Operator op, List<PatternElement> args) {
+	public BasePatternElement(String name, Operator op, List<PatternElement> args) {
+		this.name = name;
 		this.op = op;
 		this.args = args;
 	}
@@ -21,7 +23,7 @@ public class BasePatternElement implements PatternElement {
 	}
 	
 	public BasePatternElement(Operator op, PatternElement... args) {
-		this(op, new ArrayList<PatternElement>(Arrays.asList(args)));
+		this(null, op, new ArrayList<PatternElement>(Arrays.asList(args)));
 	}
 	
 	public AnnotationMatcherPatternElement newInstance(AnnotationMatcher matcher) {
@@ -31,6 +33,7 @@ public class BasePatternElement implements PatternElement {
 	@Override
 	public String toString() {
 		return Objects.toStringHelper(this)
+				.add("name", name)
 				.add("op", op)
 				.add("args", args)
 				.toString();
