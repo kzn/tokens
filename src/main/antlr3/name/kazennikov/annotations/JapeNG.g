@@ -55,8 +55,12 @@ modif: (':' SIMPLE) -> ^(GROUP_OP["named"] SIMPLE)
         | '+' -> ^(GROUP_OP["+"])
         | '[' DIGITS (',' DIGITS)? ']' -> ^(GROUP_OP["range"] DIGITS+)
         ;
-actions: java_code+;
+actions: (labelings|java_code)+;
 java_code: '{' (SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '!' | java_code)* '}';
+labelings: labeling (',' labeling)* -> labeling+;
+labeling: ':' SIMPLE '.' SIMPLE '=' '{' attrvalue (',' attrvalue )'}';
+attrvalue: SIMPLE | STRING '=' attrval;
+attrval: SIMPLE | STRING | ':' SIMPLE '.' SIMPLE '.' SIMPLE;
         
           
 
