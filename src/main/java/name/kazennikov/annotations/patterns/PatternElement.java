@@ -9,8 +9,6 @@ public interface PatternElement {
 		OR,
 		STAR,
 		PLUS,
-		NONGREEDY_STAR,
-		NONGREEDY_PLUS,
 		OPTIONAL
 	}
 	

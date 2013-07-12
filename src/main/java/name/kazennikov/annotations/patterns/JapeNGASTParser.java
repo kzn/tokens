@@ -91,7 +91,7 @@ public class JapeNGASTParser {
 				case "*":
 					op = Operator.STAR;
 				case "+":
-					op = Operator.NONGREEDY_PLUS;
+					op = Operator.PLUS;
 				}
 				
 			

@@ -18,9 +18,6 @@ tokens {
     GROUP_OP;
     ANNOT;
     OR;
-    RULE;
-    NAME;
-    PRIORITY;
 }
 
 
@@ -37,11 +34,9 @@ jape: phase input opts rule+;
 phase: 'Phase:' SIMPLE -> ^(PHASE SIMPLE);
 input: 'Input:' SIMPLE+ -> ^(INPUT SIMPLE+);
 opts: 'Options:' option (',' option)* -> ^(OPTIONS option+);
-option: SIMPLE '=' SIMPLE -> ^(SIMPLE SIMPLE);
+option: SIMPLE '=' SIMPLE -> ^(OPTION SIMPLE SIMPLE);
 
-rule: 'Rule:' name=SIMPLE priority? matcher+ '-->' actions -> ^(RULE ^(NAME $name) priority? matcher+);
-priority: 'Priority:' num=integer -> ^(PRIORITY $num);
-integer: ('-'|'+')? DIGITS;
+rule: 'Rule:' SIMPLE matcher '-->' actions;
 matcher: group modif? -> ^(GROUP_MATCHER modif? group);
 group: '(' group_elem+ ('|' group_elem+)*')' -> ^(OR group_elem+);
 
@@ -54,17 +49,17 @@ op: '!=' -> ^(OP["neq"])
 
 group_elem: matcher | simple_matcher;
 
-modif: (':' SIMPLE) -> ^(GROUP_OP SIMPLE["named"] SIMPLE)
-        | '?' -> ^(GROUP_OP SIMPLE["?"])
-        | '*' -> ^(GROUP_OP SIMPLE["*"])
-        | '+' -> ^(GROUP_OP SIMPLE["+"])
-        | '[' DIGITS (',' DIGITS)? ']' -> ^(GROUP_OP SIMPLE["range"] DIGITS+)
+modif: (':' SIMPLE) -> ^(GROUP_OP["named"] SIMPLE)
+        | '?' -> ^(GROUP_OP["?"])
+        | '*' -> ^(GROUP_OP["*"])
+        | '+' -> ^(GROUP_OP["+"])
+        | '[' DIGITS (',' DIGITS)? ']' -> ^(GROUP_OP["range"] DIGITS+)
         ;
 actions: (labelings|java_code)+;
 java_code: '{' (SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '!' | java_code)* '}';
 labelings: labeling (',' labeling)* -> labeling+;
-labeling: ':' SIMPLE '.' SIMPLE '=' '{' attrvalue (',' attrvalue )*'}';
-attrvalue: (SIMPLE | STRING) '=' attrval;
+labeling: ':' SIMPLE '.' SIMPLE '=' '{' attrvalue (',' attrvalue )'}';
+attrvalue: SIMPLE | STRING '=' attrval;
 attrval: SIMPLE | STRING | ':' SIMPLE '.' SIMPLE '.' SIMPLE;
         
           
@@ -75,5 +70,5 @@ COMMENT:   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;};
 
 STRING : '"' (~('"' | '\\') | '\\' .)* '"';
 DIGITS: '0'..'9'+;
-SIMPLE: ~('(' | ')' | ' ' | ',' | '.' | '<' | '>' | '\t' | '\r' | '\n' | '{' | '}' | '[' | ']' | ':' | '=' | '!' | '~')+;
+SIMPLE: ~('(' | ')' | ' ' | ',' | '.' | '<' | '>' | '\t' | '\r' | '\n' | '{' | '}' | '[' | ']' | ':')+;
 
