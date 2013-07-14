@@ -1,0 +1,39 @@
+Phase:Phase1
+Input: Token Lookup
+Options: control = appelt
+
+
+
+
+Rule: Test1
+(
+    {Token}
+):test
+-->
+{
+  
+}
+
+Rule: Test2
+(
+    {Token}
+):test
+-->
+:test.Foo = {rule = "Bar", "id" = foo}
+
+Rule: Test3
+(
+    {Token}
+):test
+-->
+:test.Foo = {id = :test.Token.kind}
+
+Rule: Test1
+(
+    {Token}
+):test
+-->
+{
+ AnnotationList l = bindings.get("test");
+ return true;
+}

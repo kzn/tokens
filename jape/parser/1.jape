@@ -1,0 +1,108 @@
+Phase:Phase1
+Input: Token Lookup
+Options: control = appelt
+
+
+
+
+Rule: Test1
+(
+    {Token}
+):test
+-->
+{
+  
+}
+
+Rule: Test2
+(
+    {Token.kind == foo}
+):test
+-->
+{
+  
+}
+
+Rule: Test2a
+(
+    {Token.kind == "foo"}
+):test
+-->
+{
+  
+}
+
+
+Rule: Test3
+(
+    {Token, Lookup}
+):test
+-->
+{
+  
+}
+
+Rule: Test3a
+(
+    {Token, !Lookup}
+):test
+-->
+{
+  
+}
+
+
+
+Rule: Test4
+(
+    {Token} | {Lookup}
+):test
+-->
+{
+  
+}
+
+Rule: Test5
+(
+    {Token} | ({Lookup}):name
+):test
+-->
+{
+  
+}
+
+Rule: Test6
+(
+    {Token} | ({Lookup})+
+):test
+-->
+{
+  
+}
+
+Rule: Test7
+(
+    ({Token} | ({Lookup})+)*
+):test
+-->
+{
+  
+}
+
+Rule: Test8
+(
+    ({Token} | ({Lookup})+)[10]
+):test
+-->
+{
+  
+}
+
+Rule: Test9
+(
+    ({Token} | ({Lookup})+)[10,]
+):test
+-->
+{
+  
+}
