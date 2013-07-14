@@ -1,6 +1,5 @@
 package name.kazennikov.annotations.patterns;
 
-import java.util.List;
 
 public interface PatternElement {
 	public static enum Operator {
@@ -9,11 +8,11 @@ public interface PatternElement {
 		OR,
 		STAR,
 		PLUS,
-		OPTIONAL
+		OPTIONAL,
+		RANGE
 	}
 	
 	public Operator op();
-	public List<PatternElement> args();
 	public int size();
 	public PatternElement get(int index);
 }

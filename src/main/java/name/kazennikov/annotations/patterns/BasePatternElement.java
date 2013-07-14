@@ -1,7 +1,5 @@
 package name.kazennikov.annotations.patterns;
 
-import com.google.common.base.Objects;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,11 +30,7 @@ public class BasePatternElement implements PatternElement {
 	
 	@Override
 	public String toString() {
-		return Objects.toStringHelper(this)
-				.add("name", name)
-				.add("op", op)
-				.add("args", args)
-				.toString();
+		return String.format("%s:%s(%s)", args, name, op);
 	}
 
 
@@ -44,13 +38,6 @@ public class BasePatternElement implements PatternElement {
 	public Operator op() {
 		return op;
 	}
-
-
-	@Override
-	public List<PatternElement> args() {
-		return args;
-	}
-
 
 	@Override
 	public int size() {

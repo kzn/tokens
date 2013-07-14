@@ -1,7 +1,5 @@
 package name.kazennikov.annotations.patterns;
 
-import java.util.Arrays;
-import java.util.List;
 
 public class AnnotationMatcherPatternElement implements PatternElement {
 	AnnotationMatcher matcher;
@@ -13,11 +11,6 @@ public class AnnotationMatcherPatternElement implements PatternElement {
 	@Override
 	public Operator op() {
 		return Operator.AN_MATCHER;
-	}
-
-	@Override
-	public List<PatternElement> args() {
-		return Arrays.asList((PatternElement)this);
 	}
 
 	@Override

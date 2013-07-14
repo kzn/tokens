@@ -45,8 +45,14 @@ integer: ('-'|'+')? DIGITS;
 matcher: group modif? -> ^(GROUP_MATCHER modif? group);
 group: '(' group_elem+ ('|' group_elem+)*')' -> ^(OR group_elem+);
 
-simple_matcher: '{'! annot_spec (','! annot_spec)* '}'!;
-annot_spec: '!'? type=SIMPLE ('.'! SIMPLE (op^ val)?)?;
+simple_matcher: '{' annot_spec (',' annot_spec)* '}' -> ^(ANNOT annot_spec+);
+
+annot_spec: '!' simple_annot_spec -> ^(SIMPLE["NOT"] simple_annot_spec)
+          | simple_annot_spec -> simple_annot_spec;
+          
+simple_annot_spec: type=SIMPLE (-> ^(SIMPLE["AN_TYPE"] SIMPLE)
+                               | '.' SIMPLE op val -> ^(SIMPLE["AN_FEAT"] op val SIMPLE+)
+                               | '@' SIMPLE op val -> ^(SIMPLE["AN_METAFEAT"] op val SIMPLE+));
 val: SIMPLE | STRING | DIGITS;
 op: '!=' -> ^(OP["neq"])
   | '==' -> ^(OP["eq"]);
@@ -58,7 +64,9 @@ modif: (':' SIMPLE) -> ^(GROUP_OP SIMPLE["named"] SIMPLE)
         | '?' -> ^(GROUP_OP SIMPLE["?"])
         | '*' -> ^(GROUP_OP SIMPLE["*"])
         | '+' -> ^(GROUP_OP SIMPLE["+"])
-        | '[' DIGITS (',' DIGITS)? ']' -> ^(GROUP_OP SIMPLE["range"] DIGITS+)
+        | '[' from=DIGITS ( -> ^(GROUP_OP SIMPLE["range"] DIGITS DIGITS)
+                     | (',' to=DIGITS?) -> ^(GROUP_OP SIMPLE["range"] $from $to?)
+                     ) ']' 
         ;
 actions: (labelings|java_code)+;
 java_code: '{' (SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '!' | java_code)* '}';
