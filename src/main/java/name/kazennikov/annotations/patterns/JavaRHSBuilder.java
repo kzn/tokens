@@ -1,6 +1,7 @@
 package name.kazennikov.annotations.patterns;
 
 import java.io.StringWriter;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import name.kazennikov.tools.EclipseECJWrapper;
@@ -10,7 +11,7 @@ public class JavaRHSBuilder {
 	
 	
 
-	public static RHS build(String packageName, String code) throws Exception {
+	public static RHS build(String packageName, List<String> imports, String code) throws Exception {
 		
 		StringBuilder sb = new StringBuilder();
 		
@@ -19,9 +20,14 @@ public class JavaRHSBuilder {
 		sb//.append("package " + packageName).append(";\n")
 		.append("import java.util.*;\n")
 		.append("import name.kazennikov.annotations.*;\n")
-		.append("import name.kazennikov.annotations.patterns.RHS;\n")
+		.append("import name.kazennikov.annotations.patterns.RHS;\n");
+		if(imports != null) {
+			for(String imp : imports) {
+				sb.append("import ").append(imp).append(";\n");
+			}
+		}
 		
-		.append("public class " + className + " implements RHS {\n")
+		sb.append("public class " + className + " implements RHS {\n")
 		.append("@Override public boolean execute(Document doc, AnnotationList input, Map<String, AnnotationList> bindings)\n")
 		.append(code)
 		.append("}");
@@ -38,7 +44,7 @@ public class JavaRHSBuilder {
 	
 	
 	public static void main(String[] args) throws Exception {
-		RHS rhs = build("foo", "{List<String> foo = null; return true;}");
+		RHS rhs = build("foo", null, "{List<String> foo = null; return true;}");
 	}
 
 }

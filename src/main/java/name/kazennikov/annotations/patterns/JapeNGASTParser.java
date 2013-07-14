@@ -3,12 +3,44 @@ package name.kazennikov.annotations.patterns;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.kazennikov.annotations.JapeNGLexer;
+import name.kazennikov.annotations.JapeNGParser;
 import name.kazennikov.annotations.patterns.PatternElement.Operator;
 
+import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.CommonToken;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
+
 public class JapeNGASTParser {
-	public Phase parse(Tree tree) {
+	String src;
+	CharStream charStream;
+	JapeNGLexer lexer;
+	CommonTokenStream tokenStream;
+	JapeNGParser parser;
+	CommonTree tree;
+	
+	public static Phase parse(String source) throws Exception {
+		JapeNGASTParser parser = new JapeNGASTParser(source);
+		return parser.parse();
+	}
+	
+	private JapeNGASTParser(String source) throws RecognitionException {
+		this.src = source;
+		charStream = new ANTLRStringStream(src);
+		lexer = new JapeNGLexer(charStream);
+		tokenStream = new CommonTokenStream(lexer);
+		parser = new JapeNGParser(tokenStream);
+		tree = (CommonTree) parser.jape().getTree();
+		System.out.printf("%n%s%n%n", tree.toStringTree());
+	}
+	
+	
+	private Phase parse() throws Exception {
 		Phase phase = new Phase();
 		
 		for(int i = 0; i < tree.getChildCount(); i++) {
@@ -45,7 +77,7 @@ public class JapeNGASTParser {
 		return phase;
 	}
 
-	private Rule parseRule(Tree r) {
+	private Rule parseRule(Tree r) throws Exception {
 		Rule rule = new Rule();
 		
 		for(int i = 0; i < r.getChildCount(); i++) {
@@ -64,12 +96,28 @@ public class JapeNGASTParser {
 				
 			case "GROUP_MATCHER":
 				rule.lhs.add(parsePatternElement(child));
+				break;
+			case "EMPTY_RHS":
+				rule.rhs.add(RHS.EMPTY);
+				break;
+			case "JAVA":
+				rule.rhs.add(parseJavaRHS(child));
 				
 			}
 			
 		}
 
 		return rule;
+	}
+
+	private RHS parseJavaRHS(Tree child) throws Exception {
+		List<CommonToken> tokens = tokenStream.get(child.getTokenStartIndex(), child.getTokenStopIndex());
+		String s = src.substring(tokens.get(0).getStartIndex(), tokens.get(tokens.size() - 1).getStopIndex() + 1);
+		
+		
+		
+
+		return JavaRHSBuilder.build("japeng", null, s);
 	}
 
 	private PatternElement parsePatternElement(Tree bpe) {
@@ -195,6 +243,7 @@ public class JapeNGASTParser {
 			
 		}
 	}
+	
 	
 
 
