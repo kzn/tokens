@@ -122,13 +122,13 @@ public class EclipseECJWrapper {
 	private static JavaCompiler javac = new EclipseCompiler();
 	private static SpecialClassLoader cl = new SpecialClassLoader();
 
-	public synchronized static Class<?> compileClass(String halloWorldProgram, String className, Writer compilerOut) throws ClassNotFoundException {
+	public synchronized static Class<?> compileClass(String code, String className, Writer compilerOut) throws ClassNotFoundException {
 		StandardJavaFileManager sjfm = javac.getStandardFileManager(null, null, null);
 
 		SpecialJavaFileManager fileManager = new SpecialJavaFileManager(sjfm, cl);
 		List<String> options = Collections.emptyList();
 
-		List<MemorySource> compilationUnits = Arrays.asList(new MemorySource(className, halloWorldProgram));
+		List<MemorySource> compilationUnits = Arrays.asList(new MemorySource(className, code));
 		DiagnosticListener<JavaFileObject> dianosticListener = null;
 		Iterable<String> classes = null;
 		JavaCompiler.CompilationTask compile = javac.getTask(compilerOut, fileManager,
