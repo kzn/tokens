@@ -29,11 +29,20 @@
         <version>3.4</version>
     </dependency>
 
-    <dependency>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr-runtime</artifactId>
-        <version>3.4</version>
-    </dependency> 
+	<dependency>
+		<groupId>org.antlr</groupId>
+		<artifactId>antlr-runtime</artifactId>
+		<version>3.4</version>
+	</dependency>
+
+
+	<dependency>
+		<groupId>org.eclipse.jdt.core.compiler</groupId>
+		<artifactId>ecj</artifactId>
+		<version>4.2.2</version>
+	</dependency>
+            
+             
   </dependencies>
   
       <build>
