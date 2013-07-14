@@ -30,6 +30,8 @@ tokens {
     NAME;
     EMPTY_RHS;
     JAVA;
+    REF_META;
+    TYPE;
 }
 
 
@@ -61,10 +63,18 @@ annotSpec: '!' simpleAnnotSpec -> ^(SIMPLE["NOT"] simpleAnnotSpec)
 simpleAnnotSpec: type=SIMPLE ( -> ^(SIMPLE["AN_TYPE"] SIMPLE)
                                | '.' SIMPLE op value -> ^(SIMPLE["AN_FEAT"] op value SIMPLE+)
                                | '@' SIMPLE op value -> ^(SIMPLE["AN_METAFEAT"] op value SIMPLE+));
-attrName: SIMPLE | STRING;
-value: SIMPLE | STRING | integer | floatingPoint;
+                               
+attrName: SIMPLE -> ^(TYPE["IDENT"] SIMPLE)
+        | STRING -> ^(TYPE["STRING"] STRING)
+        ;
+value: SIMPLE -> ^(TYPE["IDENT"] SIMPLE)
+     | STRING -> ^(TYPE["STRING"] STRING)
+     | integer -> ^(TYPE["INTEGER"] integer)
+     | floatingPoint -> ^(TYPE["FLOAT"] floatingPoint)
+     ;
 op: '!=' -> ^(OP["neq"])
-  | '==' -> ^(OP["eq"]);
+  | '==' -> ^(OP["eq"])
+  ;
 
 
 
@@ -87,7 +97,8 @@ labeling: ':' SIMPLE '.' SIMPLE '=' '{' attr (',' attr )*'}' -> ^(SIMPLE_RHS ^(N
 
 attr:  attrName '=' attrValue -> ^(ATTR attrName attrValue);
 attrValue: value -> ^(VAL value)
-         |':' SIMPLE '.' SIMPLE '.' SIMPLE -> ^(REF_VAL SIMPLE+);
+         |':' SIMPLE '.' SIMPLE '.' SIMPLE -> ^(REF_VAL SIMPLE+)
+         |':' SIMPLE '.' SIMPLE '@' SIMPLE -> ^(REF_META SIMPLE+);
        
         
           
@@ -107,5 +118,5 @@ exponent: ('e' | 'E') ('-'|'+')? DIGITS;
 
 STRING : '"' (~('"' | '\\') | '\\' .)* '"';
 DIGITS: '0'..'9'+;
-SIMPLE: ~('(' | ')' | ' ' | ',' | '.' | '<' | '>' | '\t' | '\r' | '\n' | '{' | '}' | '[' | ']' | ':' | '=' | '!' | '~')+;
+SIMPLE: ~('(' | ')' | ' ' | ',' | '.' | '<' | '>' | '\t' | '\r' | '\n' | '{' | '}' | '[' | ']' | ':' | '=' | '!' | '~' | '"')+;
 

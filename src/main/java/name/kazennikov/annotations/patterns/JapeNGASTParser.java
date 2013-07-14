@@ -6,6 +6,7 @@ import java.util.List;
 import name.kazennikov.annotations.JapeNGLexer;
 import name.kazennikov.annotations.JapeNGParser;
 import name.kazennikov.annotations.patterns.PatternElement.Operator;
+import name.kazennikov.annotations.patterns.SimpleRHS.Value;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
@@ -102,12 +103,59 @@ public class JapeNGASTParser {
 				break;
 			case "JAVA":
 				rule.rhs.add(parseJavaRHS(child));
+				break;
+			case "SIMPLE_RHS":
+				rule.rhs.add(parseSimpleRHS(child));
+				break;
+				
 				
 			}
 			
 		}
 
 		return rule;
+	}
+
+	private RHS parseSimpleRHS(Tree rhsTree) {
+		SimpleRHS rhs = new SimpleRHS();
+		
+		for(int i = 0; i < rhsTree.getChildCount(); i++) {
+			Tree child = rhsTree.getChild(i);
+			switch(child.getText()) {
+			case "NAME":
+				parseRHSName(child, rhs);
+				break;
+			case "ATTR": 
+				rhs.values.add(parseAttr(child));
+			}
+		}
+		
+
+		return rhs;
+	}
+
+	private Value parseAttr(Tree attr) {
+		String name = parseVal(attr.getChild(0)).toString();
+		Tree value = attr.getChild(1);
+		
+		switch(value.getText()) {
+		case "VAL":
+			return new SimpleRHS.SimpleValue(name, parseVal(value.getChild(0)));
+		case "REF_VAL":
+			return new SimpleRHS.BindingValue(name, 
+					value.getChild(0).getText(), 
+					value.getChild(1).getText(), 
+					value.getChild(2).getText());
+		}
+
+		return null;
+	}
+
+	private void parseRHSName(Tree child, SimpleRHS rhs) {
+		String group = child.getChild(0).getText();
+		String type = parseVal(child.getChild(1)).toString();
+		rhs.bindingName = group;
+		rhs.type = type;
 	}
 
 	private RHS parseJavaRHS(Tree child) throws Exception {
@@ -214,10 +262,50 @@ public class JapeNGASTParser {
 		return matchers.size() == 1? matchers.get(0) : new AnnotationMatchers.ANDMatcher(matchers);
 
 	}
+	
+	private Object parseVal(Tree val) {
+		assert val.getChildCount() == 1;
+		String str = val.getText();
+		
+		switch(val.getText()) {
+		case "IDENT":
+			return val.getChild(0).getText();
+		case "STRING":
+			StringBuilder sb = new StringBuilder();
+			String s = val.getChild(0).getText();
+			for(int i = 1; i < s.length() - 1; i++) {
+				char ch = s.charAt(i);
+				if(ch == '\\') {
+					i++;
+					ch = s.charAt(i);
+					switch(ch) {
+					case 'n':
+						sb.append('\n');
+						break;
+					case '\t':
+						sb.append('\t');
+					default:
+						sb.append(ch);
+					}
+				} else {
+					sb.append(ch);
+				}
+			}
+			return sb.toString();
+		case "INTEGER":
+			return Integer.parseInt(str);
+			
+		case "FLOAT":
+			if(str.endsWith("f") ||str.endsWith("F"))
+				return Float.parseFloat(str);
+			return Double.parseDouble(str);
+		}
+		return val.getText();
+	}
 
 	private AnnotationMatcher parseAnFeat(Tree feats) {
 		String op = feats.getChild(0).getText();
-		String val = feats.getChild(1).getText();
+		Object val = parseVal(feats.getChild(1));
 		String type = feats.getChild(2).getText();
 		String feat = feats.getChild(3).getText();
 		switch(op) {

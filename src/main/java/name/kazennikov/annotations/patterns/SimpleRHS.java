@@ -1,5 +1,6 @@
 package name.kazennikov.annotations.patterns;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +93,7 @@ public class SimpleRHS implements RHS {
 	
 	String bindingName; // target binding
 	String type; // target type
-	List<Value> values;
+	List<Value> values = new ArrayList<>();
 
 	@Override
 	public boolean execute(Document doc, AnnotationList input, Map<String, AnnotationList> bindings) {
