@@ -4,6 +4,8 @@ options {
   language = Java;
   output = AST;
   ASTLabelType = CommonTree;
+  backtrack = true;
+  memoize = true;
 }
 
 tokens {
@@ -21,6 +23,13 @@ tokens {
     RULE;
     NAME;
     PRIORITY;
+    SIMPLE_RHS;
+    ATTR;
+    VAL;
+    REF_VAL;
+    NAME;
+    EMPTY_RHS;
+    JAVA;
 }
 
 
@@ -39,26 +48,26 @@ input: 'Input:' SIMPLE+ -> ^(INPUT SIMPLE+);
 opts: 'Options:' option (',' option)* -> ^(OPTIONS option+);
 option: SIMPLE '=' SIMPLE -> ^(SIMPLE SIMPLE);
 
-rule: 'Rule:' name=SIMPLE priority? matcher+ '-->' actions -> ^(RULE ^(NAME $name) priority? matcher+);
+rule: 'Rule:' name=SIMPLE priority? matcher+ '-->' action+ -> ^(RULE ^(NAME $name) priority? matcher+ action+);
 priority: 'Priority:' num=integer -> ^(PRIORITY $num);
-integer: ('-'|'+')? DIGITS;
+// LHS grammar
 matcher: group modif? -> ^(GROUP_MATCHER modif? group);
-group: '(' group_elem+ ('|' group_elem+)*')' -> ^(OR group_elem+);
+group: '(' groupElem+ ('|' groupElem+)*')' -> ^(OR groupElem+);
+groupElem: matcher | simpleMatcher;
 
-simple_matcher: '{' annot_spec (',' annot_spec)* '}' -> ^(ANNOT annot_spec+);
-
-annot_spec: '!' simple_annot_spec -> ^(SIMPLE["NOT"] simple_annot_spec)
-          | simple_annot_spec -> simple_annot_spec;
-          
-simple_annot_spec: type=SIMPLE (-> ^(SIMPLE["AN_TYPE"] SIMPLE)
-                               | '.' SIMPLE op val -> ^(SIMPLE["AN_FEAT"] op val SIMPLE+)
-                               | '@' SIMPLE op val -> ^(SIMPLE["AN_METAFEAT"] op val SIMPLE+));
-val: SIMPLE | STRING | DIGITS;
+simpleMatcher: '{' annotSpec (',' annotSpec)* '}' -> ^(ANNOT annotSpec+);
+annotSpec: '!' simpleAnnotSpec -> ^(SIMPLE["NOT"] simpleAnnotSpec)
+         | simpleAnnotSpec -> simpleAnnotSpec;
+simpleAnnotSpec: type=SIMPLE ( -> ^(SIMPLE["AN_TYPE"] SIMPLE)
+                               | '.' SIMPLE op value -> ^(SIMPLE["AN_FEAT"] op value SIMPLE+)
+                               | '@' SIMPLE op value -> ^(SIMPLE["AN_METAFEAT"] op value SIMPLE+));
+attrName: SIMPLE | STRING;
+value: SIMPLE | STRING | integer | floatingPoint;
 op: '!=' -> ^(OP["neq"])
   | '==' -> ^(OP["eq"]);
 
 
-group_elem: matcher | simple_matcher;
+
 
 modif: (':' SIMPLE) -> ^(GROUP_OP SIMPLE["named"] SIMPLE)
         | '?' -> ^(GROUP_OP SIMPLE["?"])
@@ -68,18 +77,33 @@ modif: (':' SIMPLE) -> ^(GROUP_OP SIMPLE["named"] SIMPLE)
                      | (',' to=DIGITS?) -> ^(GROUP_OP SIMPLE["range"] $from $to?)
                      ) ']' 
         ;
-actions: (labelings|java_code)+;
-java_code: '{' (SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '!' | java_code)* '}';
+// RHS grammar
+action: labelings | javaCode;
+javaCode: '{' ( '}'-> ^(EMPTY_RHS)
+                | code+=(SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '!' | javaCode)+ '}'
+                -> ^(JAVA));
 labelings: labeling (',' labeling)* -> labeling+;
-labeling: ':' SIMPLE '.' SIMPLE '=' '{' attrvalue (',' attrvalue )*'}';
-attrvalue: (SIMPLE | STRING) '=' attrval;
-attrval: SIMPLE | STRING | ':' SIMPLE '.' SIMPLE '.' SIMPLE;
+labeling: ':' SIMPLE '.' SIMPLE '=' '{' attr (',' attr )*'}' -> ^(SIMPLE_RHS ^(NAME SIMPLE+) attr+);
+
+attr:  attrName '=' attrValue -> ^(ATTR attrName attrValue);
+attrValue: value -> ^(VAL value)
+         |':' SIMPLE '.' SIMPLE '.' SIMPLE -> ^(REF_VAL SIMPLE+);
+       
         
           
 
 WS: (' ' | '\t' | '\n' | '\r')+ { $channel = HIDDEN;};
 SINGLE_COMMENT: '//' ~('\r' | '\n')* {$channel = HIDDEN;};
 COMMENT:   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;};
+
+integer: ('-'|'+')? DIGITS;
+
+floatingPoint: ('-'|'+')? DIGITS '.' DIGITS exponent? ('f' | 'F' | 'd' 'D')?
+             | '.' DIGITS exponent? ('f' | 'F' | 'd' 'D')?
+             | DIGITS exponent  ('f' | 'F' | 'd' 'D')?
+             | DIGITS exponent? ('f' | 'F' | 'd' 'D');
+             
+exponent: ('e' | 'E') ('-'|'+')? DIGITS;
 
 STRING : '"' (~('"' | '\\') | '\\' .)* '"';
 DIGITS: '0'..'9'+;
