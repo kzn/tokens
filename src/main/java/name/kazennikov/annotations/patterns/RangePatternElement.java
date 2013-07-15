@@ -32,5 +32,13 @@ public class RangePatternElement implements PatternElement {
 	public String toString() {
 		return String.format("%s(%d,%d)", element, min, max);
 	}
+	
+	public int min() {
+		return min;
+	}
+	
+	public int max() {
+		return max;
+	}
 
 }

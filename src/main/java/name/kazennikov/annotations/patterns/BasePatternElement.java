@@ -49,6 +49,10 @@ public class BasePatternElement implements PatternElement {
 	public PatternElement get(int index) {
 		return args.get(index);
 	}
+	
+	public String getName() {
+		return name;
+	}
 
 
 }

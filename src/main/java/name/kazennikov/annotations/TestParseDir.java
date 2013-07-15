@@ -3,8 +3,10 @@ package name.kazennikov.annotations;
 import java.io.File;
 import java.nio.charset.Charset;
 
+import name.kazennikov.annotations.fsm.FSM;
 import name.kazennikov.annotations.patterns.JapeNGASTParser;
 import name.kazennikov.annotations.patterns.Phase;
+import name.kazennikov.annotations.patterns.Rule;
 
 import com.google.common.io.Files;
 
@@ -16,7 +18,12 @@ public class TestParseDir {
 		if(f.isFile()) {
 			String s = Files.toString(f, Charset.forName("UTF-8"));
 			Phase phase = JapeNGASTParser.parse(s);
-			phase = phase;
+			
+			for(Rule r : phase.getRules()) {
+				FSM fsm = new FSM(r);
+				fsm.toDot("test.dot");
+			}
+
 			
 
 		} else if(f.isDirectory()) {

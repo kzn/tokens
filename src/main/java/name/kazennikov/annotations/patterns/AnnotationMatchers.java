@@ -41,6 +41,10 @@ public class AnnotationMatchers {
 		public boolean match(Annotation a) {
 			return a.getType().equals(type);
 		}
+		@Override
+		public String toString() {
+			return String.format("{%s}", type);
+		}
 	}
 	
 	public static class FeatureEqMatcher extends BaseMatcher {
@@ -61,6 +65,11 @@ public class AnnotationMatchers {
 				return false;
 			
 			return value.equals(o);
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("{%s.%s == %s}", type, name, value);
 		}
 	}
 	

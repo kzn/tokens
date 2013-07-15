@@ -23,5 +23,9 @@ public class Phase {
 				.toString();
 	}
 	
+	public List<Rule> getRules() {
+		return rules;
+	}
+	
 
 }
