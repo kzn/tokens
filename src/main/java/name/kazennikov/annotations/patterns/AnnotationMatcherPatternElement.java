@@ -22,5 +22,9 @@ public class AnnotationMatcherPatternElement implements PatternElement {
 	public PatternElement get(int index) {
 		return index == 0? this : null;
 	}
+	
+	public AnnotationMatcher matcher() {
+		return matcher;
+	}
 
 }

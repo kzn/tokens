@@ -22,4 +22,12 @@ public class Rule {
 				.toString();
 	}
 	
+	public List<PatternElement> lhs() {
+		return lhs;
+	}
+	
+	public List<RHS> rhs() {
+		return rhs;
+	}
+	
 }
