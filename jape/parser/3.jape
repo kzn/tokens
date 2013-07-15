@@ -1,0 +1,25 @@
+Phase:Phase3
+Input: Token Lookup
+Options: control = appelt
+
+
+
+
+Rule: Test1
+(
+    ({Token})[0,2]
+):test
+-->
+{
+  
+}
+ 
+Rule: Test1
+(
+    ({Token})[1,2]
+):test
+-->
+{
+  
+}
+ 
