@@ -1,10 +1,15 @@
 package name.kazennikov.annotations.fsm;
 
+
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import name.kazennikov.annotations.patterns.AnnotationMatcher;
 import name.kazennikov.annotations.patterns.AnnotationMatcherPatternElement;
@@ -20,14 +25,18 @@ public class FSM {
 	
 	State start;
 	
-	public FSM(Rule r) {
+	public FSM() {
 		this.start = addState();
+	}
+	
+	public void addRule(Rule r) {
 		State start = this.start;
 		for(PatternElement e : r.lhs()) {
 			start = addPE(start, e, new ArrayList<String>());
 		}
 		
 		start.rhs.addAll(r.rhs());
+
 	}
 	
 	public State addState() {
@@ -133,5 +142,106 @@ public class FSM {
 		toDot(pw);
 		pw.close();
 	}
+	
+	public Set<State> lambdaClosure(Set<State> states) {
+		LinkedList<State> list = new LinkedList<State>(states);
+		Set<State> closure = new HashSet<State>(states);
+
+		while(!list.isEmpty()) {
+			State current = list.removeFirst();
+			for(Transition t : current.transitions) {
+				if(t.matcher == null) {
+					State target = t.target;
+					if(!closure.contains(target)) {
+						closure.add(target);
+						list.addFirst(target);
+					}
+				}
+			}
+		}
+		return closure;
+	}
+
+	
+	/**
+	 * Converts this epsilon-NFA to epsilon-free NFA. Non-destructive procedure
+	 * 
+	 * @return fresh epsilon free NFA
+	 */
+	public FSM epsilonFreeFSM() {
+
+		Map<Set<State>, State> newStates = new HashMap<>();
+		Set<Set<State>> dStates = new HashSet<>();
+		LinkedList<Set<State>> unmarkedDStates = new LinkedList<Set<State>>();
+		Set<State> currentDState = new HashSet<State>();
+
+
+		currentDState.add(start);
+		currentDState = lambdaClosure(currentDState);
+		dStates.add(currentDState);
+		unmarkedDStates.add(currentDState);
+		FSM fsm = new FSM();
+
+		newStates.put(currentDState, fsm.start);
+
+		for(State c : currentDState) {
+			if(c.isFinal()) {
+				fsm.start.rhs = c.rhs;
+				break;
+			}
+		}
+
+		while(!unmarkedDStates.isEmpty()) {
+			currentDState = unmarkedDStates.removeFirst();
+
+			for(State state: currentDState) {
+				for(Transition t : state.transitions) {
+
+					// skip epsilon transitions
+					if(t.matcher == null)
+						continue;
+
+
+					State target = t.target;
+					Set<State> newDState = new HashSet<State>();
+					newDState.add(target);
+					newDState = lambdaClosure(newDState);
+
+					// add new state to epsilon-free automaton
+					if(!dStates.contains(newDState)) {
+						dStates.add(newDState);
+						unmarkedDStates.add(newDState);
+						State newState = fsm.addState();
+						newStates.put(newDState, newState);
+
+						for(State currentInnerState : newDState) {
+							if(currentInnerState.isFinal()) {
+								newState.rhs = currentInnerState.rhs;
+								break;
+							}
+						}
+					}
+
+					State currentState = newStates.get(currentDState);
+					State newState = newStates.get(newDState);
+					currentState.addTransition(newState, t.matcher, t.bindings);
+
+				}
+			}
+
+		}
+
+		return fsm;
+	}
+	
+	public State getStart() {
+		return start;
+	}
+	
+	public int size() {
+		return states.size();
+	}
+
+
 
 }

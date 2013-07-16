@@ -8,6 +8,8 @@ import java.util.Set;
 import name.kazennikov.annotations.patterns.AnnotationMatcher;
 import name.kazennikov.annotations.patterns.RHS;
 
+import com.google.common.base.Objects;
+
 public class State {
 	int number;
 	List<Transition> transitions = new ArrayList<>();
@@ -46,7 +48,7 @@ public class State {
 		visited.add(this);
 
 		for(Transition t : transitions) {
-			pw.printf("%d -> %d [label=\"%s\"];%n", number, t.target.number, escape(t.matcher != null? t.matcher.toString() : "null"));
+			pw.printf("%d -> %d [label=\"%s%s\"];%n", number, t.target.number, escape(t.matcher != null? t.matcher.toString() : "null"), t.bindings);
 		}
 
 		for(Transition t : transitions) {
@@ -58,9 +60,25 @@ public class State {
 		if(isFinal()) {
 			pw.printf("%d [shape=doublecircle];%n", number);
 		}
-
-
-
-
+	}
+	
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this)
+				.add("number", number)
+				.add("isFinal", isFinal())
+				.toString();
+	}
+	
+	public List<Transition> getTransitions() {
+		return transitions;
+	}
+	
+	public List<RHS> getRHS() {
+		return rhs;
+	}
+	
+	public int getNumber() {
+		return number;
 	}
 }
