@@ -18,11 +18,16 @@ public class TestParseDir {
 		if(f.isFile()) {
 			String s = Files.toString(f, Charset.forName("UTF-8"));
 			Phase phase = JapeNGASTParser.parse(s);
-			
+			FSM fsm = new FSM();
 			for(Rule r : phase.getRules()) {
-				FSM fsm = new FSM(r);
-				fsm.toDot("test.dot");
+				fsm.addRule(r);
+
 			}
+			
+			fsm.toDot("pretest.dot");
+			fsm = fsm.epsilonFreeFSM();
+			fsm.toDot("test.dot");
+
 
 			
 
