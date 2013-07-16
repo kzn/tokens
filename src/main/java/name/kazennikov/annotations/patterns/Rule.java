@@ -29,5 +29,9 @@ public class Rule {
 	public List<RHS> rhs() {
 		return rhs;
 	}
+
+	public int getPriority() {
+		return priority;
+	}
 	
 }

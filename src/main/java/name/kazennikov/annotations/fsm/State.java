@@ -14,6 +14,7 @@ public class State {
 	int number;
 	List<Transition> transitions = new ArrayList<>();
 	List<RHS> rhs = new ArrayList<>();
+	int priority = -1;
 
 	public boolean isFinal() {
 		return !rhs.isEmpty();
@@ -80,5 +81,13 @@ public class State {
 	
 	public int getNumber() {
 		return number;
+	}
+	
+	public int getPriority() {
+		return priority;
+	}
+	
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 }

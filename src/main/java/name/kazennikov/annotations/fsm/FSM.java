@@ -36,6 +36,7 @@ public class FSM {
 		}
 		
 		start.rhs.addAll(r.rhs());
+		start.priority = r.getPriority();
 
 	}
 	
