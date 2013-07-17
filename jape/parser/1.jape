@@ -100,7 +100,7 @@ Rule: Test8
 
 Rule: Test9
 (
-    ({Token} | ({Lookup})+)[10,]
+    ({Token} | ({Lookup})+)[10]
 ):test
 -->
 {
