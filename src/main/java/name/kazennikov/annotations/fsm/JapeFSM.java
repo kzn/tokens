@@ -137,7 +137,7 @@ public class JapeFSM {
 	public void addRule(Rule r) {
 		State start = this.start;
 		for(PatternElement e : r.lhs()) {
-			start = addPE(start, e, new ArrayList<String>());
+			start = addPE(e, start, new ArrayList<String>());
 		}
 		
 		start.rhs.addAll(r.rhs());
@@ -154,11 +154,11 @@ public class JapeFSM {
 	
 	/**
 	 * Add NFA states to start that represent pattern element
-	 * @param start current start state
 	 * @param e pattern element
+	 * @param start current start state
 	 * @return end state of the pattern element
 	 */
-	private State addPE(State start, PatternElement e, List<String> bindings) {
+	private State addPE(PatternElement e, State start, List<String> bindings) {
 		State end = null;
 		
 		if(e instanceof AnnotationMatcherPatternElement) {
@@ -185,16 +185,16 @@ public class JapeFSM {
 		State end = addState();
 		
 		for(int i = 0; i < e.min(); i++) {
-			start = addPE(start, e.get(0), bindings);
+			start = addPE(e.get(0), start, bindings);
 		}
 		
 		if(e.max() == RangePatternElement.INFINITE) {
-			State mEnd = addPE(start, e.get(0), bindings);
+			State mEnd = addPE(e.get(0), start, bindings);
 			mEnd.addTransition(end, null, bindings);
 			mEnd.addTransition(start, null, bindings);
 		} else if(e.min() != e.max()) {
 			for(int i = e.min(); i < e.max(); i++) {
-				start = addPE(start, e.get(0), bindings);
+				start = addPE(e.get(0), start, bindings);
 				start.addTransition(end, null, bindings);
 			}
 		} else {
@@ -210,7 +210,7 @@ public class JapeFSM {
 			bindings.add(e.getName());
 		
 		for(int i = 0; i < e.size(); i++) {
-			start = addPE(start, e.get(i), bindings);
+			start = addPE(e.get(i), start, bindings);
 		}
 		
 		if(e.getName() != null)
@@ -226,7 +226,7 @@ public class JapeFSM {
 		for(int i = 0; i < e.size(); i++) {
 			State mStart = addState();
 			start.addTransition(mStart, null, bindings);
-			State mEnd = addPE(mStart, e.get(i), bindings);
+			State mEnd = addPE(e.get(i), mStart, bindings);
 			mEnd.addTransition(end, null, bindings);
 		}
 
