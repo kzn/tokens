@@ -25,6 +25,10 @@ import com.google.common.base.Objects;
 
 public class JapeFSM {
 	
+	public static interface StateVisitor {
+		public void visit(State s);
+	}
+	
 	public static class State {
 		int number;
 		List<Transition> transitions = new ArrayList<>();
@@ -104,6 +108,28 @@ public class JapeFSM {
 		
 		public void setPriority(int priority) {
 			this.priority = priority;
+		}		
+		
+		
+		public void visit(StateVisitor v, Set<State> visited) {
+			if(visited.contains(this))
+				return;
+			
+			visited.add(this);
+			v.visit(this);
+
+			for(Transition t : transitions) {
+				t.target.visit(v, visited);
+			}
+		}
+		
+		public void setFinalFrom(Set<State> states) {
+			for(State currentInnerState : states) {
+				if(currentInnerState.isFinal()) {
+					this.rhs = currentInnerState.rhs;
+					break;
+				}
+			}
 		}
 	}
 	
@@ -187,20 +213,18 @@ public class JapeFSM {
 		for(int i = 0; i < e.min(); i++) {
 			start = addPE(e.get(0), start, bindings);
 		}
+		start.addTransition(end, null, bindings); // skip optional parrts
 		
 		if(e.max() == RangePatternElement.INFINITE) {
 			State mEnd = addPE(e.get(0), start, bindings);
 			mEnd.addTransition(end, null, bindings);
 			mEnd.addTransition(start, null, bindings);
-		} else if(e.min() != e.max()) {
+		} else {
 			for(int i = e.min(); i < e.max(); i++) {
 				start = addPE(e.get(0), start, bindings);
 				start.addTransition(end, null, bindings);
 			}
-		} else {
-			start.addTransition(end, null, bindings);
-		}
-		
+		} 
 		
 		return end;
 	}
@@ -289,13 +313,7 @@ public class JapeFSM {
 		JapeFSM fsm = new JapeFSM();
 
 		newStates.put(currentDState, fsm.start);
-
-		for(State c : currentDState) {
-			if(c.isFinal()) {
-				fsm.start.rhs = c.rhs;
-				break;
-			}
-		}
+		fsm.start.setFinalFrom(currentDState);
 
 		while(!unmarkedDStates.isEmpty()) {
 			currentDState = unmarkedDStates.removeFirst();
@@ -320,12 +338,7 @@ public class JapeFSM {
 						State newState = fsm.addState();
 						newStates.put(newDState, newState);
 
-						for(State currentInnerState : newDState) {
-							if(currentInnerState.isFinal()) {
-								newState.rhs = currentInnerState.rhs;
-								break;
-							}
-						}
+						newState.setFinalFrom(newDState);
 					}
 
 					State currentState = newStates.get(currentDState);
@@ -347,7 +360,4 @@ public class JapeFSM {
 	public int size() {
 		return states.size();
 	}
-
-
-
 }
