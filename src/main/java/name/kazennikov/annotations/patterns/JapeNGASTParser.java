@@ -241,7 +241,7 @@ public class JapeNGASTParser {
 			switch(child.getText()) {
 			
 			case "NOT":
-				matchers.add(parseAnnot(child).complement());
+				matchers.add(new AnnotationMatchers.NegativeAnnotationMatcher(parseAnnot(child)));
 				break;
 			
 			case "AN_TYPE":
@@ -312,7 +312,7 @@ public class JapeNGASTParser {
 		case "eq":
 			return new AnnotationMatchers.FeatureEqMatcher(type, feat, val);
 		case "neq":
-			return new AnnotationMatchers.FeatureEqMatcher(type, feat, val).complement();
+			return new AnnotationMatchers.FeatureNEqMatcher(type, feat, val);
 		}
 		throw new IllegalStateException("illegal annotation type feature operation " + op);
 	}

@@ -4,5 +4,5 @@ import name.kazennikov.annotations.Annotation;
 
 public interface AnnotationMatcher {
 	public boolean match(Annotation a);
-	public AnnotationMatcher complement();
+	public String getType();
 }
