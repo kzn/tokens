@@ -1,5 +1,6 @@
 package name.kazennikov.annotations.fsm;
 
+import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
@@ -149,9 +150,13 @@ public class JapePlusFSM {
 
 
 	List<State> states = new ArrayList<>();	
+	
+	TIntArrayList tFrom = new TIntArrayList();
+	TIntArrayList tTo = new TIntArrayList();
+	TIntArrayList tLabel = new TIntArrayList();
+	
 	Alphabet<String> groups = new Alphabet<>();
 	Alphabet<AnnotationMatcher> matchers = new Alphabet<>();
-	
 	State start;
 	
 	public JapePlusFSM() {
@@ -176,6 +181,14 @@ public class JapePlusFSM {
 		return state;
 	}
 	
+	
+	public void addTransition(State from, State to, int label) {
+		from.addTransition(to, label);
+		tFrom.add(from.number);
+		tTo.add(to.number);
+		tLabel.add(label);
+	}
+	
 	/**
 	 * Add NFA states to start that represent pattern element
 	 * @param e pattern element
@@ -190,7 +203,7 @@ public class JapePlusFSM {
 			AnnotationMatcher matcher = ((AnnotationMatcherPatternElement) e).matcher();
 			int label = matchers.get(matcher);
 			
-			start.addTransition(end, label);
+			addTransition(start, end, label);
 		} else if(e instanceof BasePatternElement) {
 			// OR or SEQ
 			if(e.op() == Operator.OR) {
@@ -213,17 +226,17 @@ public class JapePlusFSM {
 			start = addPE(e.get(0), start);
 		}
 
-		start.addTransition(end, Transition.EPSILON); // skip optional parrts
+		addTransition(start, end, Transition.EPSILON); // skip optional parrts
 		
 		if(e.max() == RangePatternElement.INFINITE) { // kleene start
 			State mEnd = addPE(e.get(0), start);
-			mEnd.addTransition(end, Transition.EPSILON);
-			mEnd.addTransition(start, Transition.EPSILON);
+			addTransition(mEnd, end, Transition.EPSILON);
+			addTransition(mEnd, start, Transition.EPSILON);
 
 		} else { // range [n,m]
 			for(int i = e.min(); i < e.max(); i++) {
 				start = addPE(e.get(0), start);
-				start.addTransition(end, Transition.EPSILON);
+				addTransition(start, end, Transition.EPSILON);
 			}
 		} 
 		
@@ -234,7 +247,7 @@ public class JapePlusFSM {
 	private State addSeq(BasePatternElement e, State start) {
 		if(e.getName() != null) {
 			State iStart = addState();
-			start.addTransition(iStart, Transition.GROUP_START);
+			addTransition(start, iStart, Transition.GROUP_START);
 			start = iStart;
 		}
 		
@@ -245,7 +258,7 @@ public class JapePlusFSM {
 		if(e.getName() != null) {
 			State iEnd = addState();
 			int label = -groups.get(e.getName()) - 1;
-			start.addTransition(iEnd, label);
+			addTransition(start, iEnd, label);
 			start = iEnd;
 		}
 		
@@ -258,9 +271,9 @@ public class JapePlusFSM {
 
 		for(int i = 0; i < e.size(); i++) {
 			State mStart = addState();
-			start.addTransition(mStart, Transition.EPSILON);
+			addTransition(start, mStart, Transition.EPSILON);
 			State mEnd = addPE(e.get(i), mStart);
-			mEnd.addTransition(end, Transition.EPSILON);
+			addTransition(mEnd, end, Transition.EPSILON);
 		}
 
 		return end;
@@ -365,7 +378,7 @@ public class JapePlusFSM {
 
 				State currentState = newStates.get(currentDState);
 				State newState = newStates.get(next);
-				currentState.addTransition(newState, label);
+				fsm.addTransition(currentState, newState, label);
 			}
 		}
 		return fsm;
@@ -422,7 +435,7 @@ public class JapePlusFSM {
 
 					State currentState = newStates.get(currentDState);
 					State newState = newStates.get(newDState);
-					currentState.addTransition(newState, t.label);
+					fsm.addTransition(currentState, newState, t.label);
 				}
 			}
 

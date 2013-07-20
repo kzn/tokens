@@ -178,6 +178,10 @@ public class JapeFSM {
 		return state;
 	}
 	
+	public void addTransition(State src, State dest, AnnotationMatcher label, List<String> bindings) {
+		src.addTransition(dest, label, bindings);
+	}
+	
 	/**
 	 * Add NFA states to start that represent pattern element
 	 * @param e pattern element
@@ -191,7 +195,7 @@ public class JapeFSM {
 			end = addState();
 			AnnotationMatcher matcher = ((AnnotationMatcherPatternElement) e).matcher();
 			
-			start.addTransition(end, matcher, bindings);
+			addTransition(start, end, matcher, bindings);
 		} else if(e instanceof BasePatternElement) {
 			// OR or SEQ
 			if(e.op() == Operator.OR) {
@@ -213,16 +217,16 @@ public class JapeFSM {
 		for(int i = 0; i < e.min(); i++) {
 			start = addPE(e.get(0), start, bindings);
 		}
-		start.addTransition(end, null, bindings); // skip optional parrts
+		addTransition(start, end, null, bindings); // skip optional parrts
 		
 		if(e.max() == RangePatternElement.INFINITE) {
 			State mEnd = addPE(e.get(0), start, bindings);
-			mEnd.addTransition(end, null, bindings);
-			mEnd.addTransition(start, null, bindings);
+			addTransition(mEnd, end, null, bindings);
+			addTransition(mEnd, start, null, bindings);
 		} else {
 			for(int i = e.min(); i < e.max(); i++) {
 				start = addPE(e.get(0), start, bindings);
-				start.addTransition(end, null, bindings);
+				addTransition(start, end, null, bindings);
 			}
 		} 
 		
@@ -249,9 +253,9 @@ public class JapeFSM {
 
 		for(int i = 0; i < e.size(); i++) {
 			State mStart = addState();
-			start.addTransition(mStart, null, bindings);
+			addTransition(start, mStart, null, bindings);
 			State mEnd = addPE(e.get(i), mStart, bindings);
-			mEnd.addTransition(end, null, bindings);
+			addTransition(mEnd, end, null, bindings);
 		}
 
 		return end;
@@ -343,7 +347,7 @@ public class JapeFSM {
 
 					State currentState = newStates.get(currentDState);
 					State newState = newStates.get(newDState);
-					currentState.addTransition(newState, t.matcher, t.bindings);
+					fsm.addTransition(currentState, newState, t.matcher, t.bindings);
 
 				}
 			}
