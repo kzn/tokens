@@ -4,6 +4,8 @@ import java.util.List;
 
 import name.kazennikov.annotations.Annotation;
 
+import com.google.common.base.Objects;
+
 public class AnnotationMatchers {
 	
 	private AnnotationMatchers() {
@@ -17,47 +19,33 @@ public class AnnotationMatchers {
 			this.type = type;
 		}
 		
-//		@Override
-//		public AnnotationMatcher complement() {
-//			final BaseMatcher bm = this;
-//			return new AnnotationMatcher() {
-//				
-//				@Override
-//				public boolean match(Annotation a) {
-//					return !bm.match(a);
-//				}
-//				
-//				@Override
-//				public AnnotationMatcher complement() {
-//					return bm;
-//				}
-//			};
-//		}
-
 		@Override
 		public String getType() {
 			return type;
 		}
-
-	}
-	
-	public static abstract class BaseFeatureMatcher extends BaseMatcher {
-		String name;
-		Object value;
 		
-		public BaseFeatureMatcher(String type, String name, Object value) {
-			super(type);
-			this.name = name;
-			this.value = value;
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(this.getClass(), type);
 		}
-		
-		public Object getValue(Annotation a) {
-			if(!a.getType().equals(type))
-				return null;
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
 			
-			return a.getFeature(name);
-		}
+			if (obj == null)
+				return false;
+			
+			if (!(obj instanceof BaseMatcher))
+				return false;
+			BaseMatcher other = (BaseMatcher) obj;
+			
+			if(!Objects.equal(this.type, other.type))
+				return false;
 
+			return true;
+		}
 	}
 		
 		
@@ -76,10 +64,62 @@ public class AnnotationMatchers {
 		public String toString() {
 			return String.format("{%s}", type);
 		}
-		
-		
 	}
 	
+	public static abstract class BaseFeatureMatcher extends BaseMatcher {
+		String name;
+		Object value;
+		
+		public BaseFeatureMatcher(String type, String name, Object value) {
+			super(type);
+			this.name = name;
+			this.value = value;
+		}
+		
+		public Object getValue(Annotation a) {
+			if(!a.getType().equals(type))
+				return null;
+			
+			return a.getFeature(name);
+		}
+		
+		
+		
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(this.getClass(), name, type, value);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			
+			if (obj == null)
+				return false;
+			
+			if (!(obj instanceof BaseFeatureMatcher))
+				return false;
+			
+			if(obj.getClass() != this.getClass())
+				return false;
+			
+			BaseFeatureMatcher other = (BaseFeatureMatcher) obj;
+			
+			if(!Objects.equal(this.type, other.type))
+				return false;
+			
+			if (!Objects.equal(this.name, other.name))
+				return false;
+			
+			if(!Objects.equal(this.value, other.value))
+				return false;
+
+			return true;
+		}
+	}
+		
+		
 	public static class FeatureEqMatcher extends BaseFeatureMatcher {
 		public FeatureEqMatcher(String type, String name, Object value) {
 			super(type, name, value);
@@ -154,9 +194,4 @@ public class AnnotationMatchers {
 			return null;
 		}
 	}
-
-
-
-	
-
 }

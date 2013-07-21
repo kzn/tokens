@@ -451,6 +451,86 @@ public class JapePlusFSM {
 	public int size() {
 		return states.size();
 	}
+	
+	public JapePlusFSM rev() {
+		
+		JapePlusFSM fsm = new JapePlusFSM();
+		List<State> finals = new ArrayList<>();
+
+		for(int i = 0; i < states.size(); i++ ) {
+			State s = fsm.addState();
+			State s0 = states.get(i);
+
+			if(s0.isFinal()) {
+				s.priority = s0.priority;
+				s.rhs = s0.rhs;
+				finals.add(s);
+			}
+		}
+		
+		
+		for(int i = 0; i < tFrom.size(); i++) {
+			State from = fsm.states.get(tTo.get(i) + 1);
+			int label = tLabel.get(i);
+			State to = fsm.states.get(tFrom.get(i) + 1);
+			fsm.addTransition(from, to, label);
+		}
+		
+		for(State f : finals) {
+			fsm.addTransition(fsm.start, f, Transition.EPSILON);
+		}
+		
+		
+		return fsm;
+		
+	}
+	
+	public List<State> finals() {
+		List<State> finals = new ArrayList<>();
+		
+		for(State s : states) {
+			if(s.isFinal())
+				finals.add(s);
+		}
+		
+		return finals;
+	}
+	
+	public JapePlusFSM minimize() {
+		JapePlusFSM fsm = new JapePlusFSM();
+		/*
+		 * Условия:
+		 * 1. Нужен механизм для различения конечных состояний
+		 * 2. Логично адресовать состояния не объектами, а номерами состояний
+		 * 3. (Спорно) Логично адресовать переходы их индексами 
+		 * 4. 
+		 */
+		
+		
+		
+		/*
+		 * P := {F, Q \ F};
+		 * W := {F};
+		 * while (W is not empty) do
+		 *      choose and remove a set A from W
+		 *      for each c in ∑ do
+		 *           let X be the set of states for which a transition on c leads to a state in A
+		 *           for each set Y in P for which X ∩ Y is nonempty do
+		 *               replace Y in P by the two sets X ∩ Y and Y \ X
+		 *               // работа с W
+		 *               if Y is in W
+		 *                    replace Y in W by the same two sets
+		 *               else if |X ∩ Y| <= |Y \ X|
+		 *                	  add X ∩ Y to W
+		 *               else
+		 *               	  add Y \ X to W
+		 *           end;
+		 *      end;
+		 * end;
+		 */
+		
+		return fsm;
+	}
 
 
 }
