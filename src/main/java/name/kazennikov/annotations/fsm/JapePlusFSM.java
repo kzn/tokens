@@ -509,10 +509,10 @@ public class JapePlusFSM {
 		
 		
 		/*
-		 * P := {F, Q \ F};
-		 * W := {F};
+		 * P := {F, Q \ F}; // текущее разбиение
+		 * W := {F}; // множества точно отличные от текущего разбиения
 		 * while (W is not empty) do
-		 *      choose and remove a set A from W
+		 *      choose and remove a set A from W // получаем очередное множество из W
 		 *      for each c in ∑ do
 		 *           let X be the set of states for which a transition on c leads to a state in A
 		 *           for each set Y in P for which X ∩ Y is nonempty do
