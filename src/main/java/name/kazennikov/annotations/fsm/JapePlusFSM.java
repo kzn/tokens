@@ -560,7 +560,7 @@ public class JapePlusFSM {
 		});
 	}
 	
-	public class AutomatonMinimizationHelp {
+	public class AutomatonMinimizationData {
 		
 		TIntIntHashMap labelsMap = new TIntIntHashMap();
 		// states:
@@ -593,7 +593,7 @@ public class JapePlusFSM {
 		protected int lettersStored; // число меток перехода
 		protected int lettersAlloced;
 
-		public AutomatonMinimizationHelp(int statesStored) {
+		public AutomatonMinimizationData(int statesStored) {
 			this.statesStored = statesStored;
 			statesClassNumber = new int[statesStored];
 			statesNext = new int[statesStored];
@@ -624,42 +624,40 @@ public class JapePlusFSM {
 		 * Adds state to given state class
 		 * 
 		 * @param state state number
-		 * @param classToAdd class number
+		 * @param cls class number
 		 */
-		protected void addState(int state, int classToAdd) {
+		protected void addState(int state, int cls) {
 			
 			// linked list addFirst() method
-			statesNext[state] = classesFirstState[classToAdd];
-			if (classesFirstState[classToAdd] != Constants.NO) {
-				statesPrev[classesFirstState[classToAdd]] = state;
+			statesNext[state] = classesFirstState[cls];
+			if (classesFirstState[cls] != Constants.NO) {
+				statesPrev[classesFirstState[cls]] = state;
 			}
 			statesPrev[state] = Constants.NO;
 			
-			statesClassNumber[state] = classToAdd;
-			classesFirstState[classToAdd] = state;
-			classesPower[classToAdd]++;
+			statesClassNumber[state] = cls;
+			classesFirstState[cls] = state;
+			classesPower[cls]++;
 		}
 
-		protected void addLetter(int classToAdd, int letter) {
+		protected void addLetter(int cls, int letter) {
 			// reallocate letters if needed
 			if (lettersStored == lettersAlloced) {
-				int mem = lettersAlloced + lettersAlloced / 4;
-				lettersLetter = GenericWholeArrray.realloc(lettersLetter, mem,
-						lettersStored);
-				lettersNext = GenericWholeArrray.realloc(lettersNext, mem,
-						lettersStored);
+				int mem = lettersAlloced + lettersAlloced / 4; // 1.25 growth rate
+				lettersLetter = GenericWholeArrray.realloc(lettersLetter, mem, lettersStored);
+				lettersNext = GenericWholeArrray.realloc(lettersNext, mem, lettersStored);
 				lettersAlloced = mem;
 			}
 			
 			// установить первую метку перехода для класса
-			if (classesFirstLetter[classToAdd] == Constants.NO) {
-				classesNext[classToAdd] = firstClass;
-				firstClass = classToAdd;
+			if (classesFirstLetter[cls] == Constants.NO) {
+				classesNext[cls] = firstClass;
+				firstClass = cls;
 			}
 			
 			lettersLetter[lettersStored] = letter;
-			lettersNext[lettersStored] = classesFirstLetter[classToAdd];
-			classesFirstLetter[classToAdd] = lettersStored;
+			lettersNext[lettersStored] = classesFirstLetter[cls];
+			classesFirstLetter[cls] = lettersStored;
 			lettersStored++;
 		}
 
@@ -677,14 +675,17 @@ public class JapePlusFSM {
 
 		protected void moveState(int state, int newClass) {
 			int curClass = statesClassNumber[state];
+			
 			if (statesPrev[state] == Constants.NO) {
 				classesFirstState[curClass] = statesNext[state];
 			} else {
 				statesNext[statesPrev[state]] = statesNext[state];
 			}
+			
 			if (statesNext[state] != Constants.NO) {
 				statesPrev[statesNext[state]] = statesPrev[state];
 			}
+			
 			addState(state, newClass);
 		}
 		
@@ -722,174 +723,189 @@ public class JapePlusFSM {
 	}
 
 	
-	protected AutomatonMinimizationHelp hopcroftMinimize() {
+	protected AutomatonMinimizationData hopcroftMinimize() {
 		// reverse transitions
 		trReverse();
 		trSort();
 		
-		AutomatonMinimizationHelp mHelp = new AutomatonMinimizationHelp(states.size());
-		mHelp.mapTransitions();
+		AutomatonMinimizationData data = new AutomatonMinimizationData(states.size());
+		data.mapTransitions();
 		
-		int labelsStored = mHelp.labelsMap.size();
+		int labelsStored = data.labelsMap.size();
 		
 		
 		IntSequence classes = new IntSequence(); // существующие классы. изначально - final - каждый в отдельный класс
 		int[] finalties = new int[states.size()];
-		int classCount = 0;
+		int finalClassCount = 0;
+		
 		for (int i = 0; i < states.size(); i++) {
 			
 			finalties[i] = -1;
 			State s = states.get(i);
+			
 			if (s.isFinal()) {
 				finalties[i] = s.number;
-				classCount++;
+				finalClassCount++;
 			}
 			classes.addIfDoesNotExsist(finalties[i]);
 		}
 
 
 		
-		if (classCount == 0) {
-			return mHelp;
+		if (finalClassCount == 0) {
+			return data;
 		}
 
 		// инициализаця данных о минимизации
 		for (int j = 0; j < classes.seqStored; j++) {
-			mHelp.classesFirstState[j] = Constants.NO;
-			mHelp.classesNewClass[j] = Constants.NO;
-			mHelp.classesNewPower[j] = 0;
-			mHelp.classesPower[j] = 0;
-			mHelp.classesFirstLetter[j] = Constants.NO;
-			mHelp.classesNext[j] = Constants.NO;
+			data.classesFirstState[j] = Constants.NO;
+			data.classesNewClass[j] = Constants.NO;
+			data.classesNewPower[j] = 0;
+			data.classesPower[j] = 0;
+			data.classesFirstLetter[j] = Constants.NO;
+			data.classesNext[j] = Constants.NO;
 		}
-		mHelp.classesStored = classes.seqStored;
+		data.classesStored = classes.seqStored;
 
 		// добавить состояния по классам
 		for (int i = 0; i < states.size(); i++) {
-			mHelp.addState(i, classes.contains(finalties[i]));
+			data.addState(i, classes.contains(finalties[i]));
 		}
 
 		// добавить метки переходов (по классам)?
 		for (int i = 0; i < labelsStored; i++) {
-			for (int j = 0; j < mHelp.classesStored; j++) {
-				mHelp.addLetter(j, i);
+			for (int j = 0; j < data.classesStored; j++) {
+				data.addLetter(j, i);
 			}
 		}
+		
 		IntSequence states = new IntSequence();
 		classes.seqStored = 0;
-		GenericWholeArrray alph = new GenericWholeArrray(
-				GenericWholeArrray.TYPE_BIT, labelsStored);
+		GenericWholeArrray alph = new GenericWholeArrray(GenericWholeArrray.TYPE_BIT, labelsStored);
 
-		while (mHelp.firstClass != Constants.NO) {
-			int q1 = mHelp.firstClass; 
-			int a = mHelp.lettersLetter[mHelp.classesFirstLetter[q1]];
-			mHelp.classesFirstLetter[q1] = mHelp.lettersNext[mHelp.classesFirstLetter[q1]];
+		while (data.firstClass != Constants.NO) {
+			int q1 = data.firstClass; 
+			int a = data.lettersLetter[data.classesFirstLetter[q1]];
+			data.classesFirstLetter[q1] = data.lettersNext[data.classesFirstLetter[q1]];
 			
-			if (mHelp.classesFirstLetter[q1] == Constants.NO) {
-				mHelp.firstClass = mHelp.classesNext[q1];
+			if (data.classesFirstLetter[q1] == Constants.NO) {
+				data.firstClass = data.classesNext[q1];
 			}
 			
 			classes.seqStored = 0;
 			states.seqStored = 0;
-			
-			for (int state = mHelp.classesFirstState[q1]; state != Constants.NO; state = mHelp.statesNext[state]) {
+
+			// iterate through states of the class q1
+			for (int state = data.classesFirstState[q1]; state != Constants.NO; state = data.statesNext[state]) {
 				State s = this.states.get(state);
 				for(Transition t : s.transitions) {
 					if(t.label == a) {
-						int q0 = mHelp.statesClassNumber[t.dest.number];
+						int q0 = data.statesClassNumber[t.dest.number];
 						states.add(t.dest.number);
-						if (mHelp.classesNewPower[q0] == 0) {
+						if (data.classesNewPower[q0] == 0) {
 							classes.add(q0);
 						}
-						mHelp.classesNewPower[q0]++;
-
+						data.classesNewPower[q0]++;
 					}
 				}
 			}
 			
 			for (int j = 0; j < states.seqStored; j++) {
-				int q0 = mHelp.statesClassNumber[states.seq[j]];
-				if (mHelp.classesNewPower[q0] == mHelp.classesPower[q0]) {
+				int q0 = data.statesClassNumber[states.seq[j]];
+				
+				if (data.classesNewPower[q0] == data.classesPower[q0]) {
 					continue;
 				}
-				if (mHelp.classesNewClass[q0] == Constants.NO) {
-					if (mHelp.classesStored == mHelp.classesAlloced) {
-						mHelp.reallocClasses();
+				
+				if (data.classesNewClass[q0] == Constants.NO) {
+					
+					if (data.classesStored == data.classesAlloced) {
+						data.reallocClasses();
 					}
-					mHelp.classesNewClass[q0] = mHelp.classesStored;
-					mHelp.classesFirstState[mHelp.classesStored] = Constants.NO;
-					mHelp.classesNewClass[mHelp.classesStored] = Constants.NO;
-					mHelp.classesNewPower[mHelp.classesStored] = 0;
-					mHelp.classesPower[mHelp.classesStored] = 0;
-					mHelp.classesFirstLetter[mHelp.classesStored] = Constants.NO;
-					mHelp.classesNext[mHelp.classesStored] = Constants.NO;
-					mHelp.classesStored++;
+					
+					data.classesNewClass[q0] = data.classesStored;
+					data.classesFirstState[data.classesStored] = Constants.NO;
+					data.classesNewClass[data.classesStored] = Constants.NO;
+					data.classesNewPower[data.classesStored] = 0;
+					data.classesPower[data.classesStored] = 0;
+					data.classesFirstLetter[data.classesStored] = Constants.NO;
+					data.classesNext[data.classesStored] = Constants.NO;
+					data.classesStored++;
 				}
-				mHelp.moveState(states.seq[j], mHelp.classesNewClass[q0]);
+				data.moveState(states.seq[j], data.classesNewClass[q0]);
 			}
 			
 			for (int i = 0; i < classes.seqStored; i++) {
 				int q0 = classes.seq[i];
-				if (mHelp.classesNewPower[q0] != mHelp.classesPower[q0]) {
-					mHelp.classesPower[q0] -= mHelp.classesNewPower[q0];
+				
+				if (data.classesNewPower[q0] != data.classesPower[q0]) {
+					data.classesPower[q0] -= data.classesNewPower[q0];
+					
 					for (int j = 1; j < labelsStored; j++) {
 						alph.setElement(j, 0);
 					}
-					for (int j = mHelp.classesFirstLetter[q0]; j != Constants.NO; j = mHelp.lettersNext[j]) {
-						mHelp.addLetter(mHelp.classesNewClass[q0],
-								mHelp.lettersLetter[j]);
-						alph.setElement(mHelp.lettersLetter[j], Constants.NO);
+					
+					for (int j = data.classesFirstLetter[q0]; j != Constants.NO; j = data.lettersNext[j]) {
+						data.addLetter(data.classesNewClass[q0], data.lettersLetter[j]);
+						alph.setElement(data.lettersLetter[j], Constants.NO);
 					}
+					
 					for (int j = 1; j < labelsStored; j++) {
 						if (alph.elementAt(j) == Constants.NO) {
 							continue;
 						}
-						if (mHelp.classesPower[q0] < mHelp.classesPower[mHelp.classesNewClass[q0]]) {
-							mHelp.addLetter(q0, j);
+						
+						if (data.classesPower[q0] < data.classesPower[data.classesNewClass[q0]]) {
+							data.addLetter(q0, j);
 						} else {
-							mHelp.addLetter(mHelp.classesNewClass[q0], j);
+							data.addLetter(data.classesNewClass[q0], j);
 						}
+						
 					}
 				}
 
-				mHelp.classesNewPower[q0] = 0;
-				mHelp.classesNewClass[q0] = Constants.NO;
+				data.classesNewPower[q0] = 0;
+				data.classesNewClass[q0] = Constants.NO;
 			}
 		}
-		return mHelp;
+		return data;
 	}
 	
 	public JapePlusFSM minimize() {
-		AutomatonMinimizationHelp mHelp = hopcroftMinimize();
+		AutomatonMinimizationData data = hopcroftMinimize();
+		
 		JapePlusFSM fsm = new JapePlusFSM();
 		
-		if (mHelp.classesStored == 0) {
+		if (data.classesStored == 0) {
 			return fsm;
 		}
 		
-		mHelp.unmapTransitions();
+		data.unmapTransitions();
 		trReverse();
 		trSort();
 		// add states
-		for(int i = 0; i < mHelp.classesStored; i++) {
+		for(int i = 0; i < data.classesStored; i++) {
 			fsm.addState();
 		}
 
 		// add transitions
-		for (int i = 0; i < mHelp.classesStored; i++) {
-			int state = mHelp.classesFirstState[i];
+		for (int i = 0; i < data.classesStored; i++) {
+			int state = data.classesFirstState[i];
 			State s = states.get(state);
+
+			// set start state
 			if(s.number == 0) {
 				fsm.start = fsm.states.get(i);
 			}
 			
 			for(Transition t : s.transitions) {
-				fsm.addTransition(fsm.states.get(i), fsm.states.get(mHelp.statesClassNumber[t.dest.number]), t.label);
+				fsm.addTransition(fsm.states.get(i), fsm.states.get(data.statesClassNumber[t.dest.number]), t.label);
 			}
 		}
 		
-		for(int i = 0; i < mHelp.classesStored; i++) {
-			int state = mHelp.classesFirstState[i];
+		// add finals
+		for(int i = 0; i < data.classesStored; i++) {
+			int state = data.classesFirstState[i];
 			State s0 = states.get(state);
 
 			State s = fsm.states.get(i);
@@ -898,19 +914,8 @@ public class JapePlusFSM {
 				s.actions.addAll(s0.actions);
 			}
 		}
-		
-		// add finals 
-//		for (int i = 0; i < mHelp.classesStored; i++) {
-//			State s = fsm.states.get(mHelp.classesFirstState[i]);
-//			
-//			result.stateFinalities.setElement(i,
-//					stateFinalities.elementAt(state));
-//			result.stateTransitions[i] = j;
-//			result.stateNumberOfTransitions.setElement(i,
-//					stateNumberOfTransitions.elementAt(state));
-//			j += result.stateNumberOfTransitions.elementAt(i);
-//		}
-		
+
+				
 		return fsm;
 	}
 
