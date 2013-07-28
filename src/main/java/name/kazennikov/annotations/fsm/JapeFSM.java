@@ -16,7 +16,6 @@ import name.kazennikov.annotations.patterns.AnnotationMatcherPatternElement;
 import name.kazennikov.annotations.patterns.BasePatternElement;
 import name.kazennikov.annotations.patterns.PatternElement;
 import name.kazennikov.annotations.patterns.PatternElement.Operator;
-import name.kazennikov.annotations.patterns.RHS;
 import name.kazennikov.annotations.patterns.RangePatternElement;
 import name.kazennikov.annotations.patterns.Rule;
 
@@ -32,11 +31,11 @@ public class JapeFSM {
 	public static class State {
 		int number;
 		List<Transition> transitions = new ArrayList<>();
-		List<RHS> rhs = new ArrayList<>();
-		int priority = -1;
+		Set<Rule> actions = new HashSet<>();
+
 
 		public boolean isFinal() {
-			return !rhs.isEmpty();
+			return !actions.isEmpty();
 		}
 
 		public void addTransition(State to, AnnotationMatcher matcher, List<String> bindings) {
@@ -94,22 +93,13 @@ public class JapeFSM {
 			return transitions;
 		}
 		
-		public List<RHS> getRHS() {
-			return rhs;
+		public Set<Rule> getActions() {
+			return actions;
 		}
 		
 		public int getNumber() {
 			return number;
 		}
-		
-		public int getPriority() {
-			return priority;
-		}
-		
-		public void setPriority(int priority) {
-			this.priority = priority;
-		}		
-		
 		
 		public void visit(StateVisitor v, Set<State> visited) {
 			if(visited.contains(this))
@@ -126,8 +116,7 @@ public class JapeFSM {
 		public void setFinalFrom(Set<State> states) {
 			for(State currentInnerState : states) {
 				if(currentInnerState.isFinal()) {
-					this.rhs = currentInnerState.rhs;
-					break;
+					actions.addAll(currentInnerState.actions);
 				}
 			}
 		}
@@ -166,9 +155,7 @@ public class JapeFSM {
 			start = addPE(e, start, new ArrayList<String>());
 		}
 		
-		start.rhs.addAll(r.rhs());
-		start.priority = r.getPriority();
-
+		start.actions.add(r);
 	}
 	
 	public State addState() {

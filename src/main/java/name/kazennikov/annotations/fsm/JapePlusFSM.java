@@ -1,12 +1,16 @@
 package name.kazennikov.annotations.fsm;
 
 import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.map.hash.TIntIntHashMap;
+import gnu.trove.procedure.TIntIntProcedure;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -14,12 +18,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import name.kazennikov.annotations.automaton.Constants;
+import name.kazennikov.annotations.automaton.GenericWholeArrray;
+import name.kazennikov.annotations.automaton.IntSequence;
 import name.kazennikov.annotations.patterns.AnnotationMatcher;
 import name.kazennikov.annotations.patterns.AnnotationMatcherPatternElement;
 import name.kazennikov.annotations.patterns.BasePatternElement;
 import name.kazennikov.annotations.patterns.PatternElement;
 import name.kazennikov.annotations.patterns.PatternElement.Operator;
-import name.kazennikov.annotations.patterns.RHS;
 import name.kazennikov.annotations.patterns.RangePatternElement;
 import name.kazennikov.annotations.patterns.Rule;
 import name.kazennikov.tools.Alphabet;
@@ -35,18 +41,16 @@ public class JapePlusFSM {
 	public static class State {
 		int number;
 		List<Transition> transitions = new ArrayList<>();
-		List<RHS> rhs = new ArrayList<>();
-		int priority = -1;
+		Set<Rule> actions = new HashSet<>();
 
 		public boolean isFinal() {
-			return !rhs.isEmpty();
+			return !actions.isEmpty();
 		}
 
-		public void addTransition(State to, int label) {
-			Transition t = new Transition();
-			t.label = label;
-			t.target = to;
+		public Transition addTransition(State to, int label) {
+			Transition t = new Transition(this, label, to);
 			transitions.add(t);
+			return t;
 		}
 
 
@@ -57,11 +61,11 @@ public class JapePlusFSM {
 			visited.add(this);
 
 			for(Transition t : transitions) {
-				pw.printf("%d -> %d [label=\"%d\"];%n", number, t.target.number, t.label);
+				pw.printf("%d -> %d [label=\"%d\"];%n", number, t.dest.number, t.label);
 			}
 
 			for(Transition t : transitions) {
-				t.target.toDot(pw, visited);
+				t.dest.toDot(pw, visited);
 			}
 
 
@@ -83,23 +87,14 @@ public class JapePlusFSM {
 			return transitions;
 		}
 		
-		public List<RHS> getRHS() {
-			return rhs;
+		public Set<Rule> getActions() {
+			return actions;
 		}
 		
 		public int getNumber() {
 			return number;
 		}
-		
-		public int getPriority() {
-			return priority;
-		}
-		
-		public void setPriority(int priority) {
-			this.priority = priority;
-		}		
-		
-		
+				
 		public void visit(StateVisitor v, Set<State> visited) {
 			if(visited.contains(this))
 				return;
@@ -108,15 +103,14 @@ public class JapePlusFSM {
 			v.visit(this);
 
 			for(Transition t : transitions) {
-				t.target.visit(v, visited);
+				t.dest.visit(v, visited);
 			}
 		}
 		
 		public void setFinalFrom(Set<State> currentDState) {
 			for(State c : currentDState) {
 				if(c.isFinal()) {
-					this.rhs = c.rhs;
-					break;
+					this.actions.addAll(c.actions);
 				}
 			}
 		}
@@ -134,15 +128,36 @@ public class JapePlusFSM {
 		 * <li> label = -1 - GROUP_START
 		 * <li> label < -1 - named group lookup
 		 */
+		State src;
 		int label;
-		State target;
+		State dest;
 		
-		public State getTarget() {
-			return target;
+		public Transition(State src, int label, State dest) {
+			this.src = src;
+			this.label = label;
+			this.dest = dest;
+		}
+		
+		
+		public State getSrc() {
+			return src;
+		}
+		
+		public State getDest() {
+			return dest;
 		}
 		
 		public int getLabel() {
 			return label;
+		}
+		
+		public boolean isEpsilon() {
+			return label == EPSILON;
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("{src=%d, label=%d, dest=%d}", src.getNumber(), label, dest.getNumber());
 		}
 		
 
@@ -150,6 +165,7 @@ public class JapePlusFSM {
 
 
 	List<State> states = new ArrayList<>();	
+	List<Transition> transitions = new ArrayList<>();
 	
 	TIntArrayList tFrom = new TIntArrayList();
 	TIntArrayList tTo = new TIntArrayList();
@@ -169,9 +185,7 @@ public class JapePlusFSM {
 			start = addPE(e, start);
 		}
 		
-		start.rhs.addAll(r.rhs());
-		start.priority = r.getPriority();
-
+		start.actions.add(r);
 	}
 	
 	public State addState() {
@@ -183,7 +197,9 @@ public class JapePlusFSM {
 	
 	
 	public void addTransition(State from, State to, int label) {
-		from.addTransition(to, label);
+		Transition t = from.addTransition(to, label);
+		transitions.add(t);
+		
 		tFrom.add(from.number);
 		tTo.add(to.number);
 		tLabel.add(label);
@@ -284,7 +300,17 @@ public class JapePlusFSM {
 		pw.println("digraph finite_state_machine {");
 		pw.println("rankdir=LR;");
 		pw.println("node [shape=circle]");
-		start.toDot(pw, new HashSet<State>());
+		
+		for(State s : states) {
+			for(Transition t : s.transitions) {
+				pw.printf("%d -> %d [label=\"%d\"];%n", t.src.number, t.dest.number, t.label);
+			}
+
+			if(s.isFinal()) {
+				pw.printf("%d [shape=doublecircle];%n", s.number);
+			}
+
+		}
 		pw.println("}");
 
 	}
@@ -303,7 +329,7 @@ public class JapePlusFSM {
 			State current = list.removeFirst();
 			for(Transition t : current.transitions) {
 				if(t.label == Transition.EPSILON) {
-					State target = t.target;
+					State target = t.dest;
 					if(!closure.contains(target)) {
 						closure.add(target);
 						list.addFirst(target);
@@ -333,7 +359,7 @@ public class JapePlusFSM {
 		for(State s : states) {
 			for(Transition t : s.transitions) {
 				if(t.label == label)
-					next.add(t.target);
+					next.add(t.dest);
 			}
 		}
 		
@@ -415,11 +441,11 @@ public class JapePlusFSM {
 				for(Transition t : state.transitions) {
 
 					// skip epsilon transitions
-					if(t.label == 0)
+					if(t.label == Transition.EPSILON)
 						continue;
 
 
-					State target = t.target;
+					State target = t.dest;
 					Set<State> newDState = new HashSet<State>();
 					newDState.add(target);
 					newDState = lambdaClosure(newDState);
@@ -462,8 +488,7 @@ public class JapePlusFSM {
 			State s0 = states.get(i);
 
 			if(s0.isFinal()) {
-				s.priority = s0.priority;
-				s.rhs = s0.rhs;
+				s.actions = s0.actions;
 				finals.add(s);
 			}
 		}
@@ -496,41 +521,400 @@ public class JapePlusFSM {
 		return finals;
 	}
 	
+	
+	
+	
+	private void trReverse() {
+		for(State s : states) {
+			s.transitions.clear();
+		}
+	
+		
+		for(Transition t : transitions) {
+			State temp = t.dest;
+			t.dest = t.src;
+			t.src = temp;
+			
+			states.get(t.src.number).transitions.add(t);
+		}
+		
+		
+	
+	}
+	
+	private void trSort() {
+		Collections.sort(transitions, new Comparator<Transition>() {
+
+			@Override
+			public int compare(Transition o1, Transition o2) {
+				int res = Integer.compare(o1.src.number, o2.src.number);
+				if(res != 0)
+					return res;
+				res = Integer.compare(o1.label, o2.label);
+				if(res != 0)
+					return res;
+				res = Integer.compare(o1.dest.number, o2.dest.number);
+				
+				return res;
+			}
+		});
+	}
+	
+	public class AutomatonMinimizationHelp {
+		
+		TIntIntHashMap labelsMap = new TIntIntHashMap();
+		// states:
+		protected int[] statesClassNumber; // state -> class
+		
+		/*
+		 *  linked list for state classes
+		 *  stateNext[i] - next member of class for i-th state
+		 *  statePrev[i] - previous member of class for i-th state
+		 */
+		protected int[] statesNext; // следующее состояния данного класса
+		protected int[] statesPrev; // предыдущее состояние этого класса
+		
+		protected int statesStored; // число классов
+
+		// classes:
+		protected int[] classesFirstState; // номер первого состояния для класса i
+		protected int[] classesPower; // размер класса (число состояний в классе)
+		protected int[] classesNewPower;
+		protected int[] classesNewClass;
+		protected int[] classesFirstLetter;
+		protected int[] classesNext;
+		protected int classesStored; // число классов
+		protected int classesAlloced;
+		protected int firstClass;
+
+		// letters:
+		protected int[] lettersLetter;
+		protected int[] lettersNext;
+		protected int lettersStored; // число меток перехода
+		protected int lettersAlloced;
+
+		public AutomatonMinimizationHelp(int statesStored) {
+			this.statesStored = statesStored;
+			statesClassNumber = new int[statesStored];
+			statesNext = new int[statesStored];
+			statesPrev = new int[statesStored];
+
+			classesAlloced = 1024;
+			classesFirstState = new int[classesAlloced];
+			classesPower = new int[classesAlloced];
+			classesNewPower = new int[classesAlloced];
+			classesNewClass = new int[classesAlloced];
+			classesFirstLetter = new int[classesAlloced];
+			classesNext = new int[classesAlloced];
+			firstClass = Constants.NO;
+
+			lettersAlloced = 1024;
+			lettersLetter = new int[lettersAlloced];
+			lettersNext = new int[lettersAlloced];
+		}
+		
+		/*
+		 * Процедуры строят цепочки состояний и переходов в обратном порядке.
+		 * Т.е. firstClass - на самом деле последнее по порядку добавления.
+		 * Таким образом получается, что идут цепочки:
+		 * 1. классов. от firstClass по classsesNext
+		 * 2. classesFirstState - первое состояние класса. Можно обходить по classes[
+		 */
+		/**
+		 * Adds state to given state class
+		 * 
+		 * @param state state number
+		 * @param classToAdd class number
+		 */
+		protected void addState(int state, int classToAdd) {
+			
+			// linked list addFirst() method
+			statesNext[state] = classesFirstState[classToAdd];
+			if (classesFirstState[classToAdd] != Constants.NO) {
+				statesPrev[classesFirstState[classToAdd]] = state;
+			}
+			statesPrev[state] = Constants.NO;
+			
+			statesClassNumber[state] = classToAdd;
+			classesFirstState[classToAdd] = state;
+			classesPower[classToAdd]++;
+		}
+
+		protected void addLetter(int classToAdd, int letter) {
+			// reallocate letters if needed
+			if (lettersStored == lettersAlloced) {
+				int mem = lettersAlloced + lettersAlloced / 4;
+				lettersLetter = GenericWholeArrray.realloc(lettersLetter, mem,
+						lettersStored);
+				lettersNext = GenericWholeArrray.realloc(lettersNext, mem,
+						lettersStored);
+				lettersAlloced = mem;
+			}
+			
+			// установить первую метку перехода для класса
+			if (classesFirstLetter[classToAdd] == Constants.NO) {
+				classesNext[classToAdd] = firstClass;
+				firstClass = classToAdd;
+			}
+			
+			lettersLetter[lettersStored] = letter;
+			lettersNext[lettersStored] = classesFirstLetter[classToAdd];
+			classesFirstLetter[classToAdd] = lettersStored;
+			lettersStored++;
+		}
+
+		protected void reallocClasses() {
+			int mem = classesAlloced + classesAlloced / 4;
+			
+			classesFirstState = GenericWholeArrray.realloc(classesFirstState, mem, classesStored);
+			classesPower = GenericWholeArrray.realloc(classesPower, mem, classesStored);
+			classesNewPower = GenericWholeArrray.realloc(classesNewPower, mem, classesStored);
+			classesNewClass = GenericWholeArrray.realloc(classesNewClass, mem, classesStored);
+			classesFirstLetter = GenericWholeArrray.realloc(classesFirstLetter, mem, classesStored);
+			classesNext = GenericWholeArrray.realloc(classesNext, mem, classesStored);
+			classesAlloced = mem;
+		}
+
+		protected void moveState(int state, int newClass) {
+			int curClass = statesClassNumber[state];
+			if (statesPrev[state] == Constants.NO) {
+				classesFirstState[curClass] = statesNext[state];
+			} else {
+				statesNext[statesPrev[state]] = statesNext[state];
+			}
+			if (statesNext[state] != Constants.NO) {
+				statesPrev[statesNext[state]] = statesPrev[state];
+			}
+			addState(state, newClass);
+		}
+		
+		public void mapTransitions() {
+			labelsMap.put(0, 0);
+			
+			// map labels to [0 ... n] values for correct algorithm work
+			for(Transition t : transitions) {
+				
+				if(!labelsMap.containsKey(t.label)) {
+					int label = labelsMap.size();
+					labelsMap.put(t.label, label);
+					t.label = label;
+				} else {
+					t.label = labelsMap.get(t.label);
+				}
+			}
+		}
+		
+		public void unmapTransitions() {
+			final TIntIntHashMap map = new TIntIntHashMap();
+			labelsMap.forEachEntry(new TIntIntProcedure() {
+				
+				@Override
+				public boolean execute(int a, int b) {
+					map.put(b, a);
+					return true;
+				}
+			});
+			
+			for(Transition t : transitions) {
+				t.label = map.get(t.label);
+			}
+		}
+	}
+
+	
+	protected AutomatonMinimizationHelp hopcroftMinimize() {
+		// reverse transitions
+		trReverse();
+		trSort();
+		
+		AutomatonMinimizationHelp mHelp = new AutomatonMinimizationHelp(states.size());
+		mHelp.mapTransitions();
+		
+		int labelsStored = mHelp.labelsMap.size();
+		
+		
+		IntSequence classes = new IntSequence(); // существующие классы. изначально - final - каждый в отдельный класс
+		int[] finalties = new int[states.size()];
+		int classCount = 0;
+		for (int i = 0; i < states.size(); i++) {
+			
+			finalties[i] = -1;
+			State s = states.get(i);
+			if (s.isFinal()) {
+				finalties[i] = s.number;
+				classCount++;
+			}
+			classes.addIfDoesNotExsist(finalties[i]);
+		}
+
+
+		
+		if (classCount == 0) {
+			return mHelp;
+		}
+
+		// инициализаця данных о минимизации
+		for (int j = 0; j < classes.seqStored; j++) {
+			mHelp.classesFirstState[j] = Constants.NO;
+			mHelp.classesNewClass[j] = Constants.NO;
+			mHelp.classesNewPower[j] = 0;
+			mHelp.classesPower[j] = 0;
+			mHelp.classesFirstLetter[j] = Constants.NO;
+			mHelp.classesNext[j] = Constants.NO;
+		}
+		mHelp.classesStored = classes.seqStored;
+
+		// добавить состояния по классам
+		for (int i = 0; i < states.size(); i++) {
+			mHelp.addState(i, classes.contains(finalties[i]));
+		}
+
+		// добавить метки переходов (по классам)?
+		for (int i = 0; i < labelsStored; i++) {
+			for (int j = 0; j < mHelp.classesStored; j++) {
+				mHelp.addLetter(j, i);
+			}
+		}
+		IntSequence states = new IntSequence();
+		classes.seqStored = 0;
+		GenericWholeArrray alph = new GenericWholeArrray(
+				GenericWholeArrray.TYPE_BIT, labelsStored);
+
+		while (mHelp.firstClass != Constants.NO) {
+			int q1 = mHelp.firstClass; 
+			int a = mHelp.lettersLetter[mHelp.classesFirstLetter[q1]];
+			mHelp.classesFirstLetter[q1] = mHelp.lettersNext[mHelp.classesFirstLetter[q1]];
+			
+			if (mHelp.classesFirstLetter[q1] == Constants.NO) {
+				mHelp.firstClass = mHelp.classesNext[q1];
+			}
+			
+			classes.seqStored = 0;
+			states.seqStored = 0;
+			
+			for (int state = mHelp.classesFirstState[q1]; state != Constants.NO; state = mHelp.statesNext[state]) {
+				State s = this.states.get(state);
+				for(Transition t : s.transitions) {
+					if(t.label == a) {
+						int q0 = mHelp.statesClassNumber[t.dest.number];
+						states.add(t.dest.number);
+						if (mHelp.classesNewPower[q0] == 0) {
+							classes.add(q0);
+						}
+						mHelp.classesNewPower[q0]++;
+
+					}
+				}
+			}
+			
+			for (int j = 0; j < states.seqStored; j++) {
+				int q0 = mHelp.statesClassNumber[states.seq[j]];
+				if (mHelp.classesNewPower[q0] == mHelp.classesPower[q0]) {
+					continue;
+				}
+				if (mHelp.classesNewClass[q0] == Constants.NO) {
+					if (mHelp.classesStored == mHelp.classesAlloced) {
+						mHelp.reallocClasses();
+					}
+					mHelp.classesNewClass[q0] = mHelp.classesStored;
+					mHelp.classesFirstState[mHelp.classesStored] = Constants.NO;
+					mHelp.classesNewClass[mHelp.classesStored] = Constants.NO;
+					mHelp.classesNewPower[mHelp.classesStored] = 0;
+					mHelp.classesPower[mHelp.classesStored] = 0;
+					mHelp.classesFirstLetter[mHelp.classesStored] = Constants.NO;
+					mHelp.classesNext[mHelp.classesStored] = Constants.NO;
+					mHelp.classesStored++;
+				}
+				mHelp.moveState(states.seq[j], mHelp.classesNewClass[q0]);
+			}
+			
+			for (int i = 0; i < classes.seqStored; i++) {
+				int q0 = classes.seq[i];
+				if (mHelp.classesNewPower[q0] != mHelp.classesPower[q0]) {
+					mHelp.classesPower[q0] -= mHelp.classesNewPower[q0];
+					for (int j = 1; j < labelsStored; j++) {
+						alph.setElement(j, 0);
+					}
+					for (int j = mHelp.classesFirstLetter[q0]; j != Constants.NO; j = mHelp.lettersNext[j]) {
+						mHelp.addLetter(mHelp.classesNewClass[q0],
+								mHelp.lettersLetter[j]);
+						alph.setElement(mHelp.lettersLetter[j], Constants.NO);
+					}
+					for (int j = 1; j < labelsStored; j++) {
+						if (alph.elementAt(j) == Constants.NO) {
+							continue;
+						}
+						if (mHelp.classesPower[q0] < mHelp.classesPower[mHelp.classesNewClass[q0]]) {
+							mHelp.addLetter(q0, j);
+						} else {
+							mHelp.addLetter(mHelp.classesNewClass[q0], j);
+						}
+					}
+				}
+
+				mHelp.classesNewPower[q0] = 0;
+				mHelp.classesNewClass[q0] = Constants.NO;
+			}
+		}
+		return mHelp;
+	}
+	
 	public JapePlusFSM minimize() {
+		AutomatonMinimizationHelp mHelp = hopcroftMinimize();
 		JapePlusFSM fsm = new JapePlusFSM();
-		/*
-		 * Условия:
-		 * 1. Нужен механизм для различения конечных состояний
-		 * 2. Логично адресовать состояния не объектами, а номерами состояний
-		 * 3. (Спорно) Логично адресовать переходы их индексами 
-		 * 4. 
-		 */
 		
+		if (mHelp.classesStored == 0) {
+			return fsm;
+		}
 		
+		mHelp.unmapTransitions();
+		trReverse();
+		trSort();
+		// add states
+		for(int i = 0; i < mHelp.classesStored; i++) {
+			fsm.addState();
+		}
+
+		// add transitions
+		for (int i = 0; i < mHelp.classesStored; i++) {
+			int state = mHelp.classesFirstState[i];
+			State s = states.get(state);
+			if(s.number == 0) {
+				fsm.start = fsm.states.get(i);
+			}
+			
+			for(Transition t : s.transitions) {
+				fsm.addTransition(fsm.states.get(i), fsm.states.get(mHelp.statesClassNumber[t.dest.number]), t.label);
+			}
+		}
 		
-		/*
-		 * P := {F, Q \ F}; // текущее разбиение
-		 * W := {F}; // множества точно отличные от текущего разбиения
-		 * while (W is not empty) do
-		 *      choose and remove a set A from W // получаем очередное множество из W
-		 *      for each c in ∑ do
-		 *           let X be the set of states for which a transition on c leads to a state in A
-		 *           for each set Y in P for which X ∩ Y is nonempty do
-		 *               replace Y in P by the two sets X ∩ Y and Y \ X
-		 *               // работа с W
-		 *               if Y is in W
-		 *                    replace Y in W by the same two sets
-		 *               else if |X ∩ Y| <= |Y \ X|
-		 *                	  add X ∩ Y to W
-		 *               else
-		 *               	  add Y \ X to W
-		 *           end;
-		 *      end;
-		 * end;
-		 */
+		for(int i = 0; i < mHelp.classesStored; i++) {
+			int state = mHelp.classesFirstState[i];
+			State s0 = states.get(state);
+
+			State s = fsm.states.get(i);
+			
+			if(s0.isFinal()) {
+				s.actions.addAll(s0.actions);
+			}
+		}
+		
+		// add finals 
+//		for (int i = 0; i < mHelp.classesStored; i++) {
+//			State s = fsm.states.get(mHelp.classesFirstState[i]);
+//			
+//			result.stateFinalities.setElement(i,
+//					stateFinalities.elementAt(state));
+//			result.stateTransitions[i] = j;
+//			result.stateNumberOfTransitions.setElement(i,
+//					stateNumberOfTransitions.elementAt(state));
+//			j += result.stateNumberOfTransitions.elementAt(i);
+//		}
 		
 		return fsm;
 	}
+
+
 
 
 }
