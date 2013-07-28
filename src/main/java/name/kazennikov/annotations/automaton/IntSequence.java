@@ -36,6 +36,7 @@ public class IntSequence {
 		if (seqStored == seq.length) {
 			realloc();
 		}
+		
 		seq[seqStored] = n;
 		seqStored++;
 	}
@@ -152,7 +153,7 @@ public class IntSequence {
 		add(n);
 	}
 
-	public int contains(int n) {
+	public int indexOf(int n) {
 		for (int i = 0; i < seqStored; i++) {
 			if (seq[i] == n) {
 				return i;

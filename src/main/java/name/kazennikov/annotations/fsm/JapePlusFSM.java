@@ -581,17 +581,17 @@ public class JapePlusFSM {
 		protected int[] classesPower; // размер класса (число состояний в классе)
 		protected int[] classesNewPower;
 		protected int[] classesNewClass;
-		protected int[] classesFirstLetter;
-		protected int[] classesNext;
+		protected int[] classesFirstLabel;
+		protected int[] classesNext; // class index sequence i.e. classesNext[cls] - next class number for given class
 		protected int classesStored; // число классов
 		protected int classesAlloced;
-		protected int firstClass;
+		protected int firstClass; // first class index
 
 		// letters:
-		protected int[] lettersLetter;
-		protected int[] lettersNext;
-		protected int lettersStored; // число меток перехода
-		protected int lettersAlloced;
+		protected int[] labelsLabel; // label index -> label id. label index is a sequence number for in [class x labels]
+		protected int[] labelsNext; // labels next label[labelId] -> next label id for this class
+		protected int labelsStored; // total number of label ids, initially [class x labels]
+		protected int labelsAlloced;
 
 		public AutomatonMinimizationData(int statesStored) {
 			this.statesStored = statesStored;
@@ -604,13 +604,13 @@ public class JapePlusFSM {
 			classesPower = new int[classesAlloced];
 			classesNewPower = new int[classesAlloced];
 			classesNewClass = new int[classesAlloced];
-			classesFirstLetter = new int[classesAlloced];
+			classesFirstLabel = new int[classesAlloced];
 			classesNext = new int[classesAlloced];
 			firstClass = Constants.NO;
 
-			lettersAlloced = 1024;
-			lettersLetter = new int[lettersAlloced];
-			lettersNext = new int[lettersAlloced];
+			labelsAlloced = 1024;
+			labelsLabel = new int[labelsAlloced];
+			labelsNext = new int[labelsAlloced];
 		}
 		
 		/*
@@ -640,25 +640,27 @@ public class JapePlusFSM {
 			classesPower[cls]++;
 		}
 
-		protected void addLetter(int cls, int letter) {
+		protected void addLabel(int cls, int label) {
 			// reallocate letters if needed
-			if (lettersStored == lettersAlloced) {
-				int mem = lettersAlloced + lettersAlloced / 4; // 1.25 growth rate
-				lettersLetter = GenericWholeArrray.realloc(lettersLetter, mem, lettersStored);
-				lettersNext = GenericWholeArrray.realloc(lettersNext, mem, lettersStored);
-				lettersAlloced = mem;
+			if (labelsStored == labelsAlloced) {
+				int mem = labelsAlloced + labelsAlloced / 4; // 1.25 growth rate
+				labelsLabel = GenericWholeArrray.realloc(labelsLabel, mem, labelsStored);
+				labelsNext = GenericWholeArrray.realloc(labelsNext, mem, labelsStored);
+				labelsAlloced = mem;
 			}
 			
-			// установить первую метку перехода для класса
-			if (classesFirstLetter[cls] == Constants.NO) {
+			// установить первую метку перехода для класса (первое появление класса)
+			if (classesFirstLabel[cls] == Constants.NO) {
 				classesNext[cls] = firstClass;
 				firstClass = cls;
 			}
 			
-			lettersLetter[lettersStored] = letter;
-			lettersNext[lettersStored] = classesFirstLetter[cls];
-			classesFirstLetter[cls] = lettersStored;
-			lettersStored++;
+			labelsLabel[labelsStored] = label;
+			
+			labelsNext[labelsStored] = classesFirstLabel[cls];
+			classesFirstLabel[cls] = labelsStored;
+			
+			labelsStored++;
 		}
 
 		protected void reallocClasses() {
@@ -668,7 +670,7 @@ public class JapePlusFSM {
 			classesPower = GenericWholeArrray.realloc(classesPower, mem, classesStored);
 			classesNewPower = GenericWholeArrray.realloc(classesNewPower, mem, classesStored);
 			classesNewClass = GenericWholeArrray.realloc(classesNewClass, mem, classesStored);
-			classesFirstLetter = GenericWholeArrray.realloc(classesFirstLetter, mem, classesStored);
+			classesFirstLabel = GenericWholeArrray.realloc(classesFirstLabel, mem, classesStored);
 			classesNext = GenericWholeArrray.realloc(classesNext, mem, classesStored);
 			classesAlloced = mem;
 		}
@@ -689,7 +691,7 @@ public class JapePlusFSM {
 			addState(state, newClass);
 		}
 		
-		public void mapTransitions() {
+		public void mapLabels() {
 			labelsMap.put(0, 0);
 			
 			// map labels to [0 ... n] values for correct algorithm work
@@ -705,7 +707,7 @@ public class JapePlusFSM {
 			}
 		}
 		
-		public void unmapTransitions() {
+		public void unmapLabels() {
 			final TIntIntHashMap map = new TIntIntHashMap();
 			labelsMap.forEachEntry(new TIntIntProcedure() {
 				
@@ -729,7 +731,7 @@ public class JapePlusFSM {
 		trSort();
 		
 		AutomatonMinimizationData data = new AutomatonMinimizationData(states.size());
-		data.mapTransitions();
+		data.mapLabels();
 		
 		int labelsStored = data.labelsMap.size();
 		
@@ -762,33 +764,35 @@ public class JapePlusFSM {
 			data.classesNewClass[cls] = Constants.NO;
 			data.classesNewPower[cls] = 0;
 			data.classesPower[cls] = 0;
-			data.classesFirstLetter[cls] = Constants.NO;
+			data.classesFirstLabel[cls] = Constants.NO;
 			data.classesNext[cls] = Constants.NO;
 		}
+		
 		data.classesStored = classes.seqStored;
 
 		// добавить состояния по классам
 		for(int state = 0; state < states.size(); state++) {
-			data.addState(state, classes.contains(finalties[state]));
+			data.addState(state, classes.indexOf(finalties[state]));
 		}
 
 		// добавить метки переходов (по классам)?
 		for(int label = 1; label < labelsStored; label++) {
 			for(int cls = 0; cls < data.classesStored; cls++) {
-				data.addLetter(cls, label);
+				data.addLabel(cls, label);
 			}
 		}
 		
 		IntSequence states = new IntSequence();
 		classes.seqStored = 0;
-		GenericWholeArrray alph = new GenericWholeArrray(GenericWholeArrray.TYPE_BIT, labelsStored);
 
+		GenericWholeArrray alpha = new GenericWholeArrray(GenericWholeArrray.TYPE_BIT, labelsStored);
+		
 		while(data.firstClass != Constants.NO) {
 			int q1 = data.firstClass; 
-			int a = data.lettersLetter[data.classesFirstLetter[q1]];
-			data.classesFirstLetter[q1] = data.lettersNext[data.classesFirstLetter[q1]];
+			int a = data.labelsLabel[data.classesFirstLabel[q1]];
+			data.classesFirstLabel[q1] = data.labelsNext[data.classesFirstLabel[q1]];
 			
-			if(data.classesFirstLetter[q1] == Constants.NO) {
+			if(data.classesFirstLabel[q1] == Constants.NO) {
 				data.firstClass = data.classesNext[q1];
 			}
 			
@@ -796,15 +800,20 @@ public class JapePlusFSM {
 			states.seqStored = 0;
 
 			// iterate through states of the class q1
+			/*
+			 * Группируем переходы в q1 по a. по различным классам
+			 */
 			for(int state = data.classesFirstState[q1]; state != Constants.NO; state = data.statesNext[state]) {
 				State s = this.states.get(state);
+
 				for(Transition t : s.transitions) {
 					if(t.label == a) {
-						int q0 = data.statesClassNumber[t.dest.number];
-						states.add(t.dest.number);
+						int q0 = data.statesClassNumber[t.dest.getNumber()];
+						states.add(t.dest.getNumber());
 						if(data.classesNewPower[q0] == 0) {
 							classes.add(q0);
 						}
+						
 						data.classesNewPower[q0]++;
 					}
 				}
@@ -817,6 +826,7 @@ public class JapePlusFSM {
 					continue;
 				}
 				
+
 				if(data.classesNewClass[q0] == Constants.NO) {
 					
 					if (data.classesStored == data.classesAlloced) {
@@ -828,10 +838,11 @@ public class JapePlusFSM {
 					data.classesNewClass[data.classesStored] = Constants.NO;
 					data.classesNewPower[data.classesStored] = 0;
 					data.classesPower[data.classesStored] = 0;
-					data.classesFirstLetter[data.classesStored] = Constants.NO;
+					data.classesFirstLabel[data.classesStored] = Constants.NO;
 					data.classesNext[data.classesStored] = Constants.NO;
 					data.classesStored++;
 				}
+				
 				data.moveState(states.seq[state], data.classesNewClass[q0]);
 			}
 			
@@ -841,24 +852,26 @@ public class JapePlusFSM {
 				if(data.classesNewPower[q0] != data.classesPower[q0]) {
 					data.classesPower[q0] -= data.classesNewPower[q0];
 					
+					
+					// reset alpha array
 					for(int label = 1; label < labelsStored; label++) {
-						alph.setElement(label, 0);
+						alpha.setElement(label, 0);
 					}
 					
-					for(int label = data.classesFirstLetter[q0]; label != Constants.NO; label = data.lettersNext[label]) {
-						data.addLetter(data.classesNewClass[q0], data.lettersLetter[label]);
-						alph.setElement(data.lettersLetter[label], Constants.NO);
+					for(int label = data.classesFirstLabel[q0]; label != Constants.NO; label = data.labelsNext[label]) {
+						data.addLabel(data.classesNewClass[q0], data.labelsLabel[label]);
+						alpha.setElement(data.labelsLabel[label], Constants.NO);
 					}
 					
 					for(int label = 1; label < labelsStored; label++) {
-						if(alph.elementAt(label) == Constants.NO) {
+						if(alpha.elementAt(label) == Constants.NO) {
 							continue;
 						}
 						
 						if(data.classesPower[q0] < data.classesPower[data.classesNewClass[q0]]) {
-							data.addLetter(q0, label);
+							data.addLabel(q0, label);
 						} else {
-							data.addLetter(data.classesNewClass[q0], label);
+							data.addLabel(data.classesNewClass[q0], label);
 						}
 						
 					}
@@ -880,7 +893,7 @@ public class JapePlusFSM {
 			return fsm;
 		}
 		
-		data.unmapTransitions();
+		data.unmapLabels();
 		trReverse();
 		trSort();
 		// add states
