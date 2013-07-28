@@ -738,44 +738,44 @@ public class JapePlusFSM {
 		int[] finalties = new int[states.size()];
 		int finalClassCount = 0;
 		
-		for (int i = 0; i < states.size(); i++) {
+		for(int state = 0; state < states.size(); state++) {
 			
-			finalties[i] = -1;
-			State s = states.get(i);
+			finalties[state] = -1;
+			State s = states.get(state);
 			
 			if (s.isFinal()) {
-				finalties[i] = s.number;
+				finalties[state] = s.number;
 				finalClassCount++;
 			}
-			classes.addIfDoesNotExsist(finalties[i]);
+			classes.addIfDoesNotExsist(finalties[state]);
 		}
 
 
 		
-		if (finalClassCount == 0) {
+		if(finalClassCount == 0) {
 			return data;
 		}
 
 		// инициализаця данных о минимизации
-		for (int j = 0; j < classes.seqStored; j++) {
-			data.classesFirstState[j] = Constants.NO;
-			data.classesNewClass[j] = Constants.NO;
-			data.classesNewPower[j] = 0;
-			data.classesPower[j] = 0;
-			data.classesFirstLetter[j] = Constants.NO;
-			data.classesNext[j] = Constants.NO;
+		for(int cls = 0; cls < classes.seqStored; cls++) {
+			data.classesFirstState[cls] = Constants.NO;
+			data.classesNewClass[cls] = Constants.NO;
+			data.classesNewPower[cls] = 0;
+			data.classesPower[cls] = 0;
+			data.classesFirstLetter[cls] = Constants.NO;
+			data.classesNext[cls] = Constants.NO;
 		}
 		data.classesStored = classes.seqStored;
 
 		// добавить состояния по классам
-		for (int i = 0; i < states.size(); i++) {
-			data.addState(i, classes.contains(finalties[i]));
+		for(int state = 0; state < states.size(); state++) {
+			data.addState(state, classes.contains(finalties[state]));
 		}
 
 		// добавить метки переходов (по классам)?
-		for (int i = 0; i < labelsStored; i++) {
-			for (int j = 0; j < data.classesStored; j++) {
-				data.addLetter(j, i);
+		for(int label = 1; label < labelsStored; label++) {
+			for(int cls = 0; cls < data.classesStored; cls++) {
+				data.addLetter(cls, label);
 			}
 		}
 		
@@ -783,12 +783,12 @@ public class JapePlusFSM {
 		classes.seqStored = 0;
 		GenericWholeArrray alph = new GenericWholeArrray(GenericWholeArrray.TYPE_BIT, labelsStored);
 
-		while (data.firstClass != Constants.NO) {
+		while(data.firstClass != Constants.NO) {
 			int q1 = data.firstClass; 
 			int a = data.lettersLetter[data.classesFirstLetter[q1]];
 			data.classesFirstLetter[q1] = data.lettersNext[data.classesFirstLetter[q1]];
 			
-			if (data.classesFirstLetter[q1] == Constants.NO) {
+			if(data.classesFirstLetter[q1] == Constants.NO) {
 				data.firstClass = data.classesNext[q1];
 			}
 			
@@ -796,13 +796,13 @@ public class JapePlusFSM {
 			states.seqStored = 0;
 
 			// iterate through states of the class q1
-			for (int state = data.classesFirstState[q1]; state != Constants.NO; state = data.statesNext[state]) {
+			for(int state = data.classesFirstState[q1]; state != Constants.NO; state = data.statesNext[state]) {
 				State s = this.states.get(state);
 				for(Transition t : s.transitions) {
 					if(t.label == a) {
 						int q0 = data.statesClassNumber[t.dest.number];
 						states.add(t.dest.number);
-						if (data.classesNewPower[q0] == 0) {
+						if(data.classesNewPower[q0] == 0) {
 							classes.add(q0);
 						}
 						data.classesNewPower[q0]++;
@@ -810,14 +810,14 @@ public class JapePlusFSM {
 				}
 			}
 			
-			for (int j = 0; j < states.seqStored; j++) {
-				int q0 = data.statesClassNumber[states.seq[j]];
+			for(int state = 0; state < states.seqStored; state++) {
+				int q0 = data.statesClassNumber[states.seq[state]];
 				
-				if (data.classesNewPower[q0] == data.classesPower[q0]) {
+				if(data.classesNewPower[q0] == data.classesPower[q0]) {
 					continue;
 				}
 				
-				if (data.classesNewClass[q0] == Constants.NO) {
+				if(data.classesNewClass[q0] == Constants.NO) {
 					
 					if (data.classesStored == data.classesAlloced) {
 						data.reallocClasses();
@@ -832,33 +832,33 @@ public class JapePlusFSM {
 					data.classesNext[data.classesStored] = Constants.NO;
 					data.classesStored++;
 				}
-				data.moveState(states.seq[j], data.classesNewClass[q0]);
+				data.moveState(states.seq[state], data.classesNewClass[q0]);
 			}
 			
-			for (int i = 0; i < classes.seqStored; i++) {
-				int q0 = classes.seq[i];
+			for(int cls = 0; cls < classes.seqStored; cls++) {
+				int q0 = classes.seq[cls];
 				
-				if (data.classesNewPower[q0] != data.classesPower[q0]) {
+				if(data.classesNewPower[q0] != data.classesPower[q0]) {
 					data.classesPower[q0] -= data.classesNewPower[q0];
 					
-					for (int j = 1; j < labelsStored; j++) {
-						alph.setElement(j, 0);
+					for(int label = 1; label < labelsStored; label++) {
+						alph.setElement(label, 0);
 					}
 					
-					for (int j = data.classesFirstLetter[q0]; j != Constants.NO; j = data.lettersNext[j]) {
-						data.addLetter(data.classesNewClass[q0], data.lettersLetter[j]);
-						alph.setElement(data.lettersLetter[j], Constants.NO);
+					for(int label = data.classesFirstLetter[q0]; label != Constants.NO; label = data.lettersNext[label]) {
+						data.addLetter(data.classesNewClass[q0], data.lettersLetter[label]);
+						alph.setElement(data.lettersLetter[label], Constants.NO);
 					}
 					
-					for (int j = 1; j < labelsStored; j++) {
-						if (alph.elementAt(j) == Constants.NO) {
+					for(int label = 1; label < labelsStored; label++) {
+						if(alph.elementAt(label) == Constants.NO) {
 							continue;
 						}
 						
-						if (data.classesPower[q0] < data.classesPower[data.classesNewClass[q0]]) {
-							data.addLetter(q0, j);
+						if(data.classesPower[q0] < data.classesPower[data.classesNewClass[q0]]) {
+							data.addLetter(q0, label);
 						} else {
-							data.addLetter(data.classesNewClass[q0], j);
+							data.addLetter(data.classesNewClass[q0], label);
 						}
 						
 					}
