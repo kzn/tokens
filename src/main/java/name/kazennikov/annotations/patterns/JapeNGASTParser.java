@@ -66,7 +66,9 @@ public class JapeNGASTParser {
 				break;
 				
 			case "RULE":
-				phase.rules.add(parseRule(child));
+				Rule r = parseRule(child);
+				r.number = phase.rules.size();
+				phase.rules.add(r);
 				break;
 			}
 
@@ -80,6 +82,7 @@ public class JapeNGASTParser {
 
 	private Rule parseRule(Tree r) throws Exception {
 		Rule rule = new Rule();
+		
 		
 		for(int i = 0; i < r.getChildCount(); i++) {
 			Tree child = r.getChild(i);
