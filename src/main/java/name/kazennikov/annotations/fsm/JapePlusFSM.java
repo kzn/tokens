@@ -722,6 +722,41 @@ public class JapePlusFSM {
 				t.label = map.get(t.label);
 			}
 		}
+
+		public void initClass(int cls) {
+			classesFirstState[cls] = Constants.NO;
+			classesNewClass[cls] = Constants.NO;
+			classesNewPower[cls] = 0;
+			classesPower[cls] = 0;
+			classesFirstLabel[cls] = Constants.NO;
+			classesNext[cls] = Constants.NO;
+		}
+		
+		public int[] finalties() {
+			int[] finalties = new int[states.size()];
+			for(int state = 0; state < states.size(); state++) {
+				State s = states.get(state);
+				finalties[state] = -1;
+				if (s.isFinal()) {
+					finalties[state] = s.number;
+				}
+			}
+			
+			return finalties;
+		}
+		
+		public IntSequence countClasses(int[] finalties) {
+			IntSequence classes = new IntSequence(); // существующие классы. изначально - final - каждый в отдельный класс
+			
+			for(int state = 0; state < states.size(); state++) {
+				classes.addIfDoesNotExsist(finalties[state]);
+			}
+			
+			return classes;
+
+		}
+		
+		
 	}
 
 	
@@ -734,38 +769,16 @@ public class JapePlusFSM {
 		data.mapLabels();
 		
 		int labelsStored = data.labelsMap.size();
+		int[] finalties = data.finalties();
+		IntSequence classes = data.countClasses(finalties);
 		
-		
-		IntSequence classes = new IntSequence(); // существующие классы. изначально - final - каждый в отдельный класс
-		int[] finalties = new int[states.size()];
-		int finalClassCount = 0;
-		
-		for(int state = 0; state < states.size(); state++) {
-			
-			finalties[state] = -1;
-			State s = states.get(state);
-			
-			if (s.isFinal()) {
-				finalties[state] = s.number;
-				finalClassCount++;
-			}
-			classes.addIfDoesNotExsist(finalties[state]);
-		}
-
-
-		
-		if(finalClassCount == 0) {
+		if(classes.seqStored == 1) {
 			return data;
 		}
 
 		// инициализаця данных о минимизации
 		for(int cls = 0; cls < classes.seqStored; cls++) {
-			data.classesFirstState[cls] = Constants.NO;
-			data.classesNewClass[cls] = Constants.NO;
-			data.classesNewPower[cls] = 0;
-			data.classesPower[cls] = 0;
-			data.classesFirstLabel[cls] = Constants.NO;
-			data.classesNext[cls] = Constants.NO;
+			data.initClass(cls);
 		}
 		
 		data.classesStored = classes.seqStored;
@@ -833,13 +846,9 @@ public class JapePlusFSM {
 						data.reallocClasses();
 					}
 					
-					data.classesNewClass[q0] = data.classesStored;
-					data.classesFirstState[data.classesStored] = Constants.NO;
-					data.classesNewClass[data.classesStored] = Constants.NO;
-					data.classesNewPower[data.classesStored] = 0;
-					data.classesPower[data.classesStored] = 0;
-					data.classesFirstLabel[data.classesStored] = Constants.NO;
-					data.classesNext[data.classesStored] = Constants.NO;
+					data.classesNewClass[q0] = data.classesStored;					
+					data.initClass(data.classesStored);
+					
 					data.classesStored++;
 				}
 				
@@ -852,11 +861,7 @@ public class JapePlusFSM {
 				if(data.classesNewPower[q0] != data.classesPower[q0]) {
 					data.classesPower[q0] -= data.classesNewPower[q0];
 					
-					
-					// reset alpha array
-					for(int label = 1; label < labelsStored; label++) {
-						alpha.setElement(label, 0);
-					}
+					alpha.clear();
 					
 					for(int label = data.classesFirstLabel[q0]; label != Constants.NO; label = data.labelsNext[label]) {
 						data.addLabel(data.classesNewClass[q0], data.labelsLabel[label]);

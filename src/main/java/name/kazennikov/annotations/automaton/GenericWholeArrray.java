@@ -36,7 +36,7 @@ public class GenericWholeArrray {
 	private int[] intArray;
 	private char[] charArray;
 	private int[] bitArray;
-	private int type;
+	private final int type;
 
 	public GenericWholeArrray(int type, int length) {
 		this.type = type;
@@ -313,5 +313,28 @@ public class GenericWholeArrray {
 			return (bits / 32);
 		}
 		return (bits / 32 + 1);
+	}
+	
+	public void clear() {
+		switch (type) {
+		case TYPE_BYTE:
+			Arrays.fill(byteArray, (byte)0);
+			break;
+		case TYPE_SHORT:
+			Arrays.fill(shortArray, (short)0);
+			break;
+		case TYPE_INT:
+			Arrays.fill(intArray, 0);
+			break;
+
+		case TYPE_CHAR:
+			Arrays.fill(charArray, (char)0);
+			break;
+
+		case TYPE_BIT:
+			Arrays.fill(bitArray, 0);
+			break;
+		}
+
 	}
 }
