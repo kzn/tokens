@@ -24,9 +24,11 @@ public class TestParseDir {
 				JapePlusFSM fsm = new JapePlusFSM();
 				fsm.addRule(r);
 
-				fsm.toDot("pretest.dot");
+				fsm.toDot("test_pre.dot");
 				fsm = fsm.determinize();
-
+				fsm.toDot("test_det.dot");
+				fsm = fsm.minimize();
+				fsm.toDot("test_min.dot");
 				fsm.toDot("test.dot");
 
 			}
