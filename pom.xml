@@ -35,6 +35,12 @@
 		<version>3.4</version>
 	</dependency>
 
+	<dependency>
+		<groupId>name.kazennikov</groupId>
+		<artifactId>dafsa</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+
 
 	<dependency>
 		<groupId>org.eclipse.jdt.core.compiler</groupId>
