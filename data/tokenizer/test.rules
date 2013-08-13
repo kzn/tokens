@@ -1,0 +1,21 @@
+#DefaultTokeniser.rules#
+#diana 28/6/00#
+#update 9/7/00#
+
+UPPERCASE_LETTER (LOWERCASE_LETTER (LOWERCASE_LETTER | DASH_PUNCTUATION | FORMAT)*)* > Token;orth=upperInitial;kind=word;
+UPPERCASE_LETTER (DASH_PUNCTUATION | FORMAT)* (UPPERCASE_LETTER | DASH_PUNCTUATION | FORMAT)+ > Token;orth=allCaps;kind=word;
+LOWERCASE_LETTER (LOWERCASE_LETTER | DASH_PUNCTUATION | FORMAT)* > Token;orth=lowercase;kind=word;
+
+#whitespace#
+(SPACE_SEPARATOR) >SpaceToken;kind=space;
+(CONTROL) >SpaceToken;kind=control;
+
+#symbols#
+(MODIFIER_SYMBOL | MATH_SYMBOL | OTHER_SYMBOL) > Token;kind=symbol;
+CURRENCY_SYMBOL > Token;kind=symbol;symbolkind=currency;
+
+#punctuation#
+(DASH_PUNCTUATION | FORMAT) > Token;kind=punctuation;subkind=dashpunct;
+(CONNECTOR_PUNCTUATION | OTHER_PUNCTUATION) > Token;kind=punctuation;
+("START_PUNCTUATION" | "INITIAL_QUOTE_PUNCTUATION") > Token;kind=punctuation;position=startpunct;
+("END_PUNCTUATION" | "FINAL_QUOTE_PUNCTUATION") >Token;kind=punctuation;position=endpunct;
