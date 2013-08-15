@@ -169,8 +169,7 @@ public class Document extends Annotation implements CharSequence {
 	}
 	
 	public Annotation addAnnotation(String name, int start, int end, Map<String, Object> features) {
-		Annotation a = new Annotation(this, name, start, end);
-		a.features = features;
+		Annotation a = new Annotation(this, name, start, end, features);
 		return addAnnotation(a);
 	}
 
