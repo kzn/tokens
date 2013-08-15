@@ -34,7 +34,7 @@ import java.util.StringTokenizer;
 
 import name.kazennikov.annotations.Annotator;
 import name.kazennikov.annotations.Document;
-import name.kazennikov.fsm.IndexedFSMGeneric;
+import name.kazennikov.fsm.FSMState;
 
 /**
  * Implementation of a Unicode rule based tokeniser. The tokeniser gets its
@@ -221,7 +221,7 @@ public class SimpleTokenizer implements Annotator {
 
 	private String encoding = "UTF-8";
 
-	IndexedFSMGeneric<RHS> fsm = new IndexedFSMGeneric<>();
+	TokenizerFSM fsm = new TokenizerFSM();
 
 	private String rulesResourceName;
 
@@ -236,8 +236,8 @@ public class SimpleTokenizer implements Annotator {
 	public void annotate(Document document) {
 
 		String content = document.getText();
-		IndexedFSMGeneric.State<RHS> current = fsm.getStart();
-		IndexedFSMGeneric.State<RHS> lastMatch = null;
+		FSMState<List<RHS>> current = fsm.getStart();
+		FSMState<List<RHS>> lastMatch = null;
 		// the index of the first character of the token trying to be recognised
 		int tokenStartIdx = 0;
 
@@ -249,11 +249,11 @@ public class SimpleTokenizer implements Annotator {
 			char currentChar = content.charAt(charIdx);
 			int charType = Character.getType(currentChar);
 
-			IndexedFSMGeneric.State<RHS> nextState = current.next(charType);
+			FSMState<List<RHS>> nextState = current.next(charType);
 
 			if (nextState != null) {
 				current = nextState;
-				if (current.isFinal()) {
+				if (fsm.isFinal(current)) {
 					lastMatchIdx = charIdx;
 					lastMatch = current;
 				}
@@ -372,13 +372,13 @@ public class SimpleTokenizer implements Annotator {
 				ruleLine.setLength(0);
 			}
 
-			IndexedFSMGeneric<RHS> temp = new IndexedFSMGeneric<>();
+			TokenizerFSM temp = new TokenizerFSM();
 			fsm.epsilonFreeFSM(temp);
 			fsm = temp;
-			temp = new IndexedFSMGeneric<>();
+			temp = new TokenizerFSM();
 			fsm.determinize(temp);
 			fsm = temp;
-			temp = new IndexedFSMGeneric<>();
+			temp = new TokenizerFSM();
 			fsm.minimize(temp);
 			fsm = temp;
 		} catch (java.io.IOException ioe) {
@@ -412,18 +412,18 @@ public class SimpleTokenizer implements Annotator {
 	 *            {@link #parseLHS parseLHS} to parse a region of the LHS (e.g.
 	 *            a &quot;(&quot;,&quot;)&quot; enclosed part.
 	 */
-	IndexedFSMGeneric.State<RHS> parseLHS(IndexedFSMGeneric.State<RHS> startState,
+	FSMState<List<RHS>> parseLHS(FSMState<List<RHS>> startState,
 			StringTokenizer st, String until) throws TokeniserException {
 
-		IndexedFSMGeneric.State<RHS> currentState = startState;
+		FSMState<List<RHS>> currentState = startState;
 		boolean orFound = false;
-		List<IndexedFSMGeneric.State<RHS>> orList = new LinkedList<>();
+		List<FSMState<List<RHS>>> orList = new LinkedList<>();
 		String token = skipIgnoreTokens(st);
 
 		if (token == null)
 			return currentState;
 
-		IndexedFSMGeneric.State<RHS> newState;
+		FSMState<List<RHS>> newState;
 
 		bigwhile: while (!token.equals(until)) {
 			if (token.equals("(")) { // (..)
@@ -465,7 +465,7 @@ public class SimpleTokenizer implements Annotator {
 				orList.add(newState);
 				newState = fsm.addState();
 
-				for (IndexedFSMGeneric.State<RHS> state : orList) {
+				for (FSMState<List<RHS>> state : orList) {
 					fsm.addTransition(state, newState, 0);
 				}
 				orList.clear();
@@ -542,10 +542,10 @@ public class SimpleTokenizer implements Annotator {
 			return;
 
 		StringTokenizer st = new StringTokenizer(line, "()+*|\" \t\f>", true);
-		IndexedFSMGeneric.State<RHS> newState = fsm.addState();
+		FSMState<List<RHS>> newState = fsm.addState();
 
 		fsm.addTransition(fsm.getStart(), newState, 0);
-		IndexedFSMGeneric.State<RHS> finalState = parseLHS(newState, st, RULE_SEP);
+		FSMState<List<RHS>> finalState = parseLHS(newState, st, RULE_SEP);
 		String rhs = "";
 
 		if (st.hasMoreTokens()) {
