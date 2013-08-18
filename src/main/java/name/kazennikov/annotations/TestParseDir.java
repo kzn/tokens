@@ -25,9 +25,9 @@ public class TestParseDir {
 				fsm.addRule(r);
 
 				fsm.toDot("test_pre.dot");
-				fsm = fsm.determinize();
+				fsm.determinize();
 				fsm.toDot("test_det.dot");
-				fsm = fsm.minimize();
+				fsm.minimize();
 				fsm.toDot("test_min.dot");
 				fsm.toDot("test.dot");
 
