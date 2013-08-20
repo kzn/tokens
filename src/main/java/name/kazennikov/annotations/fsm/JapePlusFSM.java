@@ -14,8 +14,8 @@ import name.kazennikov.annotations.patterns.PatternElement;
 import name.kazennikov.annotations.patterns.PatternElement.Operator;
 import name.kazennikov.annotations.patterns.RangePatternElement;
 import name.kazennikov.annotations.patterns.Rule;
-import name.kazennikov.fsm.FSM;
-import name.kazennikov.fsm.FSMState;
+import name.kazennikov.fsa.FSA;
+import name.kazennikov.fsa.FSAState;
 import name.kazennikov.tools.Alphabet;
 
 import com.google.common.base.Objects;
@@ -139,7 +139,7 @@ public class JapePlusFSM {
 		}
 		
 		public boolean isEpsilon() {
-			return label == name.kazennikov.fsm.Constants.EPSILON;
+			return label == name.kazennikov.fsa.Constants.EPSILON;
 		}
 		
 		@Override
@@ -150,21 +150,21 @@ public class JapePlusFSM {
 
 	}
 	
-	protected static class InterFSM extends FSM<Set<Rule>> {
+	protected static class InterFSM extends FSA<Set<Rule>> {
 		@Override
-		public boolean isFinal(FSMState<Set<Rule>> s) {
+		public boolean isFinal(FSAState<Set<Rule>> s) {
 			return !s.getFinals().isEmpty();
 		}
 
 		@Override
-		public FSMState<Set<Rule>> addState() {
-			FSMState<Set<Rule>> state = super.addState();
+		public FSAState<Set<Rule>> addState() {
+			FSAState<Set<Rule>> state = super.addState();
 			state.setFinals(new HashSet<Rule>());
 			return state;
 		}
 		
 		@Override
-		public void mergeFinals(FSMState<Set<Rule>> dest, FSMState<Set<Rule>> src) {
+		public void mergeFinals(FSAState<Set<Rule>> dest, FSAState<Set<Rule>> src) {
 			dest.getFinals().addAll(src.getFinals());
 		}
 
@@ -185,7 +185,7 @@ public class JapePlusFSM {
 	}
 	
 	public void addRule(Rule r) {
-		FSMState<Set<Rule>> start = fsm.getStart();
+		FSAState<Set<Rule>> start = fsm.getStart();
 		for(PatternElement e : r.lhs()) {
 			start = addPE(e, start);
 		}
@@ -201,8 +201,8 @@ public class JapePlusFSM {
 	 * @param start current start state
 	 * @return end state of the pattern element
 	 */
-	private FSMState<Set<Rule>> addPE(PatternElement e, FSMState<Set<Rule>> start) {
-		FSMState<Set<Rule>> end = null;
+	private FSAState<Set<Rule>> addPE(PatternElement e, FSAState<Set<Rule>> start) {
+		FSAState<Set<Rule>> end = null;
 		
 		if(e instanceof AnnotationMatcherPatternElement) {
 			end = fsm.addState();
@@ -225,24 +225,24 @@ public class JapePlusFSM {
 		return end;
 	}
 
-	private FSMState<Set<Rule>> addRange(RangePatternElement e, FSMState<Set<Rule>> start) {
-		FSMState<Set<Rule>> end = fsm.addState();
+	private FSAState<Set<Rule>> addRange(RangePatternElement e, FSAState<Set<Rule>> start) {
+		FSAState<Set<Rule>> end = fsm.addState();
 		
 		for(int i = 0; i < e.min(); i++) {
 			start = addPE(e.get(0), start);
 		}
 
-		fsm.addTransition(start, end, name.kazennikov.fsm.Constants.EPSILON); // skip optional parrts
+		fsm.addTransition(start, end, name.kazennikov.fsa.Constants.EPSILON); // skip optional parrts
 		
 		if(e.max() == RangePatternElement.INFINITE) { // kleene start
-			FSMState<Set<Rule>> mEnd = addPE(e.get(0), start);
-			fsm.addTransition(mEnd, end, name.kazennikov.fsm.Constants.EPSILON);
-			fsm.addTransition(mEnd, start, name.kazennikov.fsm.Constants.EPSILON);
+			FSAState<Set<Rule>> mEnd = addPE(e.get(0), start);
+			fsm.addTransition(mEnd, end, name.kazennikov.fsa.Constants.EPSILON);
+			fsm.addTransition(mEnd, start, name.kazennikov.fsa.Constants.EPSILON);
 
 		} else { // range [n,m]
 			for(int i = e.min(); i < e.max(); i++) {
 				start = addPE(e.get(0), start);
-				fsm.addTransition(start, end, name.kazennikov.fsm.Constants.EPSILON);
+				fsm.addTransition(start, end, name.kazennikov.fsa.Constants.EPSILON);
 			}
 		} 
 		
@@ -250,9 +250,9 @@ public class JapePlusFSM {
 		return end;
 	}
 
-	private FSMState<Set<Rule>> addSeq(BasePatternElement e, FSMState<Set<Rule>> start) {
+	private FSAState<Set<Rule>> addSeq(BasePatternElement e, FSAState<Set<Rule>> start) {
 		if(e.getName() != null) {
-			FSMState<Set<Rule>> iStart = fsm.addState();
+			FSAState<Set<Rule>> iStart = fsm.addState();
 			fsm.addTransition(start, iStart, Transition.GROUP_START);
 			start = iStart;
 		}
@@ -262,7 +262,7 @@ public class JapePlusFSM {
 		}
 		
 		if(e.getName() != null) {
-			FSMState<Set<Rule>> iEnd = fsm.addState();
+			FSAState<Set<Rule>> iEnd = fsm.addState();
 			int label = -groups.get(e.getName()) - 1;
 			fsm.addTransition(start, iEnd, label);
 			start = iEnd;
@@ -272,14 +272,14 @@ public class JapePlusFSM {
 		
 	}
 
-	private FSMState<Set<Rule>> addOR(BasePatternElement e, FSMState<Set<Rule>> start) {
-		FSMState<Set<Rule>> end = fsm.addState();
+	private FSAState<Set<Rule>> addOR(BasePatternElement e, FSAState<Set<Rule>> start) {
+		FSAState<Set<Rule>> end = fsm.addState();
 
 		for(int i = 0; i < e.size(); i++) {
-			FSMState<Set<Rule>> mStart = fsm.addState();
-			fsm.addTransition(start, mStart, name.kazennikov.fsm.Constants.EPSILON);
-			FSMState<Set<Rule>> mEnd = addPE(e.get(i), mStart);
-			fsm.addTransition(mEnd, end, name.kazennikov.fsm.Constants.EPSILON);
+			FSAState<Set<Rule>> mStart = fsm.addState();
+			fsm.addTransition(start, mStart, name.kazennikov.fsa.Constants.EPSILON);
+			FSAState<Set<Rule>> mEnd = addPE(e.get(i), mStart);
+			fsm.addTransition(mEnd, end, name.kazennikov.fsa.Constants.EPSILON);
 		}
 
 		return end;

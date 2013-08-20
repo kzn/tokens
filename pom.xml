@@ -37,8 +37,14 @@
 
 	<dependency>
 		<groupId>name.kazennikov</groupId>
-		<artifactId>dafsa</artifactId>
+		<artifactId>fsa</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	
+	<dependency>
+	   <groupId>name.kazennikov</groupId>
+	   <artifactId>logger</artifactId>
+	   <version>0.0.1-SNAPSHOT</version>
 	</dependency>
 
 
@@ -46,12 +52,6 @@
 		<groupId>org.eclipse.jdt.core.compiler</groupId>
 		<artifactId>ecj</artifactId>
 		<version>4.2.2</version>
-	</dependency>
-	
-	<dependency>
-	<groupId>name.kazennikov</groupId>
-	<artifactId>dafsa</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	</dependency>
             
              

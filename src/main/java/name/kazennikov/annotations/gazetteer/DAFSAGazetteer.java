@@ -5,10 +5,10 @@ import gnu.trove.list.array.TIntArrayList;
 import java.util.Map;
 
 import name.kazennikov.annotations.Document;
-import name.kazennikov.dafsa.CharTrie;
-import name.kazennikov.dafsa.IntFSA;
-import name.kazennikov.dafsa.IntTrie;
-import name.kazennikov.dafsa.Nodes;
+import name.kazennikov.dafsa.obsolete.CharTrie;
+import name.kazennikov.dafsa.obsolete.IntFSA;
+import name.kazennikov.dafsa.obsolete.IntTrie;
+import name.kazennikov.dafsa.obsolete.Nodes;
 import name.kazennikov.tools.Alphabet;
 
 public class DAFSAGazetteer extends BaseGazetteer {

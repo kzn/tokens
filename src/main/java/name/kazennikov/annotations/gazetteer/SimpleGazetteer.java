@@ -7,14 +7,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import name.kazennikov.trie.IntTrieBuilderBoolean;
-import name.kazennikov.trie.IntTrieBuilderObject;
+import name.kazennikov.dafsa.IntDAFSAObject;
 
 public class SimpleGazetteer extends AbstractSimpleGazetteer {
 	int count;
 	
-	IntTrieBuilderBoolean trie = new IntTrieBuilderBoolean();
-	IntTrieBuilderObject<Feats> trieFeats = new IntTrieBuilderObject<>();
+	IntDAFSAObject<Feats> trieFeats = new IntDAFSAObject<>();
 	TIntArrayList temp = new TIntArrayList();
 	
 	public static class Feats {
@@ -97,7 +95,6 @@ public class SimpleGazetteer extends AbstractSimpleGazetteer {
 			long st = System.currentTimeMillis();
 			g.read();
 			System.out.printf("Entries: %d%n", g.count);
-			System.out.printf("FSM size: %d%n", g.trie.size());
 			System.out.printf("FSM1 size: %d%n", g.trieFeats.size());
 			System.out.printf("Elapsed: %dms%n", System.currentTimeMillis() - st);
 		}

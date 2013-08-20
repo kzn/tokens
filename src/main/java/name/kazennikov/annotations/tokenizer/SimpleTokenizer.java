@@ -34,7 +34,7 @@ import java.util.StringTokenizer;
 
 import name.kazennikov.annotations.Annotator;
 import name.kazennikov.annotations.Document;
-import name.kazennikov.fsm.FSMState;
+import name.kazennikov.fsa.FSAState;
 
 /**
  * Implementation of a Unicode rule based tokeniser. The tokeniser gets its
@@ -219,7 +219,7 @@ public class SimpleTokenizer implements Annotator {
 		return null;
 	}
 
-	private String encoding = "UTF-8";
+	private final String encoding = "UTF-8";
 
 	TokenizerFSM fsm = new TokenizerFSM();
 
@@ -236,8 +236,8 @@ public class SimpleTokenizer implements Annotator {
 	public void annotate(Document document) {
 
 		String content = document.getText();
-		FSMState<List<RHS>> current = fsm.getStart();
-		FSMState<List<RHS>> lastMatch = null;
+		FSAState<List<RHS>> current = fsm.getStart();
+		FSAState<List<RHS>> lastMatch = null;
 		// the index of the first character of the token trying to be recognised
 		int tokenStartIdx = 0;
 
@@ -249,7 +249,7 @@ public class SimpleTokenizer implements Annotator {
 			char currentChar = content.charAt(charIdx);
 			int charType = Character.getType(currentChar);
 
-			FSMState<List<RHS>> nextState = current.next(charType);
+			FSAState<List<RHS>> nextState = current.next(charType);
 
 			if (nextState != null) {
 				current = nextState;
@@ -398,8 +398,8 @@ public class SimpleTokenizer implements Annotator {
 	 * Parses a part or the entire LHS.
 	 * 
 	 * @param startState
-	 *            a FSMState object representing the initial state for the small
-	 *            FSM that will recognise the (part of) the rule parsed by this
+	 *            a FSAState object representing the initial state for the small
+	 *            FSA that will recognise the (part of) the rule parsed by this
 	 *            method.
 	 * @param st
 	 *            a {@link java.util.StringTokenizer StringTokenizer} that
@@ -412,18 +412,18 @@ public class SimpleTokenizer implements Annotator {
 	 *            {@link #parseLHS parseLHS} to parse a region of the LHS (e.g.
 	 *            a &quot;(&quot;,&quot;)&quot; enclosed part.
 	 */
-	FSMState<List<RHS>> parseLHS(FSMState<List<RHS>> startState,
+	FSAState<List<RHS>> parseLHS(FSAState<List<RHS>> startState,
 			StringTokenizer st, String until) throws TokeniserException {
 
-		FSMState<List<RHS>> currentState = startState;
+		FSAState<List<RHS>> currentState = startState;
 		boolean orFound = false;
-		List<FSMState<List<RHS>>> orList = new LinkedList<>();
+		List<FSAState<List<RHS>>> orList = new LinkedList<>();
 		String token = skipIgnoreTokens(st);
 
 		if (token == null)
 			return currentState;
 
-		FSMState<List<RHS>> newState;
+		FSAState<List<RHS>> newState;
 
 		bigwhile: while (!token.equals(until)) {
 			if (token.equals("(")) { // (..)
@@ -465,7 +465,7 @@ public class SimpleTokenizer implements Annotator {
 				orList.add(newState);
 				newState = fsm.addState();
 
-				for (FSMState<List<RHS>> state : orList) {
+				for (FSAState<List<RHS>> state : orList) {
 					fsm.addTransition(state, newState, 0);
 				}
 				orList.clear();
@@ -531,7 +531,7 @@ public class SimpleTokenizer implements Annotator {
 
 	/**
 	 * Parses one input line containing a tokeniser rule. This will create the
-	 * necessary FSMState objects and the links between them.
+	 * necessary FSAState objects and the links between them.
 	 * 
 	 * @param line
 	 *            the string containing the rule
@@ -542,10 +542,10 @@ public class SimpleTokenizer implements Annotator {
 			return;
 
 		StringTokenizer st = new StringTokenizer(line, "()+*|\" \t\f>", true);
-		FSMState<List<RHS>> newState = fsm.addState();
+		FSAState<List<RHS>> newState = fsm.addState();
 
 		fsm.addTransition(fsm.getStart(), newState, 0);
-		FSMState<List<RHS>> finalState = parseLHS(newState, st, RULE_SEP);
+		FSAState<List<RHS>> finalState = parseLHS(newState, st, RULE_SEP);
 		String rhs = "";
 
 		if (st.hasMoreTokens()) {
