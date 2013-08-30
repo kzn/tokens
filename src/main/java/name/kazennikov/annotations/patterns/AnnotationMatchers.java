@@ -1,6 +1,8 @@
 package name.kazennikov.annotations.patterns;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import name.kazennikov.annotations.Annotation;
 
@@ -48,16 +50,24 @@ public class AnnotationMatchers {
 		}
 	}
 		
-		
+	/**
+	 * Matches the annotation type.
+	 * @author Anton Kazennikov
+	 *
+	 */
 	public static class TypeMatcher extends BaseMatcher {
 
+		/**
+		 * Construct a type matcher
+		 * @param type type to match, or null, to match any type
+		 */
 		public TypeMatcher(String type) {
 			super(type);
 		}
 
 		@Override
 		public boolean match(Annotation a) {
-			return a.getType().equals(type);
+			return type == null || a.getType().equals(type);
 		}
 		
 		@Override
@@ -66,28 +76,109 @@ public class AnnotationMatchers {
 		}
 	}
 	
-	public static abstract class BaseFeatureMatcher extends BaseMatcher {
+	public static abstract class FeatureAccessor {
 		String name;
+		
+		public FeatureAccessor(String name) {
+			this.name = name;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		public abstract Object getValue(Annotation a);
+		
+		@Override
+		public int hashCode() {
+			return name.hashCode();
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if(this == o)
+				return true;
+			
+			if(o == null)
+				return false;
+			
+			if(o.getClass() != this.getClass())
+				return false;
+			
+			FeatureAccessor fa = (FeatureAccessor) o;
+			return name.equals(fa.getName());
+		}
+		
+	}
+	
+	
+	
+	public static class SimpleFeatureAccessor extends FeatureAccessor {
+		public SimpleFeatureAccessor(String name) {
+			super(name);
+		}
+
+		@Override
+		public Object getValue(Annotation a) {
+			return a.getFeature(name);
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+		
+		@Override
+		public String toString() {
+			return "." + name;
+		}
+	}
+
+	
+	
+	/**
+	 * Base full type/feature/value matcher. Used for matching:
+	 * 
+	 * type.feature OP value
+	 * @author Anton Kazennikov
+	 *
+	 */
+	public static abstract class BaseFeatureMatcher extends BaseMatcher {
+		FeatureAccessor fa;
 		Object value;
 		
-		public BaseFeatureMatcher(String type, String name, Object value) {
+		public BaseFeatureMatcher(String type, FeatureAccessor fa, Object value) {
 			super(type);
-			this.name = name;
+			this.fa = fa;
 			this.value = value;
 		}
 		
+		
 		public Object getValue(Annotation a) {
-			if(!a.getType().equals(type))
+			if(type != null && !a.getType().equals(type))
 				return null;
 			
-			return a.getFeature(name);
+			return fa.getValue(a);
 		}
+		
 		
 		
 		
 		@Override
+		public boolean match(Annotation a) {
+			Object anValue = getValue(a);
+			if(anValue == null)
+				return false;
+			
+			return matchValue(anValue, value);
+		}
+		
+		public abstract boolean matchValue(Object annotationValue, Object matcherValue);
+
+
+		@Override
 		public int hashCode() {
-			return Objects.hashCode(this.getClass(), name, type, value);
+			return Objects.hashCode(this.getClass(), fa, type, value);
 		}
 
 		@Override
@@ -109,7 +200,7 @@ public class AnnotationMatchers {
 			if(!Objects.equal(this.type, other.type))
 				return false;
 			
-			if (!Objects.equal(this.name, other.name))
+			if (!Objects.equal(this.fa, other.fa))
 				return false;
 			
 			if(!Objects.equal(this.value, other.value))
@@ -118,59 +209,81 @@ public class AnnotationMatchers {
 			return true;
 		}
 	}
-		
-		
-	public static class FeatureEqMatcher extends BaseFeatureMatcher {
-		public FeatureEqMatcher(String type, String name, Object value) {
-			super(type, name, value);
-		}
-		
-		@Override
-		public boolean match(Annotation a) {
-			Object v = getValue(a);
-			return v == null? false : v.equals(value);
-		}
-		
-		@Override
-		public String toString() {
-			return String.format("{%s.%s == %s}", type, name, value);
-		}
-	}
 	
-	public static class FeatureNEqMatcher extends BaseFeatureMatcher {
-		public FeatureNEqMatcher(String type, String name, Object value) {
-			super(type, name, value);
-		}
-		
-		@Override
-		public boolean match(Annotation a) {
-			Object v = getValue(a);
-			return v == null? false : !v.equals(value);
-		}
-		
-		@Override
-		public String toString() {
-			return String.format("{%s.%s != %s}", type, name, value);
-		}
-	}
-	
-	public static class NegativeAnnotationMatcher implements AnnotationMatcher {
-		AnnotationMatcher matcher;
-		
-		public NegativeAnnotationMatcher(AnnotationMatcher matcher) {
+	public static class NegativeMatcher extends BaseFeatureMatcher {
+		BaseFeatureMatcher matcher;
+
+		public NegativeMatcher(BaseFeatureMatcher matcher) {
+			super(matcher.type, matcher.fa, matcher.value);
 			this.matcher = matcher;
-		}
-		@Override
-		public boolean match(Annotation a) {
-			return !matcher.match(a);
 		}
 
 		@Override
-		public String getType() {
-			return matcher.getType();
+		public boolean matchValue(Object annotationValue, Object matcherValue) {
+			return !matcher.matchValue(annotationValue, matcherValue);
 		}
 		
 	}
+		
+		
+	public static class FeatureEqMatcher extends BaseFeatureMatcher {
+		public FeatureEqMatcher(String type, FeatureAccessor fa, Object value) {
+			super(type, fa, value);
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("{%s.%s == %s}", type, fa, value);
+		}
+		
+		@Override
+		public boolean matchValue(Object annotationObject, Object value) {
+			return value.equals(annotationObject);
+		}
+	}
+	
+	public static class FeatureRegexMatcher extends BaseFeatureMatcher {
+		Pattern p;
+		public FeatureRegexMatcher(String type, FeatureAccessor fa, Object value) {
+			super(type, fa, value);
+			p = Pattern.compile(value.toString());
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("{%s.%s ==~ %s}", type, fa, value);
+		}
+		
+		@Override
+		public boolean matchValue(Object annotationObject, Object value) {
+			String strAn = annotationObject.toString();
+			Matcher m = p.matcher(strAn);
+			return m.find();
+		}
+	}
+	
+	public static class FeatureContainsRegexMatcher extends BaseFeatureMatcher {
+		Pattern p;
+		public FeatureContainsRegexMatcher(String type, FeatureAccessor fa, Object value) {
+			super(type, fa, value);
+			p = Pattern.compile(value.toString());
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("{%s.%s =~ %s}", type, fa, value);
+		}
+		
+		@Override
+		public boolean matchValue(Object annotationObject, Object value) {
+			String strAn = annotationObject.toString();
+			Matcher m = p.matcher(strAn);
+			return m.matches();
+		}
+	}
+
+
+	
 
 	
 	public static class ANDMatcher implements AnnotationMatcher {
@@ -192,6 +305,24 @@ public class AnnotationMatchers {
 		@Override
 		public String getType() {
 			return null;
+		}
+	}
+	
+	public static final class NegativeAnnotationMatcher implements AnnotationMatcher {
+		AnnotationMatcher matcher;
+		
+		NegativeAnnotationMatcher(AnnotationMatcher matcher) {
+			this.matcher = matcher;
+		}
+
+		@Override
+		public boolean match(Annotation a) {
+			return !matcher.match(a);
+		}
+
+		@Override
+		public String getType() {
+			return matcher.getType();
 		}
 	}
 }

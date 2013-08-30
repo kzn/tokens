@@ -5,6 +5,7 @@ import java.util.List;
 
 import name.kazennikov.annotations.JapeNGLexer;
 import name.kazennikov.annotations.JapeNGParser;
+import name.kazennikov.annotations.patterns.AnnotationMatchers.FeatureAccessor;
 import name.kazennikov.annotations.patterns.PatternElement.Operator;
 import name.kazennikov.annotations.patterns.SimpleRHS.Value;
 
@@ -311,11 +312,12 @@ public class JapeNGASTParser {
 		Object val = parseVal(feats.getChild(1));
 		String type = feats.getChild(2).getText();
 		String feat = feats.getChild(3).getText();
+		FeatureAccessor fa = new AnnotationMatchers.SimpleFeatureAccessor(feat);
 		switch(op) {
 		case "eq":
-			return new AnnotationMatchers.FeatureEqMatcher(type, feat, val);
+			return new AnnotationMatchers.FeatureEqMatcher(type, fa, val);
 		case "neq":
-			return new AnnotationMatchers.FeatureNEqMatcher(type, feat, val);
+			return new AnnotationMatchers.NegativeMatcher(new AnnotationMatchers.FeatureEqMatcher(type, fa, val));
 		}
 		throw new IllegalStateException("illegal annotation type feature operation " + op);
 	}
