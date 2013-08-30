@@ -2,9 +2,7 @@ package name.kazennikov.annotations.fsm;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import name.kazennikov.annotations.patterns.AnnotationMatcher;
@@ -18,137 +16,9 @@ import name.kazennikov.fsa.FSA;
 import name.kazennikov.fsa.FSAState;
 import name.kazennikov.tools.Alphabet;
 
-import com.google.common.base.Objects;
-
 public class JapePlusFSM {
+	public static final int GROUP_START = -1;
 
-	public static interface StateVisitor {
-		public void visit(State s);
-	}
-	
-	public static class State {
-		int number;
-		List<Transition> transitions = new ArrayList<>();
-		Set<Rule> actions = new HashSet<>();
-
-		public boolean isFinal() {
-			return !actions.isEmpty();
-		}
-
-		public Transition addTransition(State to, int label) {
-			Transition t = new Transition(this, label, to);
-			transitions.add(t);
-			return t;
-		}
-
-
-		public void toDot(PrintWriter pw, Set<State> visited) {
-			if(visited.contains(this))
-				return;
-
-			visited.add(this);
-
-			for(Transition t : transitions) {
-				pw.printf("%d -> %d [label=\"%d\"];%n", number, t.dest.number, t.label);
-			}
-
-			for(Transition t : transitions) {
-				t.dest.toDot(pw, visited);
-			}
-
-
-
-			if(isFinal()) {
-				pw.printf("%d [shape=doublecircle];%n", number);
-			}
-		}
-		
-		@Override
-		public String toString() {
-			return Objects.toStringHelper(this)
-					.add("number", number)
-					.add("isFinal", isFinal())
-					.toString();
-		}
-		
-		public List<Transition> getTransitions() {
-			return transitions;
-		}
-		
-		public Set<Rule> getActions() {
-			return actions;
-		}
-		
-		public int getNumber() {
-			return number;
-		}
-				
-		public void visit(StateVisitor v, Set<State> visited) {
-			if(visited.contains(this))
-				return;
-			
-			visited.add(this);
-			v.visit(this);
-
-			for(Transition t : transitions) {
-				t.dest.visit(v, visited);
-			}
-		}
-		
-		public void setFinalFrom(Set<State> currentDState) {
-			for(State c : currentDState) {
-				if(c.isFinal()) {
-					this.actions.addAll(c.actions);
-				}
-			}
-		}
-	}
-	
-	public static class Transition {
-		public static final int GROUP_START = -1;
-		
-		/**
-		 * Encoding:
-		 * <ul>
-		 * <li> label > 0 - AnnotationMatcher table lookup
-		 * <li> label = 0 - epsilon
-		 * <li> label = -1 - GROUP_START
-		 * <li> label < -1 - named group lookup
-		 */
-		State src;
-		int label;
-		State dest;
-		
-		public Transition(State src, int label, State dest) {
-			this.src = src;
-			this.label = label;
-			this.dest = dest;
-		}
-		
-		
-		public State getSrc() {
-			return src;
-		}
-		
-		public State getDest() {
-			return dest;
-		}
-		
-		public int getLabel() {
-			return label;
-		}
-		
-		public boolean isEpsilon() {
-			return label == name.kazennikov.fsa.Constants.EPSILON;
-		}
-		
-		@Override
-		public String toString() {
-			return String.format("{src=%d, label=%d, dest=%d}", src.getNumber(), label, dest.getNumber());
-		}
-		
-
-	}
 	
 	protected static class InterFSM extends FSA<Set<Rule>> {
 		@Override
@@ -253,7 +123,7 @@ public class JapePlusFSM {
 	private FSAState<Set<Rule>> addSeq(BasePatternElement e, FSAState<Set<Rule>> start) {
 		if(e.getName() != null) {
 			FSAState<Set<Rule>> iStart = fsm.addState();
-			fsm.addTransition(start, iStart, Transition.GROUP_START);
+			fsm.addTransition(start, iStart, GROUP_START);
 			start = iStart;
 		}
 		
