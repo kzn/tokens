@@ -5,17 +5,14 @@ import gnu.trove.list.array.TIntArrayList;
 import java.util.Map;
 
 import name.kazennikov.annotations.Document;
-import name.kazennikov.dafsa.obsolete.CharTrie;
-import name.kazennikov.dafsa.obsolete.IntFSA;
-import name.kazennikov.dafsa.obsolete.IntTrie;
-import name.kazennikov.dafsa.obsolete.Nodes;
+import name.kazennikov.dafsa.IntDAFSAInt;
+import name.kazennikov.fsa.walk.WalkFSAInt;
 import name.kazennikov.tools.Alphabet;
 
 public class DAFSAGazetteer extends BaseGazetteer {
-	IntFSA fsa = new IntFSA.Simple(new Nodes.IntSimpleNode());
-	CharTrie trie;
+	IntDAFSAInt fsa = new IntDAFSAInt();
 	Alphabet<Map<String, String>> feats = new Alphabet<>();
-	
+	WalkFSAInt walkFSA;
 
 	@Override
 	public boolean isApplicable(Document doc) {
@@ -33,9 +30,9 @@ public class DAFSAGazetteer extends BaseGazetteer {
 	@Override
 	public void init() throws Exception {
 		super.init();
-		IntTrie.SimpleBuilder<CharTrie> b = new IntTrie.SimpleBuilder<>(new CharTrie());
-		fsa.write(b);
-		trie = b.build();
+		WalkFSAInt.Builder builder = new WalkFSAInt.Builder();
+		fsa.emit(builder);
+		walkFSA = builder.build();
 		fsa = null;
 	}
 
@@ -51,11 +48,13 @@ public class DAFSAGazetteer extends BaseGazetteer {
 		
 		TIntArrayList l = new TIntArrayList();
 		entry = entry.trim().toLowerCase();
+
 		for(int i = 0; i < entry.length(); i++) {
 			l.add(entry.charAt(i));
 		}		
-	
-		fsa.addMinWord(l, this.feats.get(feats));
+		
+		fsa.setFinalValue(this.feats.get(feats));
+		fsa.addMinWord(l);
 	}
 
 }
