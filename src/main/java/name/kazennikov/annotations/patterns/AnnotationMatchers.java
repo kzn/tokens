@@ -306,6 +306,10 @@ public class AnnotationMatchers {
 		public String getType() {
 			return null;
 		}
+		
+		public List<AnnotationMatcher> getMatchers() {
+			return matchers;
+		}
 	}
 	
 	public static final class NegativeAnnotationMatcher implements AnnotationMatcher {
@@ -323,6 +327,10 @@ public class AnnotationMatchers {
 		@Override
 		public String getType() {
 			return matcher.getType();
+		}
+		
+		public AnnotationMatcher getMatcher() {
+			return matcher;
 		}
 	}
 }
