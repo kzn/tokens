@@ -21,7 +21,7 @@ public class TestParseDir {
 
 
 			for(Rule r : phase.getRules()) {
-				JapePlusFSM fsm = new JapePlusFSM();
+				JapePlusFSM.Builder fsm = new JapePlusFSM.Builder();
 				fsm.addRule(r);
 
 				fsm.toDot("test_pre.dot");
@@ -30,7 +30,6 @@ public class TestParseDir {
 				fsm.minimize();
 				fsm.toDot("test_min.dot");
 				fsm.toDot("test.dot");
-
 			}
 
 		} else if(f.isDirectory()) {
