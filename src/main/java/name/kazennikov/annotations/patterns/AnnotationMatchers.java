@@ -233,7 +233,7 @@ public class AnnotationMatchers {
 		
 		@Override
 		public String toString() {
-			return String.format("{%s.%s == %s}", type, fa, value);
+			return String.format("{%s%s == %s}", type, fa, value);
 		}
 		
 		@Override
@@ -251,7 +251,7 @@ public class AnnotationMatchers {
 		
 		@Override
 		public String toString() {
-			return String.format("{%s.%s ==~ %s}", type, fa, value);
+			return String.format("{%s%s ==~ %s}", type, fa, value);
 		}
 		
 		@Override
@@ -271,7 +271,7 @@ public class AnnotationMatchers {
 		
 		@Override
 		public String toString() {
-			return String.format("{%s.%s =~ %s}", type, fa, value);
+			return String.format("{%s%s =~ %s}", type, fa, value);
 		}
 		
 		@Override
@@ -285,7 +285,13 @@ public class AnnotationMatchers {
 
 	
 
-	
+	/**
+	 * Complex matcher. Matches when all matchers matches.
+	 * Assume, that matchers are sorted by annotation types
+	 * 
+	 * @author Anton Kazennikov
+	 *
+	 */
 	public static class ANDMatcher implements AnnotationMatcher {
 		List<AnnotationMatcher> matchers;
 
@@ -312,10 +318,15 @@ public class AnnotationMatchers {
 		}
 	}
 	
-	public static final class NegativeAnnotationMatcher implements AnnotationMatcher {
+	/**
+	 * NOT matcher wrapper. Intended to implement {!Token.foo == bar} matcher 
+	 * @author Anton Kazennikov
+	 *
+	 */
+	public static final class NOTAnnotationMatcher implements AnnotationMatcher {
 		AnnotationMatcher matcher;
 		
-		NegativeAnnotationMatcher(AnnotationMatcher matcher) {
+		NOTAnnotationMatcher(AnnotationMatcher matcher) {
 			this.matcher = matcher;
 		}
 

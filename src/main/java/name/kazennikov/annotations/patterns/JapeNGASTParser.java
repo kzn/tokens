@@ -245,7 +245,7 @@ public class JapeNGASTParser {
 			switch(child.getText()) {
 			
 			case "NOT":
-				matchers.add(new AnnotationMatchers.NegativeAnnotationMatcher(parseAnnot(child)));
+				matchers.add(new AnnotationMatchers.NOTAnnotationMatcher(parseAnnot(child)));
 				break;
 			
 			case "AN_TYPE":

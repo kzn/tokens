@@ -277,11 +277,12 @@ public class JapePlusFSM {
 	
 	TypeMatcher getMatcherFor(List<TypeMatcher> typeMatchers, String name) {
 		for(TypeMatcher m : typeMatchers) {
-			if(m.type.equals(name))
+			if(m.type == name || m.type.equals(name)) // allow null m.type value for wildcard matches
 				return m;
 		}
 		
 		TypeMatcher m = new TypeMatcher();
+		m.type = name;
 		typeMatchers.add(m);
 		return m;
 	}
@@ -292,8 +293,8 @@ public class JapePlusFSM {
 			for(AnnotationMatcher atom : ((ANDMatcher)m).getMatchers()) {
 				convertMatcher(atom, typeMatchers);
 			}
-		} else if(m instanceof AnnotationMatchers.NegativeAnnotationMatcher) {
-			AnnotationMatcher inner = ((AnnotationMatchers.NegativeAnnotationMatcher) m).getMatcher();
+		} else if(m instanceof AnnotationMatchers.NOTAnnotationMatcher) {
+			AnnotationMatcher inner = ((AnnotationMatchers.NOTAnnotationMatcher) m).getMatcher();
 			TypeMatcher matcher = getMatcherFor(typeMatchers, inner.getType());
 			matcher.matchers.add(matchers.get(inner));
 			matcher.flags.add(1);
