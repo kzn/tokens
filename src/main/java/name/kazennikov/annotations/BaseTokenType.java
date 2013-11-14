@@ -1,5 +1,6 @@
 package name.kazennikov.annotations;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -8,7 +9,12 @@ import java.util.HashMap;
  * @author Anton Kazennikov
  *
  */
-public class BaseTokenType implements TokenType {
+public class BaseTokenType implements TokenType, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	final TokenType parent;
 	final String name;
 

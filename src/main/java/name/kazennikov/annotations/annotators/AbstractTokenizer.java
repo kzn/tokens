@@ -26,7 +26,7 @@ import name.kazennikov.annotations.TokenType;
  *     <li>Tokens. A content token is a sequence of non-separator characters</li>
  * </ul>
  *
- * Also, it infers type of content token. Predefined types are:
+ * Also, it infers type of content token. Predefined types are (see {@link BaseTokenType}):
  * <ul>
  *     <li>DIGITS - for digit only char sequences
  *     <li>LETTERS - for letter only char sequences
@@ -36,15 +36,28 @@ import name.kazennikov.annotations.TokenType;
  * </ul>
  */
 public abstract class AbstractTokenizer implements Annotator {
-	public static final String DIGITS = "digits";
-	public static final String LETTERS = "letters";
-	public static final String ALPHANUM = "alphanum";
-	public static final String MISC = "misc";
-	public static final String SPACE = "space";
-	public static final String PUNC = "punc";
+//	public static final String DIGITS = "digits";
+//	public static final String LETTERS = "letters";
+//	public static final String ALPHANUM = "alphanum";
+//	public static final String MISC = "misc";
+//	public static final String SPACE = "space";
+//	public static final String PUNC = "punc";
+	
+	String tokenAnnotationType = Annotation.TOKEN;
 
     public AbstractTokenizer() {
     }
+    
+	public String getTokenAnnotationType() {
+		return tokenAnnotationType;
+	}
+
+	public void setTokenAnnotationType(String tokenAnnotationType) {
+		this.tokenAnnotationType = tokenAnnotationType;
+	}
+
+    
+    
 
     /**
      * Checks if a char is a white space
@@ -151,6 +164,6 @@ public abstract class AbstractTokenizer implements Annotator {
     void add(Document d, int start, int end, TokenType type) {
     	Map<String, Object> feats = new HashMap<String, Object>();
     	feats.put(Annotation.TYPE, type);
-        d.addAnnotation(Annotation.TOKEN, start, end, feats);
+        d.addAnnotation(tokenAnnotationType, start, end, feats);
     }
 }
