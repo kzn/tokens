@@ -11,15 +11,22 @@ import com.google.common.base.Predicates;
 /**
  * Central class for annotation framework. Annotation is a typed span in the document.
  * 
+ * Conventions for naming annotations are borrowed from GATE project (it is not a strict requirement):
+ * <ul>
+ * <li> annotation types are capitalized e.g. FooBarAnnotation (as java classes)
+ * <li> annotation feature names are java camel cased e.g. fooBarName (as java fields/members)
+ * </ul>
+ * 
  * @author Anton Kazennikov
  *
  */
 public class Annotation implements CharSequence, Comparable<Annotation> {
 
-	public static final String TOKEN = "token";
-    public static final String WORD = "word";
-    public static final String SENT = "sent";
-    public static final String DOC = "doc";
+	public static final String TOKEN = "Token";
+    public static final String WORD = "Word";
+    public static final String SENT = "Sentence";
+    public static final String DOC = "Document";
+    
     public static final String TYPE = "type";
     public static final String KIND = "kind";
     public static final String DATA = "data";
