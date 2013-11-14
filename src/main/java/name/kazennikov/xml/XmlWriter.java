@@ -25,6 +25,14 @@ public interface XmlWriter {
     public boolean writeTo(XMLStreamWriter writer, XmlWriter rootWriter, Object object) throws XMLStreamException;
     public boolean isApplicable(Object o);
 
+    /**
+     * Trivial writer. Writes an object as:<br>
+     * &lt;value class="[CLASS]"&gt; <br>
+     * Object.toString() <br>
+     * &lt;/value&gt;
+     * @author Anton Kazennikov
+     *
+     */
     public static class TrivialXmlWriter implements XmlWriter {
 
         @Override
