@@ -16,6 +16,8 @@
 
 package name.kazennikov.annotations.tokenizer;
 
+import gate.creole.ResourceInstantiationException;
+import gate.creole.tokeniser.TokeniserException;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 import java.io.BufferedReader;
@@ -32,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import name.kazennikov.annotations.AnnotationEngineException;
 import name.kazennikov.annotations.Annotator;
 import name.kazennikov.annotations.Document;
 import name.kazennikov.fsa.FSAState;
@@ -230,7 +233,7 @@ public class SimpleTokenizer implements Annotator {
 	TObjectIntHashMap<String> uClasses = getCharTypes();
 
 	/**
-	 * The method that does the actual tokenisation.
+	 * The method that does the actual tokenization.
 	 */
 	@Override
 	public void annotate(Document document) {
@@ -346,7 +349,7 @@ public class SimpleTokenizer implements Annotator {
 				reader = new BufferedReader(new InputStreamReader(rulesURL.openStream(), encoding));
 			} else {
 				// no init data, Scream!
-				throw new TokeniserException("No URL provided for the rules!");
+				throw new AnnotationEngineException("No URL provided for the rules!");
 			}
 
 			StringBuilder ruleLine = new StringBuilder();
@@ -382,10 +385,9 @@ public class SimpleTokenizer implements Annotator {
 			fsm.minimize(temp);
 			fsm = temp;
 		} catch (java.io.IOException ioe) {
-			throw new TokeniserException(ioe);
-		} catch (TokeniserException te) {
-			throw new TokeniserException(te);
+			throw new AnnotationEngineException(ioe);
 		}
+		
 		return this;
 	}
 
@@ -449,7 +451,7 @@ public class SimpleTokenizer implements Annotator {
 			// treat the operators
 			token = skipIgnoreTokens(st);
 			if (null == token)
-				throw new InvalidRuleException("Tokeniser rule ended too soon!");
+				throw new AnnotationEngineException("Tokeniser rule ended too soon!");
 
 			if (token.equals("|")) {
 
@@ -457,7 +459,7 @@ public class SimpleTokenizer implements Annotator {
 				orList.add(newState);
 				token = skipIgnoreTokens(st);
 				if (token == null)
-					throw new InvalidRuleException("Tokeniser rule ended too soon!");
+					throw new AnnotationEngineException("Tokeniser rule ended too soon!");
 
 				continue bigwhile;
 			} else if (orFound) {// done parsing the "|"
@@ -480,7 +482,7 @@ public class SimpleTokenizer implements Annotator {
 				token = skipIgnoreTokens(st);
 
 				if (token == null)
-					throw new InvalidRuleException("Tokeniser rule ended too soon!");
+					throw new AnnotationEngineException("Tokenizer rule ended too soon!");
 			} else if (token.equals("*")) {
 
 				fsm.addTransition(currentState, newState, 0);
@@ -491,7 +493,7 @@ public class SimpleTokenizer implements Annotator {
 				token = skipIgnoreTokens(st);
 
 				if (token == null)
-					throw new InvalidRuleException("Tokeniser rule ended too soon!");
+					throw new AnnotationEngineException("Tokenizer rule ended too soon!");
 			}
 			currentState = newState;
 		}
@@ -500,7 +502,7 @@ public class SimpleTokenizer implements Annotator {
 	}
 
 	/**
-	 * Parses from the given string tokeniser until it finds a specific
+	 * Parses from the given string tokenizer until it finds a specific
 	 * delimiter. One use for this method is to read everything until the first
 	 * quote.
 	 * 
@@ -524,7 +526,7 @@ public class SimpleTokenizer implements Annotator {
 			if (st.hasMoreElements())
 				token = st.nextToken();
 			else
-				throw new InvalidRuleException("Tokeniser rule ended too soon!");
+				throw new AnnotationEngineException("Tokeniser rule ended too soon!");
 		}
 		return type.toString();
 	}
