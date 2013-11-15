@@ -34,7 +34,7 @@ public abstract class AbstractGazetteerListReader {
 				String majorType = parts.length > 1? parts[1] : null;
 				String minorType = parts.length > 2? parts[2] : null;
 				String annotation = parts.length > 3? parts[3] : null;
-				GazetteerDef rec = new GazetteerDef(file, minorType, majorType, annotation);
+				GazetteerDefinition rec = new GazetteerDefinition(file, minorType, majorType, annotation);
 				process(rec);
 				
 			}
@@ -45,7 +45,7 @@ public abstract class AbstractGazetteerListReader {
 		}
 	}
 	
-	public abstract void process(GazetteerDef rec);
+	public abstract void process(GazetteerDefinition rec);
 	
 	
 

@@ -5,11 +5,11 @@ import java.util.List;
 public class GazetteerEntry {
 	String entry;
 	
-	GazetteerDef def;
+	GazetteerDefinition def;
 	List<String> featNames;
 	List<String> featValues;
 	
-	public GazetteerEntry(String entry, GazetteerDef def, List<String> featNames, List<String> featValues) {
+	public GazetteerEntry(String entry, GazetteerDefinition def, List<String> featNames, List<String> featValues) {
 		this.entry = entry;
 		this.def = def;
 		this.featNames = featNames;

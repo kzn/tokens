@@ -23,7 +23,7 @@ public abstract class AbstractSimpleGazetteer {
 	protected class GazetteerListReader extends AbstractGazetteerListReader {
 
 		@Override
-		public void process(GazetteerDef rec) {
+		public void process(GazetteerDefinition rec) {
 			GazetteerReader r = new GazetteerReader(rec, sep);
 			try {
 				r.read();
@@ -36,7 +36,7 @@ public abstract class AbstractSimpleGazetteer {
 	
 	protected class GazetteerReader extends AbstractGazetteerReader {
 
-		public GazetteerReader(GazetteerDef rec, char sep) {
+		public GazetteerReader(GazetteerDefinition rec, char sep) {
 			super(rec, sep);
 		}
 

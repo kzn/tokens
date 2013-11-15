@@ -4,14 +4,14 @@ import java.io.File;
 
 import com.google.common.base.Objects;
 
-public class GazetteerDef {
+public class GazetteerDefinition {
 	File file;
 	
 	String minorType;
 	String majorType;
 	String annotation;
 	
-	public GazetteerDef(File file, String minorType, String majorType, String annotation) {
+	public GazetteerDefinition(File file, String minorType, String majorType, String annotation) {
 		super();
 		this.file = file;
 		this.minorType = minorType;

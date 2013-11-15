@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public abstract class AbstractGazetteerReader {
-	GazetteerDef rec;
+	GazetteerDefinition rec;
 	char sep;
 	
-	public AbstractGazetteerReader(GazetteerDef rec, char sep) {
+	public AbstractGazetteerReader(GazetteerDefinition rec, char sep) {
 		this.rec = rec;
 		this.sep = sep;
 	}
