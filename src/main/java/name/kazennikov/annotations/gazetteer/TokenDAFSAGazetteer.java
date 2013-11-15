@@ -14,11 +14,12 @@ public class TokenDAFSAGazetteer extends AbstractDAFSAGazetteer {
 			return;
 		
 		int currentState = 0;
-		int lastMatchingState;
-
-		int currentIndex = starts.get(0);
+		int lastMatchingState = 0;
+		int startToken = 0; 
+		int currentIndex = starts.get(startToken++);
 		int matchStart = currentIndex;
-		int matchEnd;
+		int matchEnd = 0;
+
 
 
 		while(currentIndex < doc.length()) {
@@ -48,48 +49,39 @@ public class TokenDAFSAGazetteer extends AbstractDAFSAGazetteer {
 				}
 				
 				//reset the FSM (обходим каждую позицию т.е. сначала с 0, потом с 1, потом с 2)
-				currentIndex = matchedRegionStart + 1;
-				matchedRegionStart = curr;
+				currentIndex = starts.get(startToken++);
+				matchStart = currentIndex;
 
 				currentState = 0;
 			} else { // go on with the matching
 				currentState = nextState;
 				//if we have a successful state then store it
 				int[] finals = walkFSA.getFinals(currentState);
-				if(finals != null && finals.length != 0 && 
-						(
-								(!wholeWordsOnly)
-								||
-								((matchedRegionStart == 0 || !isWordInternal(doc.charAt(matchedRegionStart - 1)))
-										&&
-										(charIdx + 1 >= doc.length()   ||
-										!isWordInternal(doc.charAt(charIdx + 1)))
-										)
-								)
-						) {
+				
+				if(finals != null && finals.length != 0 && ends.binarySearch(currentIndex) > 0) {
 					//we have a new match
 					//if we had an existing match and we need to annotate prefixes, then 
 					//apply it
 					if(!longestMatchOnly && lastMatchingState != 0) {
-						createLookup(lastMatchingState, doc, matchedRegionStart, matchedRegionEnd);
+						createLookup(lastMatchingState, doc, matchStart, currentIndex);
 					}
-					matchedRegionEnd = charIdx;
+					
+					matchEnd = currentIndex;
 					lastMatchingState = currentState;
 				}
-				charIdx++;
+				currentIndex++;
 
-				if(charIdx == doc.length()){
+				if(currentIndex == doc.length()) {
 					//we can't go on, use the last matching state and restart matching
 					//from the next char
 					if(lastMatchingState != 0) {
 						//let's add the new annotation(s)
-						createLookup(lastMatchingState, doc, matchedRegionStart, 
-								matchedRegionEnd);
+						createLookup(lastMatchingState, doc, matchStart, matchEnd);
 						lastMatchingState = 0;
 					}
 					//reset the FSM
-					charIdx = matchedRegionStart + 1;
-					matchedRegionStart = charIdx;
+					currentIndex = starts.get(startToken++);
+					matchStart = currentIndex;
 					currentState = 0;
 				}
 
