@@ -198,6 +198,14 @@ public class JapePlusFSM {
 	public static class State {
 		int number;
 		List<Transition> transitions = new ArrayList<>();
+		
+		public int getNumber() {
+			return number;
+		}
+		
+		public List<Transition> getTransitions() {
+			return transitions;
+		}
 	}
 	
 	public class TypeMatcher {
@@ -214,6 +222,22 @@ public class JapePlusFSM {
 		int type;
 		
 		List<TypeMatcher> matchers = new ArrayList<>();
+		
+		public int getType() {
+			return type;
+		}
+		
+		public List<TypeMatcher> getMatchers() {
+			return matchers;
+		}
+		
+		public State getDest() {
+			return dest;
+		}
+		
+		public State getSrc() {
+			return src;
+		}
 	}
 	
 	Alphabet<AnnotationMatcher> matchers = new Alphabet<>();
@@ -306,16 +330,13 @@ public class JapePlusFSM {
 	}
 	
 	
+	public State getState(int index) {
+		return states.get(index);
+	}
+	
+	public String getGroupName(int index) {
+		return groups.get(index);
+	}
 	
 	
-	
-
-	
-	
-	
-
-
-
-
-
 }
