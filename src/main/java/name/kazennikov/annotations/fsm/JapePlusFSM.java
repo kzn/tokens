@@ -337,6 +337,10 @@ public class JapePlusFSM {
 	public String getGroupName(int index) {
 		return groups.get(index);
 	}
+
+	public State getStart() {
+		return start;
+	}
 	
 	
 }
