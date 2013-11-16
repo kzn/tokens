@@ -198,6 +198,7 @@ public class JapePlusFSM {
 	public static class State {
 		int number;
 		List<Transition> transitions = new ArrayList<>();
+		Set<Rule> rules;
 		
 		public int getNumber() {
 			return number;
@@ -206,6 +207,14 @@ public class JapePlusFSM {
 		public List<Transition> getTransitions() {
 			return transitions;
 		}
+
+		public boolean isFinal() {
+			return !(rules != null && rules.isEmpty());
+		}
+		
+		public Set<Rule> getRules() {
+			return rules;
+		}
 	}
 	
 	public class TypeMatcher {
@@ -213,6 +222,19 @@ public class JapePlusFSM {
 		
 		TIntArrayList matchers = new TIntArrayList();
 		TIntArrayList flags = new TIntArrayList(); // currently 1 - negated, 0 - non negated
+		
+		public String getType() {
+			return type;
+		}
+		
+		public TIntArrayList getMatchers() {
+			return matchers;
+		}
+		
+		public TIntArrayList getFlags() {
+			return flags;
+		}
+		
 	}
 	
 	public static class Transition {
@@ -262,6 +284,7 @@ public class JapePlusFSM {
 			FSAState<Set<Rule>> s0 = builder.fsm.getState(i);
 			State s = new State();
 			s.number = i;
+			s.rules = s0.getFinals();
 			stateMap.put(s0, s);
 			states.add(s);
 		}
@@ -340,6 +363,10 @@ public class JapePlusFSM {
 
 	public State getStart() {
 		return start;
+	}
+
+	public AnnotationMatcher getMatcher(int key) {
+		return matchers.get(key);
 	}
 	
 	
