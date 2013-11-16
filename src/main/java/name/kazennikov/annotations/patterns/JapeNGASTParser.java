@@ -8,6 +8,7 @@ import name.kazennikov.annotations.JapeNGParser;
 import name.kazennikov.annotations.patterns.AnnotationMatchers.FeatureAccessor;
 import name.kazennikov.annotations.patterns.PatternElement.Operator;
 import name.kazennikov.annotations.patterns.SimpleRHS.Value;
+import name.kazennikov.logger.Logger;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
@@ -19,6 +20,7 @@ import org.antlr.runtime.tree.Tree;
 
 
 public class JapeNGASTParser {
+	private static final Logger logger = Logger.getLogger();
 	String src;
 	CharStream charStream;
 	JapeNGLexer lexer;
@@ -38,7 +40,8 @@ public class JapeNGASTParser {
 		tokenStream = new CommonTokenStream(lexer);
 		parser = new JapeNGParser(tokenStream);
 		tree = (CommonTree) parser.jape().getTree();
-		System.out.printf("%n%s%n%n", tree.toStringTree());
+		
+		logger.debug("%s", tree.toStringTree());
 	}
 	
 	
