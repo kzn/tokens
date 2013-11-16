@@ -54,7 +54,8 @@ rule: 'Rule:' name=SIMPLE priority? matcher+ '-->' action+ -> ^(RULE ^(NAME $nam
 priority: 'Priority:' num=integer -> ^(PRIORITY $num);
 // LHS grammar
 matcher: group modif? -> ^(GROUP_MATCHER modif? group);
-group: '(' groupElem+ ('|' groupElem+)*')' -> ^(OR groupElem+);
+group: '(' groupAnd ('|' groupAnd)*')' -> ^(OR groupAnd+);
+groupAnd: groupElem+ -> ^(GROUP_MATCHER groupElem+);
 groupElem: matcher | simpleMatcher;
 
 simpleMatcher: '{' annotSpec (',' annotSpec)* '}' -> ^(ANNOT annotSpec+);
