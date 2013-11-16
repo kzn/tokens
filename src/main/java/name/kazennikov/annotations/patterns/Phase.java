@@ -3,6 +3,8 @@ package name.kazennikov.annotations.patterns;
 import java.util.ArrayList;
 import java.util.List;
 
+import name.kazennikov.annotations.fsm.JapePlusFSM;
+
 import com.google.common.base.Objects;
 
 public class Phase {
@@ -11,7 +13,7 @@ public class Phase {
 	MatchMode mode = MatchMode.BRILL;
 	List<String> input = new ArrayList<>();
 	List<Rule> rules = new ArrayList<>();
-	
+	JapePlusFSM fsm;
 	
 	@Override
 	public String toString() {
@@ -26,6 +28,20 @@ public class Phase {
 	public List<Rule> getRules() {
 		return rules;
 	}
+	
+	public boolean isCompiled() {
+		return fsm != null;
+	}
+	
+	public void compile() {
+		JapePlusFSM.Builder builder = new JapePlusFSM.Builder();
+		for(Rule r : rules) {
+			builder.addRule(r);
+		}
+		
+		fsm = builder.build();
+	}
+	
 	
 
 }
