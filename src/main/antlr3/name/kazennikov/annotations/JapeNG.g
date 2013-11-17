@@ -94,7 +94,7 @@ javaCode: '{' ( '}'-> ^(EMPTY_RHS)
                 | code+=(SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '!' | javaCode)+ '}'
                 -> ^(JAVA));
 labelings: labeling (',' labeling)* -> labeling+;
-labeling: ':' SIMPLE '.' SIMPLE '=' '{' (attr (',' attr )*)?'}' -> ^(SIMPLE_RHS ^(NAME SIMPLE+) attr+);
+labeling: ':' SIMPLE '.' SIMPLE '=' '{' (attr (',' attr )*)?'}' -> ^(SIMPLE_RHS ^(NAME SIMPLE+) attr*);
 
 attr:  attrName '=' attrValue -> ^(ATTR attrName attrValue);
 attrValue: value -> ^(VAL value)
