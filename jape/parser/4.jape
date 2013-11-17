@@ -1,0 +1,13 @@
+Phase:Phase4
+Input: Token Lookup
+Options: control = appelt
+
+
+Rule: Test1
+(
+    {Token} 
+    ({Token@string == "-"} | {Token@string == ":"})
+    {Token}
+):test
+-->
+:test.Dashed = {}
