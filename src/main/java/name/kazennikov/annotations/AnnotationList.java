@@ -1,17 +1,25 @@
 package name.kazennikov.annotations;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
 /**
  * List of annotations. Some basic extension over the java ArrayList
  */
 public class AnnotationList extends ArrayList<Annotation> {
+	
+	public AnnotationList() {
+		super();
+	}
+	
+	public AnnotationList(int initialSize) {
+		super(initialSize);
+	}
 
     public AnnotationList get(Predicate<Annotation>... p) {
         AnnotationList list = new AnnotationList();
@@ -64,5 +72,14 @@ public class AnnotationList extends ArrayList<Annotation> {
     @Override
     public Annotation get(int index) {
     	return super.get(index < 0? size() - index : index);
+    }
+    
+    public AnnotationList copy() {
+    	AnnotationList copy = new AnnotationList();
+    	for(int i = 0; i < size(); i++) {
+    		copy.add(get(i));
+    	}
+    	
+    	return copy;
     }
 }
