@@ -42,29 +42,42 @@ public class RecursiveJapeAnnotator implements Annotator {
 	}
 
 	public static class FSMInstance {
-		Map<String, AnnotationList> bindings;
+		//Map<String, AnnotationList> bindings;
 		List<AnnotationList> stack;
+		List<String> keys;
+		List<AnnotationList> values;
 		int position = 0;
 		Rule rule;
 
 		public void init() {
-			bindings = new HashMap<>();
+			//bindings = new HashMap<>();
+			keys = new ArrayList<>();
+			values = new ArrayList<>();
 			stack = new ArrayList<>();
 		}
 
 		public FSMInstance copy() {
 			FSMInstance copy = new FSMInstance();
-			copy.bindings = new HashMap<String, AnnotationList>();
+			//copy.bindings = new HashMap<String, AnnotationList>();
+			copy.keys = new ArrayList<>(this.keys.size());
+			copy.values = new ArrayList<>(this.values.size());
 			copy.stack = new ArrayList<>();
 			copy.position = position;
 
 			for(AnnotationList l : stack) {
 				copy.stack.add(l.copy());
 			}
-
-			for(Map.Entry<String, AnnotationList> e : bindings.entrySet()) {
-				copy.bindings.put(e.getKey(), e.getValue().copy());
+			
+			for(int i = 0; i < keys.size(); i++) {
+				copy.keys.add(keys.get(i));
+				copy.values.add(values.get(i).copy());
 			}
+			
+
+//			for(Map.Entry<String, AnnotationList> e : bindings.entrySet()) {
+//				copy.bindings.put(e.getKey(), e.getValue().copy());
+//			}
+
 
 
 			return copy;
@@ -83,14 +96,23 @@ public class RecursiveJapeAnnotator implements Annotator {
 		public void pop(String groupName) {
 			AnnotationList l = stack.get(stack.size() - 1);
 			stack.remove(stack.size() - 1);
-			bindings.put(groupName, l);
+			//bindings.put(groupName, l);
+			keys.add(groupName);
+			values.add(l);
 		}
 
 		public static FSMInstance newInstance() {
 			FSMInstance inst = new FSMInstance();
-			inst.bindings = new HashMap<>();
-			inst.stack = new ArrayList<>();
+			inst.init();
 			return inst;
+		}
+
+		public Map<String, AnnotationList> bindings() {
+			Map<String, AnnotationList> map = new HashMap<String, AnnotationList>();
+			for(int i = 0; i < keys.size(); i++) {
+				map.put(keys.get(i), values.get(i));
+			}
+			return map;
 		}
 
 
@@ -145,7 +167,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 		public int execOnce() {
 			FSMInstance inst = instances.get(0);
 			for(RHS rhs : inst.rule.rhs()) {
-				rhs.execute(doc, input, inst.bindings);
+				rhs.execute(doc, input, inst.bindings());
 			}
 
 			return -1;
@@ -154,7 +176,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 		public int execFirst() {
 			FSMInstance inst = instances.get(0);
 			for(RHS rhs : inst.rule.rhs()) {
-				rhs.execute(doc, input, inst.bindings);
+				rhs.execute(doc, input, inst.bindings());
 			}
 
 			return skipToNextIndex(inst.position);
@@ -164,7 +186,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 			for(int i = 0; i < instances.size(); i++) {
 				FSMInstance inst = instances.get(i);
 				for(RHS rhs : inst.rule.rhs()) {
-					rhs.execute(doc, input, inst.bindings);
+					rhs.execute(doc, input, inst.bindings());
 				}
 			}
 			
@@ -176,7 +198,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 			for(int i = 0; i < instances.size(); i++) {
 				FSMInstance inst = instances.get(i);
 				for(RHS rhs : inst.rule.rhs()) {
-					rhs.execute(doc, input, inst.bindings);
+					rhs.execute(doc, input, inst.bindings());
 				}
 
 				maxPos = Math.max(maxPos, inst.position);
@@ -205,7 +227,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 			});
 			
 			for(RHS rhs : instances.get(0).rule.rhs()) {
-				rhs.execute(doc, input, instances.get(0).bindings);
+				rhs.execute(doc, input, instances.get(0).bindings());
 			}
 
 			return skipToNextIndex(instances.get(0).position);
