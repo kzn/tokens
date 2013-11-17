@@ -81,7 +81,7 @@ public interface AnnotationXmlLoader {
 					String tag = reader.getLocalName();
 					String value = reader.getElementText();
 					
-					if(tag.equals(Annotation.TYPE) || tag.equals(Annotation.KIND)) {
+					if(tag.equals(AnnotationConstants.TYPE) || tag.equals(AnnotationConstants.KIND)) {
 						value = value.intern();
 					}
 					

@@ -5,7 +5,7 @@ import gnu.trove.list.array.TIntArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import name.kazennikov.annotations.Annotation;
+import name.kazennikov.annotations.AnnotationConstants;
 import name.kazennikov.annotations.Document;
 import name.kazennikov.dafsa.IntDAFSAInt;
 import name.kazennikov.fsa.walk.WalkFSAInt;
@@ -23,7 +23,7 @@ public abstract class AbstractDAFSAGazetteer extends BaseGazetteer {
 
 	@Override
 	public boolean isApplicable(Document doc) {
-		return doc.contains(Annotation.TOKEN);
+		return doc.contains(AnnotationConstants.TOKEN);
 	}
 	
 	protected boolean isWhitespace(char ch) {
@@ -71,7 +71,7 @@ public abstract class AbstractDAFSAGazetteer extends BaseGazetteer {
 		
 		for(int i = 0; i < finals.length; i++) {
 			Map<String, Object> f = new HashMap<String, Object>(feats.get(finals[i]));
-			d.addAnnotation(Annotation.LOOKUP, start, end, f);
+			d.addAnnotation(AnnotationConstants.LOOKUP, start, end, f);
 		}
 	}
 

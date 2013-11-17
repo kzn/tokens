@@ -1,8 +1,5 @@
 package name.kazennikov.annotations;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,6 +7,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 /**
  * Reader for document xml stream
@@ -41,7 +42,7 @@ public class DocumentStreamReader {
     public Document readNext() throws XMLStreamException {
 
         while(s.hasNext()) {
-            if(s.isStartElement() && s.getLocalName().equals(Document.DOC))
+            if(s.isStartElement() && s.getLocalName().equals(AnnotationConstants.DOC))
                 return Document.read(s, anLoaders);
             s.next();
         }

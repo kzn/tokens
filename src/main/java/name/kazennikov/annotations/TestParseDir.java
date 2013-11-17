@@ -8,6 +8,8 @@ import name.kazennikov.annotations.patterns.JapeNGASTParser;
 import name.kazennikov.annotations.patterns.Phase;
 import name.kazennikov.annotations.patterns.Rule;
 
+import org.apache.log4j.BasicConfigurator;
+
 import com.google.common.io.Files;
 
 public class TestParseDir {
@@ -21,15 +23,17 @@ public class TestParseDir {
 
 
 			for(Rule r : phase.getRules()) {
-				JapePlusFSM.Builder fsm = new JapePlusFSM.Builder();
-				fsm.addRule(r);
+				JapePlusFSM.Builder fsmBuilder = new JapePlusFSM.Builder();
+				fsmBuilder.addRule(r);
 
-				fsm.toDot("test_pre.dot");
-				fsm.determinize();
-				fsm.toDot("test_det.dot");
-				fsm.minimize();
-				fsm.toDot("test_min.dot");
-				fsm.toDot("test.dot");
+				fsmBuilder.toDot("test_pre.dot");
+				fsmBuilder.determinize();
+				fsmBuilder.toDot("test_det.dot");
+				fsmBuilder.minimize();
+				fsmBuilder.toDot("test_min.dot");
+				fsmBuilder.toDot("test.dot");
+				
+				JapePlusFSM fsm1 = fsmBuilder.build();
 			}
 
 		} else if(f.isDirectory()) {
@@ -41,6 +45,7 @@ public class TestParseDir {
 	
 	
 	public static void main(String[] args) throws Exception {
+		BasicConfigurator.configure();
 		testParseDirs(new File("jape/parser"));
 
 	}

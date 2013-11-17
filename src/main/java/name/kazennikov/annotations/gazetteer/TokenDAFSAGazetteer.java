@@ -2,6 +2,7 @@ package name.kazennikov.annotations.gazetteer;
 
 import gnu.trove.list.array.TIntArrayList;
 import name.kazennikov.annotations.Annotation;
+import name.kazennikov.annotations.AnnotationConstants;
 import name.kazennikov.annotations.Document;
 
 public class TokenDAFSAGazetteer extends AbstractDAFSAGazetteer {
@@ -94,7 +95,7 @@ public class TokenDAFSAGazetteer extends AbstractDAFSAGazetteer {
 
 	TIntArrayList getStarts(Document doc) {
 		TIntArrayList t = new TIntArrayList();
-		for(Annotation a : doc.get(Annotation.TOKEN)) {
+		for(Annotation a : doc.get(AnnotationConstants.TOKEN)) {
 			t.add(a.getStart());
 		}
 
@@ -103,7 +104,7 @@ public class TokenDAFSAGazetteer extends AbstractDAFSAGazetteer {
 
 	TIntArrayList getEnds(Document doc) {
 		TIntArrayList t = new TIntArrayList();
-		for(Annotation a : doc.get(Annotation.TOKEN)) {
+		for(Annotation a : doc.get(AnnotationConstants.TOKEN)) {
 			t.add(a.getEnd());
 		}
 

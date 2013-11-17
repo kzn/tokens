@@ -3,7 +3,7 @@ package name.kazennikov.annotations.annotators;
 import java.util.HashMap;
 import java.util.Map;
 
-import name.kazennikov.annotations.Annotation;
+import name.kazennikov.annotations.AnnotationConstants;
 import name.kazennikov.annotations.Annotator;
 import name.kazennikov.annotations.BaseTokenType;
 import name.kazennikov.annotations.Document;
@@ -43,7 +43,7 @@ public abstract class AbstractTokenizer implements Annotator {
 //	public static final String SPACE = "space";
 //	public static final String PUNC = "punc";
 	
-	String tokenAnnotationType = Annotation.TOKEN;
+	String tokenAnnotationType = AnnotationConstants.TOKEN;
 
     public AbstractTokenizer() {
     }
@@ -163,7 +163,7 @@ public abstract class AbstractTokenizer implements Annotator {
 
     void add(Document d, int start, int end, TokenType type) {
     	Map<String, Object> feats = new HashMap<String, Object>();
-    	feats.put(Annotation.TYPE, type);
+    	feats.put(AnnotationConstants.TYPE, type);
         d.addAnnotation(tokenAnnotationType, start, end, feats);
     }
 }

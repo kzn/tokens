@@ -22,16 +22,6 @@ import com.google.common.base.Predicates;
  */
 public class Annotation implements CharSequence, Comparable<Annotation> {
 
-	public static final String TOKEN = "Token";
-    public static final String WORD = "Word";
-    public static final String SENT = "Sentence";
-    public static final String DOC = "Document";
-	public static final String LOOKUP = "Lookup";
-    
-    public static final String TYPE = "type";
-    public static final String KIND = "kind";
-    public static final String DATA = "data";
-
 	/**
 	 * Basic comparator for natural order. Sorts by:
 	 * <ul>

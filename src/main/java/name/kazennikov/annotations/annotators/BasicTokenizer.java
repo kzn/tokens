@@ -1,6 +1,7 @@
 package name.kazennikov.annotations.annotators;
 
 import name.kazennikov.annotations.Annotation;
+import name.kazennikov.annotations.AnnotationConstants;
 import name.kazennikov.annotations.Annotator;
 import name.kazennikov.annotations.Document;
 
@@ -37,7 +38,7 @@ public class BasicTokenizer extends AbstractTokenizer {
 		Annotator ann = new BasicTokenizer();
 		ann.annotate(d);
 		
-		for(Annotation a : d.get(Annotation.TOKEN)) {
+		for(Annotation a : d.get(AnnotationConstants.TOKEN)) {
 			System.out.printf("'%s' %s%n", a.getText(), a.getFeatureMap());
 		}
 	}

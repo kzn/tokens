@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import name.kazennikov.annotations.Annotation;
+import name.kazennikov.annotations.AnnotationConstants;
 import name.kazennikov.annotations.AnnotationStream;
 import name.kazennikov.annotations.Annotator;
 import name.kazennikov.annotations.BaseTokenType;
@@ -23,7 +24,7 @@ import com.google.common.collect.Sets;
  *
  */
 public class SentenceSplitter implements Annotator {
-	public static final String SENT = "sent";
+	public static final String SENT = AnnotationConstants.SENT;
 	
 	Set<String> abbrev = Sets.newHashSet();
 	boolean splitOnLower;
@@ -41,14 +42,14 @@ public class SentenceSplitter implements Annotator {
 
     @Override
     public boolean isApplicable(Document doc) {
-        return doc.contains(Annotation.TOKEN);
+        return doc.contains(AnnotationConstants.TOKEN);
     }
 
     @Override
 	public void annotate(Document doc) {
-		AnnotationStream in = new AnnotationStream(null, doc.get(Annotation.TOKEN));
+		AnnotationStream in = new AnnotationStream(null, doc.get(AnnotationConstants.TOKEN));
 		
-		while(!in.isNull() && in.current().getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.WHITESPACE))
+		while(!in.isNull() && in.current().getFeature(AnnotationConstants.TYPE, TokenType.class).is(BaseTokenType.WHITESPACE))
 			in.next();
 
 		int sentenceStart = in.pos();
@@ -59,7 +60,7 @@ public class SentenceSplitter implements Annotator {
 				add(doc, in, sentenceStart, in.pos()); // TODO: trim
 				
 				
-				while(!in.isNull()  && in.current().getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.WHITESPACE))
+				while(!in.isNull()  && in.current().getFeature(AnnotationConstants.TYPE, TokenType.class).is(BaseTokenType.WHITESPACE))
 					in.next();
 				
 				sentenceStart = in.pos();
@@ -74,10 +75,10 @@ public class SentenceSplitter implements Annotator {
 	}
 	
 	public void add(Document d, AnnotationStream s, int start, int end) {
-		while(s.isNull(s.get(start)) || s.get(start).getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.SPACE))
+		while(s.isNull(s.get(start)) || s.get(start).getFeature(AnnotationConstants.TYPE, TokenType.class).is(BaseTokenType.SPACE))
 			start++;
 		
-		while(s.isNull(s.get(end)) || s.get(end).getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.SPACE))
+		while(s.isNull(s.get(end)) || s.get(end).getFeature(AnnotationConstants.TYPE, TokenType.class).is(BaseTokenType.SPACE))
 			end--;
 		
 		
@@ -88,7 +89,7 @@ public class SentenceSplitter implements Annotator {
 	 * Check if the token could be a possible EOS
 	 */
 	public static boolean isPossibleEOS(Document d, Annotation token) {
-		if(!token.getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.PUNC))
+		if(!token.getFeature(AnnotationConstants.TYPE, TokenType.class).is(BaseTokenType.PUNC))
 			return false;
 		
 		String value = token.getText();
@@ -126,7 +127,7 @@ public class SentenceSplitter implements Annotator {
             return false;
 				
 		// skip all punctuation after current position
-		while(!s.isNull() && s.current().getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.PUNC)) {
+		while(!s.isNull() && s.current().getFeature(AnnotationConstants.TYPE, TokenType.class).is(BaseTokenType.PUNC)) {
 			s.next();
 		}
 		
@@ -135,12 +136,12 @@ public class SentenceSplitter implements Annotator {
 		
 		
 		
-		if(!s.current().getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.WHITESPACE))
+		if(!s.current().getFeature(AnnotationConstants.TYPE, TokenType.class).is(BaseTokenType.WHITESPACE))
 			return false;
 		
 		int sentStart = s.pos();
 		// skip all non-text after the punctuation
-		while(s.isNull(s.get(sentStart)) && !s.get(sentStart).getFeature(Annotation.TYPE, TokenType.class).is(BaseTokenType.TEXT)) {
+		while(s.isNull(s.get(sentStart)) && !s.get(sentStart).getFeature(AnnotationConstants.TYPE, TokenType.class).is(BaseTokenType.TEXT)) {
 			sentStart++;
 		}
 		

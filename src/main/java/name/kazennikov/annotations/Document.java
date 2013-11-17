@@ -262,7 +262,7 @@ public class Document extends Annotation implements CharSequence {
 	
 
 	public void toXml(XMLStreamWriter writer, Map<String, XmlWritable<Map<String, Object>>> anWriters) throws XMLStreamException {
-		writer.writeStartElement(DOC);
+		writer.writeStartElement(AnnotationConstants.DOC);
 		writer.writeAttribute("text", getText());
 		writer.writeAttribute("type", getType()); // get root annotation
 
@@ -302,7 +302,7 @@ public class Document extends Annotation implements CharSequence {
 	 */
 	public static Document read(XMLStreamReader stream, Map<String, AnnotationXmlLoader> anLoaders) throws XMLStreamException {
 		String tag = stream.getName().getLocalPart();
-		if(!tag.equals(DOC))
+		if(!tag.equals(AnnotationConstants.DOC))
 			return null;
 		
 		String anDoc = stream.getAttributeValue(null, "type");
@@ -310,7 +310,7 @@ public class Document extends Annotation implements CharSequence {
 		Document doc = new Document(anDoc, text);
 		
 		while(stream.hasNext()) {
-			if(stream.isEndElement() && stream.getLocalName().equals(DOC))
+			if(stream.isEndElement() && stream.getLocalName().equals(AnnotationConstants.DOC))
 				break;
 			
 			if(stream.isStartElement()) {
