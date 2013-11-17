@@ -25,6 +25,8 @@ import name.kazennikov.fsa.FSAState;
 import name.kazennikov.fsa.FSATransition;
 import name.kazennikov.tools.Alphabet;
 
+import com.google.common.base.Objects;
+
 public class JapePlusFSM {
 	public static final int GROUP_START = -1;
 	
@@ -215,6 +217,13 @@ public class JapePlusFSM {
 		public Set<Rule> getRules() {
 			return rules;
 		}
+		
+		@Override
+		public String toString() {
+			return Objects.toStringHelper(this)
+					.add("number", number)
+					.toString();
+		}
 	}
 	
 	public class TypeMatcher {
@@ -260,6 +269,16 @@ public class JapePlusFSM {
 		public State getSrc() {
 			return src;
 		}
+		
+		@Override
+		public String toString() {
+			return Objects.toStringHelper(this)
+					.add("from", src.number)
+					.add("to", dest.number)
+					.add("type", type)
+					.toString();
+		}
+
 	}
 	
 	Alphabet<AnnotationMatcher> matchers = new Alphabet<>();
@@ -311,10 +330,10 @@ public class JapePlusFSM {
 		t.src = srcState;
 		t.dest = destState;
 		
-		// simple group start/group end
-		if(t0.getLabel() < 0) {
-			t.type = t0.getLabel();
-		} else { // convert annotation matcher
+
+		t.type = t0.getLabel();
+		
+		if(t0.getLabel() >= 0) { // convert annotation matcher
 			AnnotationMatcher m = builderAlphabet.get(t0.getLabel());
 			convertMatcher(m, t.matchers);
 		}
