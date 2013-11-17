@@ -121,8 +121,10 @@ public class RecursiveJapeAnnotator implements Annotator {
 
 	public static class Matcher {
 		AnnotationList input;
+		int[] nextAnnotationIndex;
 		Document doc;
 		Phase phase;
+		
 		
 		List<FSMInstance> instances = new ArrayList<>();
 
@@ -138,7 +140,29 @@ public class RecursiveJapeAnnotator implements Annotator {
 
 			}); 
 
-			input.sort();
+			input.sort();		
+			nextAnnotationIndex = computeFollowingAnnotationIndex(input);
+		}
+
+		public static int[] computeFollowingAnnotationIndex(AnnotationList input) {
+			int nextAnnotationIndex[] = new int[input.size()];
+			
+			for(int i = 0; i < input.size(); i++) {
+				int index = Collections.binarySearch(input, input.get(i), new Comparator<Annotation>() {
+
+					@Override
+					public int compare(Annotation o1, Annotation o2) {
+						return Integer.compare(o1.getStart(), o2.getEnd());
+					}
+				});
+				
+				if(index < 0) {
+					index = -index - 1;
+				}
+				nextAnnotationIndex[i] = index;
+			}
+
+			return nextAnnotationIndex;
 		}
 
 		public void execute() {
@@ -299,12 +323,12 @@ public class RecursiveJapeAnnotator implements Annotator {
 
 		public boolean tryMatch(int startIndex, int endIndex, Transition t, FSMInstance instance) {
 			List<TypeMatcher> matchers = t.getMatchers();
-			Annotation[] matchedAnnotations = new Annotation[matchers.size()];
-			return trySingleMatch(startIndex, endIndex, matchers, 0, matchedAnnotations, t.getDest(), instance);
+			int[] matchedAnnotations = new int[matchers.size()];
+			return tryConstraintMatch(startIndex, endIndex, matchers, 0, matchedAnnotations, t.getDest(), instance);
 		}
 
-		public boolean trySingleMatch(int startIndex, int endIndex, 
-				List<TypeMatcher> typeMatchers, int tmIndex, Annotation[] matched,
+		public boolean tryConstraintMatch(int startIndex, int endIndex, 
+				List<TypeMatcher> typeMatchers, int tmIndex, int[] matched,
 				State dest, FSMInstance instance) {
 			
 			if(startIndex >= input.size())
@@ -313,10 +337,13 @@ public class RecursiveJapeAnnotator implements Annotator {
 			if(tmIndex == typeMatchers.size()) {
 				FSMInstance inst = instance.copy();
 				inst.position = startIndex;
-				for(Annotation a : matched) {
-					inst.addMatching(a);
+				int nextIndex = Integer.MIN_VALUE;
+				for(int annotIndex : matched) {
+					inst.addMatching(input.get(annotIndex));
+					nextIndex = Math.max(nextIndex, nextAnnotationIndex[annotIndex]);
 				}
-				return tryExecute(endIndex, dest, inst);
+				
+				return tryExecute(nextIndex, dest, inst);
 			} else {
 				TypeMatcher m = typeMatchers.get(tmIndex);
 				TIntArrayList matchersIndex = m.getMatchers();
@@ -334,8 +361,8 @@ public class RecursiveJapeAnnotator implements Annotator {
 							res = !res;
 
 						if(res) {
-							matched[tmIndex] = a;
-							trySingleMatch(startIndex, endIndex, typeMatchers, tmIndex + 1, matched, dest, instance);
+							matched[tmIndex] = annotIndex;
+							tryConstraintMatch(startIndex, endIndex, typeMatchers, tmIndex + 1, matched, dest, instance);
 						}
 					}
 				}				
@@ -348,14 +375,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 		public int skipToNextIndex(int index) {
 			if(index >= input.size())
 				return index;
-			
-			int pos = input.get(index).getStart();
-			while(++index < input.size()) {
-				if(input.get(index).getStart() != pos)
-					return index;
-			}
-
-			return input.size();
+			return nextAnnotationIndex[index];
 		}
 	}
 
