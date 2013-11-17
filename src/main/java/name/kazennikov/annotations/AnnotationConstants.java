@@ -6,6 +6,7 @@ public interface AnnotationConstants {
     public static final String SENT = "Sentence";
     public static final String DOC = "Document";
 	public static final String LOOKUP = "Lookup";
+	public static final String NUMBER = "Number";
     
     public static final String TYPE = "type";
     public static final String KIND = "kind";
