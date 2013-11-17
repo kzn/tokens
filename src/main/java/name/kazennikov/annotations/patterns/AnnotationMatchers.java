@@ -134,9 +134,9 @@ public class AnnotationMatchers {
 		}
 	}
 	
-	public static class TextMetaFeatureAccessor extends FeatureAccessor {
-		public TextMetaFeatureAccessor() {
-			super("text");
+	public static class StringMetaFeatureAccessor extends FeatureAccessor {
+		public StringMetaFeatureAccessor() {
+			super("string");
 		}
 
 		@Override
@@ -146,7 +146,7 @@ public class AnnotationMatchers {
 		
 		@Override
 		public String toString() {
-			return "@text";
+			return "@string";
 		}
 	}
 

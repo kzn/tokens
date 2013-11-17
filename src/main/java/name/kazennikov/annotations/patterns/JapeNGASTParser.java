@@ -37,7 +37,7 @@ public class JapeNGASTParser {
 	}
 	
 	private JapeNGASTParser(String source) throws RecognitionException {
-		addFeatureAccessor(new AnnotationMatchers.TextMetaFeatureAccessor());
+		addFeatureAccessor(new AnnotationMatchers.StringMetaFeatureAccessor());
 		this.src = source;
 		charStream = new ANTLRStringStream(src);
 		lexer = new JapeNGLexer(charStream);
