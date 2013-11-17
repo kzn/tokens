@@ -270,12 +270,16 @@ public class AnnotationMatchers {
 			return String.format("{%s%s ==~ '%s'}", type, fa, value);
 		}
 		
+
+		
 		@Override
 		public boolean matchValue(Object annotationObject, Object value) {
 			String strAn = annotationObject.toString();
 			Matcher m = p.matcher(strAn);
-			return m.find();
+			return m.matches();
 		}
+
+		
 	}
 	
 	public static class FeatureContainsRegexMatcher extends BaseFeatureMatcher {
@@ -289,12 +293,11 @@ public class AnnotationMatchers {
 		public String toString() {
 			return String.format("{%s%s =~ '%s'}", type, fa, value);
 		}
-		
 		@Override
 		public boolean matchValue(Object annotationObject, Object value) {
 			String strAn = annotationObject.toString();
 			Matcher m = p.matcher(strAn);
-			return m.matches();
+			return m.find();
 		}
 	}
 
