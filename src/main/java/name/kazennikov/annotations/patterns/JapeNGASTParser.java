@@ -332,6 +332,10 @@ public class JapeNGASTParser {
 			return new AnnotationMatchers.FeatureEqMatcher(type, fa, val);
 		case "neq":
 			return new AnnotationMatchers.NegativeMatcher(new AnnotationMatchers.FeatureEqMatcher(type, fa, val));
+		case "match":
+			return new AnnotationMatchers.FeatureRegexMatcher(type, fa, val);
+		case "contains":
+			return new AnnotationMatchers.FeatureContainsRegexMatcher(type, fa, val);
 		}
 		throw new IllegalStateException("illegal annotation type feature operation " + op);
 	}
@@ -347,8 +351,13 @@ public class JapeNGASTParser {
 			return new AnnotationMatchers.FeatureEqMatcher(type, fa, val);
 		case "neq":
 			return new AnnotationMatchers.NegativeMatcher(new AnnotationMatchers.FeatureEqMatcher(type, fa, val));
+		case "match":
+			return new AnnotationMatchers.FeatureRegexMatcher(type, fa, val);
+		case "contains":
+			return new AnnotationMatchers.FeatureContainsRegexMatcher(type, fa, val);
+
 		}
-		throw new IllegalStateException("illegal annotation type feature operation " + op);
+		throw new IllegalStateException("illegal annotation type metafeature operation " + op);
 	}
 
 

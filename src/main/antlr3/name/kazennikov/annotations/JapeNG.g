@@ -75,6 +75,8 @@ value: SIMPLE -> ^(TYPE["IDENT"] SIMPLE)
      ;
 op: '!=' -> ^(OP["neq"])
   | '==' -> ^(OP["eq"])
+  | '=~' -> ^(OP["contains"])
+  | '==~' -> ^(OP["match"])
   ;
 
 
