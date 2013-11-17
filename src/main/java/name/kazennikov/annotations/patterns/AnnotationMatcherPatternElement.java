@@ -26,5 +26,10 @@ public class AnnotationMatcherPatternElement implements PatternElement {
 	public AnnotationMatcher matcher() {
 		return matcher;
 	}
+	
+	@Override
+	public String toString() {
+		return matcher.toString();
+	}
 
 }

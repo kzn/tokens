@@ -1,7 +1,9 @@
 package name.kazennikov.annotations.patterns;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import name.kazennikov.annotations.JapeNGLexer;
 import name.kazennikov.annotations.JapeNGParser;
@@ -27,6 +29,7 @@ public class JapeNGASTParser {
 	CommonTokenStream tokenStream;
 	JapeNGParser parser;
 	CommonTree tree;
+	Map<String, FeatureAccessor> metaFeats = new HashMap<String, AnnotationMatchers.FeatureAccessor>();
 	
 	public static Phase parse(String source) throws Exception {
 		JapeNGASTParser parser = new JapeNGASTParser(source);
@@ -34,6 +37,7 @@ public class JapeNGASTParser {
 	}
 	
 	private JapeNGASTParser(String source) throws RecognitionException {
+		addFeatureAccessor(new AnnotationMatchers.TextMetaFeatureAccessor());
 		this.src = source;
 		charStream = new ANTLRStringStream(src);
 		lexer = new JapeNGLexer(charStream);
@@ -42,6 +46,10 @@ public class JapeNGASTParser {
 		tree = (CommonTree) parser.jape().getTree();
 		
 		logger.debug("%s", tree.toStringTree());
+	}
+	
+	private void addFeatureAccessor(FeatureAccessor acc) {
+		metaFeats.put(acc.getName(), acc);
 	}
 	
 	
@@ -259,6 +267,9 @@ public class JapeNGASTParser {
 				matchers.add(parseAnFeat(child));
 				break;
 				
+			case "AN_METAFEAT":
+				matchers.add(parseAnMetaFeat(child));
+				break;
 
 			}
 		}
@@ -324,6 +335,22 @@ public class JapeNGASTParser {
 		}
 		throw new IllegalStateException("illegal annotation type feature operation " + op);
 	}
+	
+	private AnnotationMatcher parseAnMetaFeat(Tree feats) {
+		String op = feats.getChild(0).getText();
+		Object val = parseVal(feats.getChild(1));
+		String type = feats.getChild(2).getText();
+		String feat = feats.getChild(3).getText();
+		FeatureAccessor fa = metaFeats.get(feat);
+		switch(op) {
+		case "eq":
+			return new AnnotationMatchers.FeatureEqMatcher(type, fa, val);
+		case "neq":
+			return new AnnotationMatchers.NegativeMatcher(new AnnotationMatchers.FeatureEqMatcher(type, fa, val));
+		}
+		throw new IllegalStateException("illegal annotation type feature operation " + op);
+	}
+
 
 	private void parseOptions(Phase phase, Tree options) {
 		for(int i = 0; i < options.getChildCount(); i++) {

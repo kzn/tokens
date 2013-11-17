@@ -133,6 +133,22 @@ public class AnnotationMatchers {
 			return "." + name;
 		}
 	}
+	
+	public static class TextMetaFeatureAccessor extends FeatureAccessor {
+		public TextMetaFeatureAccessor() {
+			super("text");
+		}
+
+		@Override
+		public Object getValue(Annotation a) {
+			return a.getText();
+		}
+		
+		@Override
+		public String toString() {
+			return "@text";
+		}
+	}
 
 	
 	
@@ -233,7 +249,7 @@ public class AnnotationMatchers {
 		
 		@Override
 		public String toString() {
-			return String.format("{%s%s == %s}", type, fa, value);
+			return String.format("{%s%s == '%s'}", type, fa, value);
 		}
 		
 		@Override
@@ -251,7 +267,7 @@ public class AnnotationMatchers {
 		
 		@Override
 		public String toString() {
-			return String.format("{%s%s ==~ %s}", type, fa, value);
+			return String.format("{%s%s ==~ '%s'}", type, fa, value);
 		}
 		
 		@Override
@@ -271,7 +287,7 @@ public class AnnotationMatchers {
 		
 		@Override
 		public String toString() {
-			return String.format("{%s%s =~ %s}", type, fa, value);
+			return String.format("{%s%s =~ '%s'}", type, fa, value);
 		}
 		
 		@Override
