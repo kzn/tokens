@@ -248,9 +248,6 @@ public class RecursiveJapeAnnotator implements Annotator {
 					return false;
 			}
 			
-			if(index >= input.size())
-				return true;
-
 			int nextIndex = skipToNextIndex(index);
 
 			for(Transition t : state.getTransitions()) {
@@ -287,6 +284,9 @@ public class RecursiveJapeAnnotator implements Annotator {
 		public boolean trySingleMatch(int startIndex, int endIndex, 
 				List<TypeMatcher> typeMatchers, int tmIndex, Annotation[] matched,
 				State dest, FSMInstance instance) {
+			
+			if(startIndex >= input.size())
+				return true;
 
 			if(tmIndex == typeMatchers.size()) {
 				FSMInstance inst = instance.copy();
@@ -324,6 +324,9 @@ public class RecursiveJapeAnnotator implements Annotator {
 
 
 		public int skipToNextIndex(int index) {
+			if(index >= input.size())
+				return index;
+			
 			int pos = input.get(index).getStart();
 			while(++index < input.size()) {
 				if(input.get(index).getStart() != pos)
