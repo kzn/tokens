@@ -27,9 +27,30 @@ import name.kazennikov.tools.Alphabet;
 
 import com.google.common.base.Objects;
 
+/**
+ * FSM for single JAPE rules file (single phase)
+ * 
+ * This FSM is based on JAPE+ implementation and essentially does following:
+ * <ul>
+ * <li> compiles the rules into a FSM
+ * <li> determinizes it as JAPE+ does (marks named group start as -1, and group
+ * close with respective named label)
+ * <li> minimizes it
+ * <li> decomposes annotation matchers to atomic matchers
+ * </ul>
+ * 
+ * @author Anton Kazennikov
+ *
+ */
 public class JapePlusFSM {
 	public static final int GROUP_START = -1;
 	
+	/**
+	 * Intermediate FSM representation for ease of determinization and minimization
+	 * 
+	 * @author Anton Kazennikov
+	 *
+	 */
 	protected static class IntermediateFSM extends FSA<Set<Rule>> {
 		@Override
 		public boolean isFinal(FSAState<Set<Rule>> s) {
@@ -61,22 +82,28 @@ public class JapePlusFSM {
 		IntermediateFSM fsm = new IntermediateFSM();
 		
 		
-		public void addRule(Rule r) {
+		/**
+		 * Add new rule to this FSMBuilder
+		 * 
+		 * @param rule rule to add
+		 */
+		public void addRule(Rule rule) {
 			FSAState<Set<Rule>> start = fsm.getStart();
-			for(PatternElement e : r.lhs()) {
+			for(PatternElement e : rule.lhs()) {
 				start = addPE(e, start);
 			}
 			
-			start.getFinals().add(r);
+			start.getFinals().add(rule);
 		}
 		
 		/**
-		 * Add NFA states to start that represent pattern element
+		 * Add NFA states to state that represent pattern element
+		 * 
 		 * @param e pattern element
-		 * @param start current start state
+		 * @param state current start state
 		 * @return end state of the pattern element
 		 */
-		private FSAState<Set<Rule>> addPE(PatternElement e, FSAState<Set<Rule>> start) {
+		private FSAState<Set<Rule>> addPE(PatternElement e, FSAState<Set<Rule>> state) {
 			FSAState<Set<Rule>> end = null;
 			
 			if(e instanceof AnnotationMatcherPatternElement) {
@@ -84,40 +111,47 @@ public class JapePlusFSM {
 				AnnotationMatcher matcher = ((AnnotationMatcherPatternElement) e).matcher();
 				int label = matchers.get(matcher);
 				
-				fsm.addTransition(start, end, label);
+				fsm.addTransition(state, end, label);
 			} else if(e instanceof BasePatternElement) {
 				// OR or SEQ
 				if(e.op() == Operator.OR) {
-					end = addOR((BasePatternElement)e, start);
+					end = addOR((BasePatternElement)e, state);
 				} else if(e.op() == Operator.SEQ) {
-					end = addSeq((BasePatternElement)e, start);
+					end = addSeq((BasePatternElement)e, state);
 				}
 				
 			} else if(e instanceof RangePatternElement) {
-				end = addRange((RangePatternElement)e, start);
+				end = addRange((RangePatternElement)e, state);
 			}
 
 			return end;
 		}
 
-		private FSAState<Set<Rule>> addRange(RangePatternElement e, FSAState<Set<Rule>> start) {
+		/**
+		 * Add range pattern element to the FSMBuilder
+		 * 
+		 * @param e range pattern element
+		 * @param state start state
+		 * @return end state of the pattern element
+		 */
+		private FSAState<Set<Rule>> addRange(RangePatternElement e, FSAState<Set<Rule>> state) {
 			FSAState<Set<Rule>> end = fsm.addState();
 			
 			for(int i = 0; i < e.min(); i++) {
-				start = addPE(e.get(0), start);
+				state = addPE(e.get(0), state);
 			}
 
-			fsm.addTransition(start, end, name.kazennikov.fsa.Constants.EPSILON); // skip optional parts
+			fsm.addTransition(state, end, name.kazennikov.fsa.Constants.EPSILON); // skip optional parts
 			
 			if(e.max() == RangePatternElement.INFINITE) { // kleene start
-				FSAState<Set<Rule>> mEnd = addPE(e.get(0), start);
+				FSAState<Set<Rule>> mEnd = addPE(e.get(0), state);
 				fsm.addTransition(mEnd, end, name.kazennikov.fsa.Constants.EPSILON);
-				fsm.addTransition(mEnd, start, name.kazennikov.fsa.Constants.EPSILON);
+				fsm.addTransition(mEnd, state, name.kazennikov.fsa.Constants.EPSILON);
 
 			} else { // range [n,m]
 				for(int i = e.min(); i < e.max(); i++) {
-					start = addPE(e.get(0), start);
-					fsm.addTransition(start, end, name.kazennikov.fsa.Constants.EPSILON);
+					state = addPE(e.get(0), state);
+					fsm.addTransition(state, end, name.kazennikov.fsa.Constants.EPSILON);
 				}
 			} 
 			
@@ -125,34 +159,48 @@ public class JapePlusFSM {
 			return end;
 		}
 
-		private FSAState<Set<Rule>> addSeq(BasePatternElement e, FSAState<Set<Rule>> start) {
+		/**
+		 * Add sequence pattern element to the FSMBuilder
+		 * 
+		 * @param e sequence pattern element
+		 * @param state start state
+		 * @return end state of the pattern element
+		 */
+		private FSAState<Set<Rule>> addSeq(BasePatternElement e, FSAState<Set<Rule>> state) {
 			if(e.getName() != null) {
 				FSAState<Set<Rule>> iStart = fsm.addState();
-				fsm.addTransition(start, iStart, GROUP_START);
-				start = iStart;
+				fsm.addTransition(state, iStart, GROUP_START);
+				state = iStart;
 			}
 			
 			for(int i = 0; i < e.size(); i++) {
-				start = addPE(e.get(i), start);
+				state = addPE(e.get(i), state);
 			}
 			
 			if(e.getName() != null) {
 				FSAState<Set<Rule>> iEnd = fsm.addState();
 				int label = -groups.get(e.getName()) - 1;
-				fsm.addTransition(start, iEnd, label);
-				start = iEnd;
+				fsm.addTransition(state, iEnd, label);
+				state = iEnd;
 			}
 			
-			return start;
+			return state;
 			
 		}
 
-		private FSAState<Set<Rule>> addOR(BasePatternElement e, FSAState<Set<Rule>> start) {
+		/**
+		 * Add alternation(or) pattern element to the FSMBuilder
+		 * 
+		 * @param e sequence pattern element
+		 * @param state start state
+		 * @return end state of the pattern element
+		 */
+		private FSAState<Set<Rule>> addOR(BasePatternElement e, FSAState<Set<Rule>> state) {
 			FSAState<Set<Rule>> end = fsm.addState();
 
 			for(int i = 0; i < e.size(); i++) {
 				FSAState<Set<Rule>> mStart = fsm.addState();
-				fsm.addTransition(start, mStart, name.kazennikov.fsa.Constants.EPSILON);
+				fsm.addTransition(state, mStart, name.kazennikov.fsa.Constants.EPSILON);
 				FSAState<Set<Rule>> mEnd = addPE(e.get(i), mStart);
 				fsm.addTransition(mEnd, end, name.kazennikov.fsa.Constants.EPSILON);
 			}
@@ -161,32 +209,57 @@ public class JapePlusFSM {
 		}
 		
 
-
+		/**
+		 * Write current FSM to dot format into print writer
+		 * 
+		 * @param pw output print writer
+		 */
 		public void toDot(PrintWriter pw) {
 			fsm.toDot(pw);
 
 		}
 		
+		/**
+		 * Write current FSM to dot format
+		 * 
+		 * @param fileName ouput filename
+		 * @throws FileNotFoundException
+		 */
 		public void toDot(String fileName) throws FileNotFoundException {
 			fsm.toDot(fileName);
 		}
 		
+		/**
+		 * Convert current NFA to DFA
+		 */
 		public void determinize() {
 			IntermediateFSM temp = new IntermediateFSM();
 			fsm.determinize(temp);
 			fsm = temp;
 		}
 		
+		/**
+		 * Minimizes current DFA (assumes that current FSM is a DFA one)
+		 */
 		public void minimize() {
 			IntermediateFSM temp = new IntermediateFSM();
 			fsm.minimize(temp);
 			fsm = temp;
 		}
 		
+		/**
+		 * Get size of the current FSM (in states)
+		 * 
+		 * @return number of states
+		 */
 		public int size() {
 			return fsm.size();
 		}
 		
+		/**
+		 * Builds a JapePlusFSM for document processing
+		 * @return
+		 */
 		public JapePlusFSM build() {
 			determinize();
 			minimize();
@@ -197,6 +270,12 @@ public class JapePlusFSM {
 
 	
 
+	/**
+	 * Single FSM state
+	 * 
+	 * @author Anton Kazennikov
+	 *
+	 */
 	public static class State {
 		int number;
 		List<Transition> transitions = new ArrayList<>();
@@ -226,6 +305,12 @@ public class JapePlusFSM {
 		}
 	}
 	
+	/**
+	 * Group of AnnotationMatchers with same type in the transition constraint
+	 * 
+	 * @author Anton Kazennikov
+	 *
+	 */
 	public class TypeMatcher {
 		String type;
 		
@@ -251,6 +336,14 @@ public class JapePlusFSM {
 		
 	}
 	
+	/**
+	 * FSM Transition<p>
+	 * 
+	 * The label is a set of constraints on the same annotation type
+	 * 
+	 * @author Anton Kazennikov
+	 *
+	 */
 	public static class Transition {
 		State src;
 		State dest;
@@ -327,6 +420,13 @@ public class JapePlusFSM {
 		start = stateMap.get(builder.fsm.getStart());
 	}
 
+	/**
+	 * Converts transition of an intermediate FSM to JapePlusFSM
+	 * 
+	 * @param t0 intermediate FSM transition
+	 * @param builderAlphabet alphabet for annotation matchers
+	 * @return converted transition
+	 */
 	private Transition convertTransition(FSATransition<Set<Rule>> t0, Alphabet<AnnotationMatcher> builderAlphabet) {
 		State srcState = stateMap.get(t0.getSrc());
 		State destState = stateMap.get(t0.getDest());
@@ -346,6 +446,13 @@ public class JapePlusFSM {
 		return t;
 	}
 	
+	/**
+	 * Get (or adds a new one) type matcher from the list
+	 * 
+	 * @param typeMatchers list of type matchers
+	 * @param name query name
+	 * @return type matcher for given name
+	 */
 	TypeMatcher getMatcherFor(List<TypeMatcher> typeMatchers, String name) {
 		for(TypeMatcher m : typeMatchers) {
 			if(m.type == name || m.type.equals(name)) // allow null m.type value for wildcard matches
@@ -358,6 +465,13 @@ public class JapePlusFSM {
 		return m;
 	}
 	
+	/**
+	 * Decomposes an annotation matcher to atomic matchers and adds them to respective type
+	 * matchers
+	 * 
+	 * @param m complex annotation matcher
+	 * @param typeMatchers list of type matchers
+	 */
 	void convertMatcher(AnnotationMatcher m, List<TypeMatcher> typeMatchers) {
 		
 		if(m instanceof ANDMatcher) {
@@ -379,22 +493,47 @@ public class JapePlusFSM {
 	}
 	
 	
+	/**
+	 * Get state by index
+	 * 
+	 * @param index state index
+	 * @return
+	 */
 	public State getState(int index) {
 		return states.get(index);
 	}
 	
+	/**
+	 * Get group by index
+	 * 
+	 * @param index group index
+	 * @return
+	 */
 	public String getGroupName(int index) {
 		return groups.get(index);
 	}
 
+	/**
+	 * Get start state
+	 * @return
+	 */
 	public State getStart() {
 		return start;
 	}
 
+	/**
+	 * Get annotation matcher by index
+	 * @param key
+	 * @return
+	 */
 	public AnnotationMatcher getMatcher(int key) {
 		return matchers.get(key);
 	}
 	
+	/**
+	 * Get total count of atomic annotation matchers for this JapePlusFSM
+	 * @return
+	 */
 	public int getMatcherCount() {
 		return matchers.size();
 	}
