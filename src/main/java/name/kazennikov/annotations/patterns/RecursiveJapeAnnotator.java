@@ -1,5 +1,6 @@
 package name.kazennikov.annotations.patterns;
 
+import gnu.trove.iterator.TIntIterator;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.io.File;
@@ -35,6 +36,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 		List<String> keys;
 		List<AnnotationList> values;
 		int position = 0;
+		State state;
 		Rule rule;
 
 		public void init() {
@@ -136,11 +138,13 @@ public class RecursiveJapeAnnotator implements Annotator {
 		public void execute() {
 			int index = 0;
 
-			State state = phase.fsm.getStart();
 
 			while(index < input.size()) {
 				
-				tryExecute(index, state, FSMInstance.newInstance());
+				FSMInstance inst = FSMInstance.newInstance();
+				inst.position = index;
+				inst.state = phase.fsm.getStart();
+				tryExecute(inst);
 				
 				// if something matched
 				if(!instances.isEmpty()) {
@@ -171,7 +175,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 				rhs.execute(doc, input, inst.bindings());
 			}
 
-			return skipToNextIndex(inst.position);
+			return inst.position;
 		}
 		
 		public int execAll(int startIndex) {
@@ -196,7 +200,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 				maxPos = Math.max(maxPos, inst.position);
 			}
 			
-			return skipToNextIndex(maxPos);
+			return maxPos;
 		}
 		
 		public int execAppelt() {
@@ -222,7 +226,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 				rhs.execute(doc, input, instances.get(0).bindings());
 			}
 
-			return skipToNextIndex(instances.get(0).position);
+			return instances.get(0).position;
 		}
 
 		
@@ -250,7 +254,8 @@ public class RecursiveJapeAnnotator implements Annotator {
 		 * @param index
 		 * @return true, if we need to continue
 		 */
-		public boolean tryExecute(int index, State state, FSMInstance instance) {
+		public boolean tryExecute(FSMInstance instance) {
+			State state = instance.state;
 			if(state.isFinal()) {
 				for(Rule r : state.getRules()) {
 					FSMInstance inst = instance.copy();
@@ -262,7 +267,6 @@ public class RecursiveJapeAnnotator implements Annotator {
 					return false;
 			}
 			
-			int nextIndex = skipToNextIndex(index);
 			boolean singleTr = state.getTransitions().size() == 1;
 
 			for(Transition t : state.getTransitions()) {
@@ -272,14 +276,20 @@ public class RecursiveJapeAnnotator implements Annotator {
 				if(type == JapePlusFSM.GROUP_START) {
 					FSMInstance inst = singleTr? instance : instance.copy();
 					inst.push();
-					res = tryExecute(index, t.getDest(), inst);
+					inst.state = t.getDest();
+					res = tryExecute(inst);
 				} else if(type < 0) { // group end
 					String groupName = phase.fsm.getGroupName(-type - 1);
 					FSMInstance inst = singleTr? instance : instance.copy();
 					inst.pop(groupName);
-					res = tryExecute(index, t.getDest(), inst);
+					inst.state = t.getDest();
+					res = tryExecute(inst);
 				} else {
-					res = tryMatch(index, nextIndex, t, instance);
+					
+					if(instance.position >= input.size())
+						return true;
+
+					res = tryMatch(instance, t, singleTr);
 				}
 				
 				if(!res)
@@ -290,39 +300,109 @@ public class RecursiveJapeAnnotator implements Annotator {
 			return true;
 		}
 
-		public boolean tryMatch(int startIndex, int endIndex, Transition t, FSMInstance instance) {
+		public boolean tryMatch(FSMInstance instance, Transition t, boolean singleTr) {
 			List<TypeMatcher> matchers = t.getMatchers();
-			int[] matchedAnnotations = new int[matchers.size()];
-			return tryConstraintMatch(startIndex, endIndex, matchers, 0, matchedAnnotations, t.getDest(), instance);
+			if(matchers.size() == 1) {
+				return trySingleConstraintMatch(instance, t.getDest(), matchers.get(0), singleTr);
+			} else {
+				int[] matchedAnnotations = new int[matchers.size()];
+				return tryConstraintsMatch(instance, t.getDest(), matchers, 0, matchedAnnotations);
+			}
+		}
+		
+		public boolean trySingleConstraintMatch(FSMInstance instance, State dest, TypeMatcher typeMatcher, boolean singleTr) {
+			List<AnnotationMatcher> matchers = typeMatcher.getMatchers();
+			TIntArrayList flags = typeMatcher.getFlags();
+			TIntArrayList matchedAnnots = new TIntArrayList();
+			int startPos = input.get(instance.position).getStart();
+
+			for(int annotIndex = instance.position; annotIndex < input.size(); annotIndex++) {
+				Annotation a = input.get(annotIndex);
+
+				if(a.getStart() != startPos)
+					break;
+				
+				boolean res = true;
+
+				for(int matcherIndex = 0; matcherIndex < matchers.size(); matcherIndex++) {
+					AnnotationMatcher matcher = matchers.get(matcherIndex);
+					int flag = flags.get(matcherIndex);
+					boolean res0 = matcher.match(a);
+
+					if(flag == 1)
+						res0 = !res0;
+
+					if(!res0) {
+						res = false;
+						break;
+					}
+				}
+
+				if(res) {
+					matchedAnnots.add(annotIndex);
+				}
+			}
+			
+			if(matchedAnnots.isEmpty())
+				return true;
+			
+			if(singleTr && matchedAnnots.size() == 1) {
+				int annotIndex = matchedAnnots.get(0);
+				instance.addMatching(input.get(annotIndex));
+				int nextIndex = nextAnnotationIndex[annotIndex];
+				
+				instance.position = nextIndex;
+				instance.state = dest;
+				return tryExecute(instance);
+			} else {
+				TIntIterator it = matchedAnnots.iterator();
+				while(it.hasNext()) {
+					int annotIndex = it.next();
+					FSMInstance inst = instance.copy();
+					inst.addMatching(input.get(annotIndex));
+					int nextIndex = nextAnnotationIndex[annotIndex];
+					
+					inst.position = nextIndex;
+					inst.state = dest;
+					return tryExecute(inst);
+					
+				}
+			}
+			
+			return true;
 		}
 
-		public boolean tryConstraintMatch(int startIndex, int endIndex, 
-				List<TypeMatcher> typeMatchers, int tmIndex, int[] matched,
-				State dest, FSMInstance instance) {
-			
-			if(startIndex >= input.size())
-				return true;
+
+		public boolean tryConstraintsMatch(FSMInstance instance, State dest, 
+				List<TypeMatcher> typeMatchers, int tmIndex, int[] matched) {
 
 			if(tmIndex == typeMatchers.size()) {
 				FSMInstance inst = instance.copy();
-				inst.position = startIndex;
 				int nextIndex = Integer.MIN_VALUE;
 				for(int annotIndex : matched) {
 					inst.addMatching(input.get(annotIndex));
 					nextIndex = Math.max(nextIndex, nextAnnotationIndex[annotIndex]);
 				}
+				inst.position = nextIndex;
+				inst.state = dest;
 				
-				return tryExecute(nextIndex, dest, inst);
+				return tryExecute(inst);
 			} else {
 				TypeMatcher m = typeMatchers.get(tmIndex);
-				TIntArrayList matchersIndex = m.getMatchers();
+				List<AnnotationMatcher> matchers = m.getMatchers();
 				TIntArrayList flags = m.getFlags();
+				int startPos = input.get(instance.position).getStart();
+				
 
-				for(int annotIndex = startIndex; annotIndex < endIndex; annotIndex++) {
+				for(int annotIndex = instance.position; annotIndex < input.size(); annotIndex++) {
 					Annotation a = input.get(annotIndex);
+					
+					if(a.getStart() != startPos)
+						return true;
+					
 					boolean res = true;
-					for(int matcherIndex = 0; matcherIndex < matchersIndex.size(); matcherIndex++) {
-						AnnotationMatcher matcher = phase.fsm.getMatcher(matchersIndex.get(matcherIndex));
+					for(int matcherIndex = 0; matcherIndex < matchers.size(); matcherIndex++) {
+						AnnotationMatcher matcher = matchers.get(matcherIndex);
 						int flag = flags.get(matcherIndex);
 						boolean res0 = matcher.match(a);
 
@@ -337,7 +417,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 					// if all matchers
 					if(res) {
 						matched[tmIndex] = annotIndex;
-						tryConstraintMatch(startIndex, endIndex, typeMatchers, tmIndex + 1, matched, dest, instance);
+						tryConstraintsMatch(instance, dest, typeMatchers, tmIndex + 1, matched);
 					}
 
 				}				

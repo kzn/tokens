@@ -4,12 +4,12 @@ import gnu.trove.iterator.TIntIterator;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,28 +45,7 @@ public class IterativeJapeAnnotator implements Annotator {
 			keys = new ArrayList<>();
 			values = new ArrayList<>();
 			stack = new ArrayList<>();
-		}
-
-		public FSMInstance copy() {
-			FSMInstance copy = new FSMInstance();
-			
-			copy.keys = new ArrayList<>(this.keys.size());
-			copy.values = new ArrayList<>(this.values.size());
-			copy.stack = new ArrayList<>();
-			copy.position = position;
-			copy.state = state;
-
-			for(TIntArrayList l : stack) {
-				copy.stack.add(new TIntArrayList(l));
-			}
-			
-			for(int i = 0; i < keys.size(); i++) {
-				copy.keys.add(keys.get(i));
-				copy.values.add(new TIntArrayList(values.get(i)));
-			}
-
-			return copy;
-		}
+		}	
 
 		public void push() {
 			stack.add(new TIntArrayList());
@@ -115,7 +94,7 @@ public class IterativeJapeAnnotator implements Annotator {
 		Document doc;
 		Phase phase;
 		
-		Deque<FSMInstance> activeInstances = new LinkedList<>();
+		Deque<FSMInstance> activeInstances = new ArrayDeque<>();//new LinkedList<>();
 		List<FSMInstance> finalInstances = new ArrayList<>();
 
 		public Matcher(Document doc, final Phase phase) {
@@ -271,6 +250,27 @@ public class IterativeJapeAnnotator implements Annotator {
 			return -1;
 		}
 		
+		public FSMInstance copy(FSMInstance src) {
+			FSMInstance copy = new FSMInstance();
+
+			copy.keys = new ArrayList<>(src.keys.size());
+			copy.values = new ArrayList<>(src.values.size());
+			copy.stack = new ArrayList<>();
+			copy.position = src.position;
+			copy.state = src.state;
+
+			for(TIntArrayList l : src.stack) {
+				copy.stack.add(new TIntArrayList(l));
+			}
+
+			for(int i = 0; i < src.keys.size(); i++) {
+				copy.keys.add(src.keys.get(i));
+				copy.values.add(new TIntArrayList(src.values.get(i)));
+			}
+
+			return copy;
+		}
+		
 		/**
 		 * Try to advance current FSMInstance
 		 * @param inst instance to advance
@@ -281,7 +281,7 @@ public class IterativeJapeAnnotator implements Annotator {
 			
 			if(state.isFinal()) {
 				for(Rule r : state.getRules()) {
-					FSMInstance inst = instance.copy();
+					FSMInstance inst = copy(instance);
 					inst.rule = r;	
 					finalInstances.add(inst);
 				}
@@ -295,42 +295,106 @@ public class IterativeJapeAnnotator implements Annotator {
 				int type = t.getType();
 							
 				if(type == JapePlusFSM.GROUP_START) {
-					FSMInstance inst = singleTr? instance : instance.copy();
+					FSMInstance inst = singleTr? instance : copy(instance);
 					inst.state = t.getDest();
 					inst.push();
 					activeInstances.addLast(inst);
 				} else if(type < 0) { // group end
 					String groupName = phase.fsm.getGroupName(-type - 1);
-					FSMInstance inst = singleTr? instance : instance.copy();
+					FSMInstance inst = singleTr? instance : copy(instance);
 					inst.pop(groupName);
 					inst.state = t.getDest();
 					activeInstances.addLast(inst);
 				} else {
-					generateMatching(t, instance);
-				}				
+					generateMatching(t, instance, singleTr);
+				}			
 			}
-			
+
 			return false;			
 		}
-		
 
 
+		public void generateMatching(Transition t, FSMInstance instance, boolean singleTr) {
+			if(instance.position >= input.size())
+				return;
 
-		public void generateMatching(Transition t, FSMInstance instance) {
 			List<TypeMatcher> matchers = t.getMatchers();
-			int[] matchedAnnotations = new int[matchers.size()];
-			tryConstraintMatch(instance, t.getDest(), matchers, 0, matchedAnnotations);
+			if(matchers.size() == 1) {
+				trySingleConstraintMatch(instance, t.getDest(), matchers.get(0), singleTr);
+			} else {
+				int[] matchedAnnotations = new int[matchers.size()];
+				tryConstraintMatch(instance, t.getDest(), matchers, 0, matchedAnnotations);
+			}
 		}
+
+		
+		public void trySingleConstraintMatch(FSMInstance instance, State dest, TypeMatcher typeMatcher, boolean singleTr) {
+			List<AnnotationMatcher> matchers = typeMatcher.getMatchers();
+			TIntArrayList flags = typeMatcher.getFlags();
+			TIntArrayList matchedAnnots = new TIntArrayList();
+			int startPos = input.get(instance.position).getStart();
+
+			for(int annotIndex = instance.position; annotIndex < input.size(); annotIndex++) {
+				Annotation a = input.get(annotIndex);
+
+				if(a.getStart() != startPos)
+					break;
+				
+				boolean res = true;
+
+				for(int matcherIndex = 0; matcherIndex < matchers.size(); matcherIndex++) {
+					AnnotationMatcher matcher = matchers.get(matcherIndex);
+					int flag = flags.get(matcherIndex);
+					boolean res0 = matcher.match(a);
+
+					if(flag == 1)
+						res0 = !res0;
+
+					if(!res0) {
+						res = false;
+						break;
+					}
+				}
+
+				if(res) {
+					matchedAnnots.add(annotIndex);
+				}
+			}
+			
+			if(matchedAnnots.isEmpty())
+				return;
+			
+			if(singleTr && matchedAnnots.size() == 1) {
+				int annotIndex = matchedAnnots.get(0);
+				instance.addMatching(annotIndex);
+				int nextIndex = nextAnnotationIndex[annotIndex];
+				
+				instance.position = nextIndex;
+				instance.state = dest;
+				activeInstances.addLast(instance);
+			} else {
+				TIntIterator it = matchedAnnots.iterator();
+				while(it.hasNext()) {
+					int annotIndex = it.next();
+					FSMInstance inst = copy(instance);
+					inst.addMatching(annotIndex);
+					int nextIndex = nextAnnotationIndex[annotIndex];
+					
+					inst.position = nextIndex;
+					inst.state = dest;
+					activeInstances.addLast(inst);
+				}
+			}
+		}
+
+
+		
+		
 
 		public void tryConstraintMatch(FSMInstance instance, State dest,
 				List<TypeMatcher> typeMatchers, int tmIndex, int[] matched) {
-			
-			if(instance.position >= input.size())
-				return;
-			
-
 			if(tmIndex == typeMatchers.size()) {
-				FSMInstance inst = instance.copy();
+				FSMInstance inst = copy(instance);
 				int nextIndex = Integer.MIN_VALUE;
 			
 				for(int annotIndex : matched) {
@@ -344,7 +408,7 @@ public class IterativeJapeAnnotator implements Annotator {
 				return;
 			} else {
 				TypeMatcher m = typeMatchers.get(tmIndex);
-				TIntArrayList matchersIndex = m.getMatchers();
+				List<AnnotationMatcher> matchers = m.getMatchers();
 				TIntArrayList flags = m.getFlags();
 				
 				int startPos = input.get(instance.position).getStart();
@@ -356,8 +420,8 @@ public class IterativeJapeAnnotator implements Annotator {
 						break;
 					boolean res = true;
 					
-					for(int matcherIndex = 0; matcherIndex < matchersIndex.size(); matcherIndex++) {
-						AnnotationMatcher matcher = phase.fsm.getMatcher(matchersIndex.get(matcherIndex));
+					for(int matcherIndex = 0; matcherIndex < matchers.size(); matcherIndex++) {
+						AnnotationMatcher matcher = matchers.get(matcherIndex);
 						int flag = flags.get(matcherIndex);
 						boolean res0 = matcher.match(a);
 
@@ -372,10 +436,10 @@ public class IterativeJapeAnnotator implements Annotator {
 					
 					if(res) {
 						matched[tmIndex] = annotIndex;
-						tryConstraintMatch(instance,dest, typeMatchers, tmIndex + 1, matched);
+						tryConstraintMatch(instance, dest, typeMatchers, tmIndex + 1, matched);
 					}
 
-				}				
+				}
 			}
 		}
 
