@@ -395,5 +395,9 @@ public class JapePlusFSM {
 		return matchers.get(key);
 	}
 	
+	public int getMatcherCount() {
+		return matchers.size();
+	}
+	
 	
 }
