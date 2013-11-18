@@ -3,7 +3,6 @@ package name.kazennikov.annotations.patterns;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,20 +25,9 @@ import name.kazennikov.logger.Logger;
 import org.apache.log4j.BasicConfigurator;
 
 import com.google.common.base.Predicate;
-import com.google.common.io.Files;
 
 public class RecursiveJapeAnnotator implements Annotator {
 	private static final Logger logger = Logger.getLogger();
-	
-
-	public static Phase compileFSM(File file) throws Exception {
-		String s = Files.toString(file, Charset.forName("UTF-8"));
-		Phase phase = JapeNGASTParser.parse(s);
-		phase.compile();
-
-		return phase;
-
-	}
 
 	public static class FSMInstance {
 		//Map<String, AnnotationList> bindings;
@@ -141,29 +129,9 @@ public class RecursiveJapeAnnotator implements Annotator {
 			}); 
 
 			input.sort();		
-			nextAnnotationIndex = computeFollowingAnnotationIndex(input);
+			nextAnnotationIndex = JapeEngineUtils.computeFollowingAnnotationIndex(input);
 		}
 
-		public static int[] computeFollowingAnnotationIndex(AnnotationList input) {
-			int nextAnnotationIndex[] = new int[input.size()];
-			
-			for(int i = 0; i < input.size(); i++) {
-				int index = Collections.binarySearch(input, input.get(i), new Comparator<Annotation>() {
-
-					@Override
-					public int compare(Annotation o1, Annotation o2) {
-						return Integer.compare(o1.getStart(), o2.getEnd());
-					}
-				});
-				
-				if(index < 0) {
-					index = -index - 1;
-				}
-				nextAnnotationIndex[i] = index;
-			}
-
-			return nextAnnotationIndex;
-		}
 
 		public void execute() {
 			int index = 0;
@@ -381,7 +349,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 
 	public static void main(String[] args) throws Exception {
 		BasicConfigurator.configure();
-		Phase fsm = compileFSM(new File("jape/parser/4.jape"));
+		Phase fsm = JapeEngineUtils.compilePhase(new File("jape/parser/4.jape"));
 		BasicTokenizer t = new BasicTokenizer();
 		t.setSeparator(",.!?()[]\"'$%^&*#{}\\|/-");
 		Document d = new Document("doc", "this--is table.");
@@ -406,7 +374,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 	
 	public void init() {
 		try {
-			phase = compileFSM(japeFile);
+			phase = JapeEngineUtils.compilePhase(japeFile);
 		} catch(Exception e) {
 			logger.warn(e);
 			throw new AnnotationEngineException(e);
