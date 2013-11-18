@@ -289,18 +289,19 @@ public class IterativeJapeAnnotator implements Annotator {
 				if(phase.mode == MatchMode.FIRST || phase.mode == MatchMode.ONCE)
 					return true;
 			}
+			boolean singleTr = state.getTransitions().size() == 1;
 			
 			for(Transition t : state.getTransitions()) {
 				int type = t.getType();
 							
 				if(type == JapePlusFSM.GROUP_START) {
-					FSMInstance inst = instance.copy();
+					FSMInstance inst = singleTr? instance : instance.copy();
 					inst.state = t.getDest();
 					inst.push();
 					activeInstances.addLast(inst);
 				} else if(type < 0) { // group end
 					String groupName = phase.fsm.getGroupName(-type - 1);
-					FSMInstance inst = instance.copy();
+					FSMInstance inst = singleTr? instance : instance.copy();
 					inst.pop(groupName);
 					inst.state = t.getDest();
 					activeInstances.addLast(inst);

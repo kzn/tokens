@@ -140,7 +140,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 
 			while(index < input.size()) {
 				
-				boolean res = tryExecute(index, state, FSMInstance.newInstance());
+				tryExecute(index, state, FSMInstance.newInstance());
 				
 				// if something matched
 				if(!instances.isEmpty()) {
@@ -263,18 +263,19 @@ public class RecursiveJapeAnnotator implements Annotator {
 			}
 			
 			int nextIndex = skipToNextIndex(index);
+			boolean singleTr = state.getTransitions().size() == 1;
 
 			for(Transition t : state.getTransitions()) {
 				int type = t.getType();
 				boolean res;
 				
 				if(type == JapePlusFSM.GROUP_START) {
-					FSMInstance inst = instance.copy();
+					FSMInstance inst = singleTr? instance : instance.copy();
 					inst.push();
 					res = tryExecute(index, t.getDest(), inst);
 				} else if(type < 0) { // group end
 					String groupName = phase.fsm.getGroupName(-type - 1);
-					FSMInstance inst = instance.copy();
+					FSMInstance inst = singleTr? instance : instance.copy();
 					inst.pop(groupName);
 					res = tryExecute(index, t.getDest(), inst);
 				} else {
