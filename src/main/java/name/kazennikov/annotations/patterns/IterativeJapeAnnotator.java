@@ -158,8 +158,6 @@ public class IterativeJapeAnnotator implements Annotator {
 		public void execute() {
 			int index = 0;
 
-			State state = phase.fsm.getStart();
-
 			while(index < input.size()) {
 				FSMInstance initInst = FSMInstance.newInstance();
 				initInst.position = index;
@@ -172,7 +170,7 @@ public class IterativeJapeAnnotator implements Annotator {
 						break;
 				}
 				
-				// if something matched
+				// if something has matched
 				if(!finalInstances.isEmpty()) {
 					index = applyRules(index);
 					finalInstances.clear();
@@ -294,8 +292,7 @@ public class IterativeJapeAnnotator implements Annotator {
 			
 			for(Transition t : state.getTransitions()) {
 				int type = t.getType();
-				boolean res;
-				
+							
 				if(type == JapePlusFSM.GROUP_START) {
 					FSMInstance inst = instance.copy();
 					inst.state = t.getDest();
