@@ -31,7 +31,6 @@ public class RecursiveJapeAnnotator implements Annotator {
 	private static final Logger logger = Logger.getLogger();
 
 	public static class FSMInstance {
-		//Map<String, AnnotationList> bindings;
 		List<AnnotationList> stack;
 		List<String> keys;
 		List<AnnotationList> values;
@@ -40,7 +39,6 @@ public class RecursiveJapeAnnotator implements Annotator {
 		Rule rule;
 
 		public void init() {
-			//bindings = new HashMap<>();
 			keys = new ArrayList<>();
 			values = new ArrayList<>();
 			stack = new ArrayList<>();
@@ -48,7 +46,6 @@ public class RecursiveJapeAnnotator implements Annotator {
 
 		public FSMInstance copy() {
 			FSMInstance copy = new FSMInstance();
-			//copy.bindings = new HashMap<String, AnnotationList>();
 			copy.keys = new ArrayList<>(this.keys.size());
 			copy.values = new ArrayList<>(this.values.size());
 			copy.stack = new ArrayList<>();
@@ -62,13 +59,6 @@ public class RecursiveJapeAnnotator implements Annotator {
 				copy.keys.add(keys.get(i));
 				copy.values.add(values.get(i).copy());
 			}
-			
-
-//			for(Map.Entry<String, AnnotationList> e : bindings.entrySet()) {
-//				copy.bindings.put(e.getKey(), e.getValue().copy());
-//			}
-
-
 
 			return copy;
 		}
@@ -86,7 +76,6 @@ public class RecursiveJapeAnnotator implements Annotator {
 		public void pop(String groupName) {
 			AnnotationList l = stack.get(stack.size() - 1);
 			stack.remove(stack.size() - 1);
-			//bindings.put(groupName, l);
 			keys.add(groupName);
 			values.add(l);
 		}
