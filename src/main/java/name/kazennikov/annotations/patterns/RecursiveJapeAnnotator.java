@@ -319,20 +319,26 @@ public class RecursiveJapeAnnotator implements Annotator {
 
 				for(int annotIndex = startIndex; annotIndex < endIndex; annotIndex++) {
 					Annotation a = input.get(annotIndex);
-
+					boolean res = true;
 					for(int matcherIndex = 0; matcherIndex < matchersIndex.size(); matcherIndex++) {
 						AnnotationMatcher matcher = phase.fsm.getMatcher(matchersIndex.get(matcherIndex));
 						int flag = flags.get(matcherIndex);
-						boolean res = matcher.match(a);
+						boolean res0 = matcher.match(a);
 
 						if(flag == 1)
-							res = !res;
-
-						if(res) {
-							matched[tmIndex] = annotIndex;
-							tryConstraintMatch(startIndex, endIndex, typeMatchers, tmIndex + 1, matched, dest, instance);
+							res0 = !res0;
+						
+						if(!res0) {
+							res = false;
+							break;
 						}
 					}
+					// if all matchers
+					if(res) {
+						matched[tmIndex] = annotIndex;
+						tryConstraintMatch(startIndex, endIndex, typeMatchers, tmIndex + 1, matched, dest, instance);
+					}
+
 				}				
 			}
 			
