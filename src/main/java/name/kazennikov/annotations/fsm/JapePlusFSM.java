@@ -229,15 +229,20 @@ public class JapePlusFSM {
 	public class TypeMatcher {
 		String type;
 		
-		TIntArrayList matchers = new TIntArrayList();
+		TIntArrayList matchersIndexes = new TIntArrayList();
+		List<AnnotationMatcher> matchers = new ArrayList<>();
 		TIntArrayList flags = new TIntArrayList(); // currently 1 - negated, 0 - non negated
 		
 		public String getType() {
 			return type;
 		}
 		
-		public TIntArrayList getMatchers() {
+		public List<AnnotationMatcher> getMatchers() {
 			return matchers;
+		}
+		
+		public TIntArrayList getMatchersIndexes() {
+			return matchersIndexes;
 		}
 		
 		public TIntArrayList getFlags() {
@@ -362,11 +367,13 @@ public class JapePlusFSM {
 		} else if(m instanceof AnnotationMatchers.NOTAnnotationMatcher) {
 			AnnotationMatcher inner = ((AnnotationMatchers.NOTAnnotationMatcher) m).getMatcher();
 			TypeMatcher matcher = getMatcherFor(typeMatchers, inner.getType());
-			matcher.matchers.add(matchers.get(inner));
+			matcher.matchers.add(inner);
+			matcher.matchersIndexes.add(matchers.get(inner));
 			matcher.flags.add(1);
 		} else {
 			TypeMatcher matcher = getMatcherFor(typeMatchers, m.getType());
-			matcher.matchers.add(matchers.get(m));
+			matcher.matchers.add(m);
+			matcher.matchersIndexes.add(matchers.get(m));
 			matcher.flags.add(0);
 		}
 	}
