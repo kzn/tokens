@@ -12,9 +12,9 @@ import com.google.common.io.Files;
 
 public class JapeEngineUtils {
 	
-	public static Phase compilePhase(File file) throws Exception {
+	public static Phase compilePhase(JapeConfiguration config, File file) throws Exception {
 		String s = Files.toString(file, Charset.forName("UTF-8"));
-		Phase phase = JapeNGASTParser.parse(s);
+		Phase phase = JapeNGASTParser.parse(config, s);
 		phase.compile();
 		return phase;
 	}

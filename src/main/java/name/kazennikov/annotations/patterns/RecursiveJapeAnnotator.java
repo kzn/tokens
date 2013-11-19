@@ -425,7 +425,8 @@ public class RecursiveJapeAnnotator implements Annotator {
 
 	public static void main(String[] args) throws Exception {
 		BasicConfigurator.configure();
-		Phase fsm = JapeEngineUtils.compilePhase(new File("jape/parser/4.jape"));
+		JapeConfiguration config = new JapeConfiguration();
+		Phase fsm = JapeEngineUtils.compilePhase(config, new File("jape/parser/4.jape"));
 		BasicTokenizer t = new BasicTokenizer();
 		t.setSeparator(",.!?()[]\"'$%^&*#{}\\|/-");
 		Document d = new Document("doc", "this--is table.");
@@ -437,6 +438,7 @@ public class RecursiveJapeAnnotator implements Annotator {
 	}
 	
 	File japeFile;
+	JapeConfiguration config;
 	Phase phase;
 	
 	public File getJapeFile() {
@@ -446,11 +448,20 @@ public class RecursiveJapeAnnotator implements Annotator {
 	public void setJapeFile(File japeFile) {
 		this.japeFile = japeFile;
 	}
+	
+	public JapeConfiguration getConfig() {
+		return config;
+	}
+
+	public void setConfig(JapeConfiguration config) {
+		this.config = config;
+	}
+
 
 	
 	public void init() {
 		try {
-			phase = JapeEngineUtils.compilePhase(japeFile);
+			phase = JapeEngineUtils.compilePhase(config, japeFile);
 		} catch(Exception e) {
 			logger.warn(e);
 			throw new AnnotationEngineException(e);

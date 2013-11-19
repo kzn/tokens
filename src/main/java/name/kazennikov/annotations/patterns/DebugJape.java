@@ -11,11 +11,12 @@ import org.apache.log4j.BasicConfigurator;
 public class DebugJape {
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
-		String s = "66.1V (1), 422-426";
+		String s = "Правда было непонятно почему - сеичас-то платформа стояла";
 
 		BasicTokenizer t = new BasicTokenizer();
 		t.setSeparator(",.!?()[]\"'$%^&*#{}\\|/-");
-		RecursiveJapeAnnotator jape = new RecursiveJapeAnnotator();
+		//RecursiveJapeAnnotator jape = new RecursiveJapeAnnotator();
+		IterativeJapeAnnotator jape = new IterativeJapeAnnotator();
 		jape.setJapeFile(new File("../tokens/jape/parser/4.jape"));
 		jape.init();
 		

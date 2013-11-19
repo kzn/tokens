@@ -1,10 +1,9 @@
 package name.kazennikov.annotations.patterns;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import name.kazennikov.annotations.AnnotationEngineException;
 import name.kazennikov.annotations.JapeNGLexer;
 import name.kazennikov.annotations.JapeNGParser;
 import name.kazennikov.annotations.patterns.AnnotationMatchers.FeatureAccessor;
@@ -29,15 +28,15 @@ public class JapeNGASTParser {
 	CommonTokenStream tokenStream;
 	JapeNGParser parser;
 	CommonTree tree;
-	Map<String, FeatureAccessor> metaFeats = new HashMap<String, AnnotationMatchers.FeatureAccessor>();
+	JapeConfiguration config;
 	
-	public static Phase parse(String source) throws Exception {
-		JapeNGASTParser parser = new JapeNGASTParser(source);
+	public static Phase parse(JapeConfiguration config, String source) throws Exception {
+		JapeNGASTParser parser = new JapeNGASTParser(config, source);
 		return parser.parse();
 	}
 	
-	private JapeNGASTParser(String source) throws RecognitionException {
-		addFeatureAccessor(new AnnotationMatchers.StringMetaFeatureAccessor());
+	private JapeNGASTParser(JapeConfiguration config, String source) throws RecognitionException {
+		this.config = config;
 		this.src = source;
 		charStream = new ANTLRStringStream(src);
 		lexer = new JapeNGLexer(charStream);
@@ -46,10 +45,6 @@ public class JapeNGASTParser {
 		tree = (CommonTree) parser.jape().getTree();
 		
 		logger.debug("%s", tree.toStringTree());
-	}
-	
-	private void addFeatureAccessor(FeatureAccessor acc) {
-		metaFeats.put(acc.getName(), acc);
 	}
 	
 	
@@ -264,11 +259,11 @@ public class JapeNGASTParser {
 				matchers.add(new AnnotationMatchers.TypeMatcher(child.getChild(0).getText()));
 				break;
 			case "AN_FEAT":
-				matchers.add(parseAnFeat(child));
+				matchers.add(parseAnFeat(child, true));
 				break;
 				
 			case "AN_METAFEAT":
-				matchers.add(parseAnMetaFeat(child));
+				matchers.add(parseAnFeat(child, false));
 				break;
 
 			}
@@ -321,12 +316,21 @@ public class JapeNGASTParser {
 		return val.getText();
 	}
 
-	private AnnotationMatcher parseAnFeat(Tree feats) {
+	private AnnotationMatcher parseAnFeat(Tree feats, boolean isSimpleFeature) {
 		String op = feats.getChild(0).getText();
 		Object val = parseVal(feats.getChild(1));
 		String type = feats.getChild(2).getText();
 		String feat = feats.getChild(3).getText();
-		FeatureAccessor fa = new AnnotationMatchers.SimpleFeatureAccessor(feat);
+		FeatureAccessor fa = null;
+		
+		if(isSimpleFeature) {
+			fa = new AnnotationMatchers.SimpleFeatureAccessor(feat);
+		} else {
+			fa = config.getMetaAccessor(feat);
+			if(fa == null)
+				throw new AnnotationEngineException("undefined metafeature: " + feat);
+		}
+		
 		switch(op) {
 		case "eq":
 			return new AnnotationMatchers.FeatureEqMatcher(type, fa, val);
@@ -338,26 +342,6 @@ public class JapeNGASTParser {
 			return new AnnotationMatchers.FeatureContainsRegexMatcher(type, fa, val);
 		}
 		throw new IllegalStateException("illegal annotation type feature operation " + op);
-	}
-	
-	private AnnotationMatcher parseAnMetaFeat(Tree feats) {
-		String op = feats.getChild(0).getText();
-		Object val = parseVal(feats.getChild(1));
-		String type = feats.getChild(2).getText();
-		String feat = feats.getChild(3).getText();
-		FeatureAccessor fa = metaFeats.get(feat);
-		switch(op) {
-		case "eq":
-			return new AnnotationMatchers.FeatureEqMatcher(type, fa, val);
-		case "neq":
-			return new AnnotationMatchers.NegativeMatcher(new AnnotationMatchers.FeatureEqMatcher(type, fa, val));
-		case "match":
-			return new AnnotationMatchers.FeatureRegexMatcher(type, fa, val);
-		case "contains":
-			return new AnnotationMatchers.FeatureContainsRegexMatcher(type, fa, val);
-
-		}
-		throw new IllegalStateException("illegal annotation type metafeature operation " + op);
 	}
 
 

@@ -149,6 +149,23 @@ public class AnnotationMatchers {
 			return "@string";
 		}
 	}
+	
+	public static class LengthMetaFeatureAccessor extends FeatureAccessor {
+		public LengthMetaFeatureAccessor() {
+			super("length");
+		}
+
+		@Override
+		public Object getValue(Annotation a) {
+			return a.length();
+		}
+		
+		@Override
+		public String toString() {
+			return "@length";
+		}
+	}
+
 
 	
 	
