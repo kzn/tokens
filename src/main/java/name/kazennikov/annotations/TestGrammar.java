@@ -14,7 +14,7 @@ import com.google.common.io.Files;
 
 public class TestGrammar {
 	public static void main(String... args) throws RecognitionException, IOException {
-		String s = Files.toString(new File("jape/test.jape"), Charset.forName("UTF-8"));
+		String s = Files.toString(new File("jape/parser/1a.jape"), Charset.forName("UTF-8"));
 		CharStream stream = new ANTLRStringStream(s);
 		JapeNGLexer lexer = new JapeNGLexer(stream);
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
