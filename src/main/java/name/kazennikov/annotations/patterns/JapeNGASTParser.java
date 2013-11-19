@@ -30,9 +30,9 @@ public class JapeNGASTParser {
 	CommonTree tree;
 	JapeConfiguration config;
 	
-	public static Phase parse(JapeConfiguration config, String source) throws Exception {
+	public static Phase parsePhase(JapeConfiguration config, String source) throws Exception {
 		JapeNGASTParser parser = new JapeNGASTParser(config, source);
-		return parser.parse();
+		return parser.parsePhase();
 	}
 	
 	private JapeNGASTParser(JapeConfiguration config, String source) throws RecognitionException {
@@ -48,19 +48,20 @@ public class JapeNGASTParser {
 	}
 	
 	
-	private Phase parse() throws Exception {
+	private Phase parsePhase() throws Exception {
 		Phase phase = new Phase();
 		
-		for(int i = 0; i < tree.getChildCount(); i++) {
+		if(!tree.getText().equals("PHASE"))
+			return null;
+		
+		phase.name = tree.getChild(0).getText();
+
+		for(int i = 1; i < tree.getChildCount(); i++) {
 			Tree child = tree.getChild(i);
 			
 			String val = child.getText();
 			
 			switch(val) {
-			case "PHASE":
-				assert child.getChildCount() == 1;
-				phase.name = child.getChild(0).getText();
-				break;
 			case "INPUT":
 				phase.input.clear();
 				for(int j = 0; j < child.getChildCount(); j++) {

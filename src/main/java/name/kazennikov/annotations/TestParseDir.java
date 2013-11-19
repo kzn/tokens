@@ -20,7 +20,7 @@ public class TestParseDir {
 		
 		if(f.isFile()) {
 			String s = Files.toString(f, Charset.forName("UTF-8"));
-			Phase phase = JapeNGASTParser.parse(config, s);
+			Phase phase = JapeNGASTParser.parsePhase(config, s);
 
 
 			for(Rule r : phase.getRules()) {

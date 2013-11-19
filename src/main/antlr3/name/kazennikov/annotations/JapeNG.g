@@ -32,6 +32,9 @@ tokens {
     JAVA;
     REF_META;
     TYPE;
+    
+    MULTIPHASE;
+    PHASES;
 }
 
 
@@ -44,8 +47,14 @@ tokens {
 }
 
 
-jape: phase input opts rule+;
-phase: 'Phase:' SIMPLE -> ^(PHASE SIMPLE);
+jape: phase | multiPhase;
+
+// multi phase grammar
+multiPhase: 'MultiPhase:' SIMPLE phasesDecl -> ^(MULTIPHASE SIMPLE phasesDecl);
+phasesDecl: 'Phases:' SIMPLE+ -> ^(PHASES SIMPLE+);
+
+// single phase grammar
+phase: 'Phase:' SIMPLE input opts? rule+-> ^(PHASE SIMPLE input opts? rule+);
 input: 'Input:' SIMPLE+ -> ^(INPUT SIMPLE+);
 opts: 'Options:' option (',' option)* -> ^(OPTIONS option+);
 option: SIMPLE '=' SIMPLE -> ^(SIMPLE SIMPLE);
@@ -124,4 +133,5 @@ exponent: ('e' | 'E') ('-'|'+')? DIGITS;
 STRING : '"' (~('"' | '\\') | '\\' .)* '"';
 DIGITS: '0'..'9'+;
 SIMPLE: ~('(' | ')' | ' ' | ',' | '.' | '<' | '>' | '\t' | '\r' | '\n' | '{' | '}' | '[' | ']' | ':' | '=' | '!' | '~' | '"' | '@')+;
+
 
