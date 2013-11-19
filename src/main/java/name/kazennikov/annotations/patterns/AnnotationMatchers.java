@@ -380,4 +380,82 @@ public class AnnotationMatchers {
 			return matcher;
 		}
 	}
+	
+	
+	public static class FeatureLesserMatcher extends BaseFeatureMatcher {
+		public FeatureLesserMatcher(String type, FeatureAccessor fa, Object value) {
+			super(type, fa, value);
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("{%s%s < '%s'}", type, fa, value);
+		}
+		
+		@Override
+		public boolean matchValue(Object annotationObject, Object value) {
+			if(value instanceof Comparable || annotationObject instanceof Comparable) {
+				
+			}
+			return ((Comparable) annotationObject).compareTo(value) < 0;
+		}
+	}
+	
+	public static class FeatureLesserEqMatcher extends BaseFeatureMatcher {
+		public FeatureLesserEqMatcher(String type, FeatureAccessor fa, Object value) {
+			super(type, fa, value);
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("{%s%s <= '%s'}", type, fa, value);
+		}
+		
+		@Override
+		public boolean matchValue(Object annotationObject, Object value) {
+			if(value instanceof Comparable || annotationObject instanceof Comparable) {
+				
+			}
+			return ((Comparable) annotationObject).compareTo(value) <= 0;
+		}
+	}
+	
+	public static class FeatureGreaterMatcher extends BaseFeatureMatcher {
+		public FeatureGreaterMatcher(String type, FeatureAccessor fa, Object value) {
+			super(type, fa, value);
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("{%s%s > '%s'}", type, fa, value);
+		}
+		
+		@Override
+		public boolean matchValue(Object annotationObject, Object value) {
+			if(value instanceof Comparable || annotationObject instanceof Comparable) {
+				
+			}
+			return ((Comparable) annotationObject).compareTo(value) > 0;
+		}
+	}
+	
+	public static class FeatureGreaterEqMatcher extends BaseFeatureMatcher {
+		public FeatureGreaterEqMatcher(String type, FeatureAccessor fa, Object value) {
+			super(type, fa, value);
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("{%s%s >= '%s'}", type, fa, value);
+		}
+		
+		@Override
+		public boolean matchValue(Object annotationObject, Object value) {
+			if(value instanceof Comparable || annotationObject instanceof Comparable) {
+				
+			}
+			return ((Comparable) annotationObject).compareTo(value) >= 0;
+		}
+	}
+
 }

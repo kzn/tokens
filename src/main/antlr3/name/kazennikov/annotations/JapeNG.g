@@ -54,7 +54,7 @@ multiPhase: 'MultiPhase:' SIMPLE phasesDecl -> ^(MULTIPHASE SIMPLE phasesDecl);
 phasesDecl: 'Phases:' SIMPLE+ -> ^(PHASES SIMPLE+);
 
 // single phase grammar
-phase: 'Phase:' SIMPLE input opts? rule+-> ^(PHASE SIMPLE input opts? rule+);
+phase: 'Phase:' SIMPLE input opts? rule+ -> ^(PHASE SIMPLE input opts? rule+);
 input: 'Input:' SIMPLE+ -> ^(INPUT SIMPLE+);
 opts: 'Options:' option (',' option)* -> ^(OPTIONS option+);
 option: SIMPLE '=' SIMPLE -> ^(SIMPLE SIMPLE);
@@ -88,6 +88,11 @@ op: '!=' -> ^(OP["neq"])
   | '==' -> ^(OP["eq"])
   | '=~' -> ^(OP["contains"])
   | '==~' -> ^(OP["match"])
+  | '>' -> ^(OP["greater"])
+  | '>=' -> ^(OP["greater_eq"])
+  | '<' -> ^(OP["lesser"])
+  | '<=' -> ^(OP["lesser_eq"])
+  | SIMPLE -> ^(OP["custom"] SIMPLE)
   ;
 
 

@@ -29,14 +29,17 @@ public class SinglePhaseJapeASTParser {
 	JapeNGParser parser;
 	CommonTree tree;
 	JapeConfiguration config;
+
 	
 	public static Phase parsePhase(JapeConfiguration config, String source) throws Exception {
+		
 		SinglePhaseJapeASTParser parser = new SinglePhaseJapeASTParser(config, source);
 		return parser.parsePhase();
 	}
 	
 	protected SinglePhaseJapeASTParser(JapeConfiguration config, String source) throws RecognitionException {
 		this.config = config;
+		
 		this.src = source;
 		charStream = new ANTLRStringStream(src);
 		lexer = new JapeNGLexer(charStream);
@@ -51,10 +54,10 @@ public class SinglePhaseJapeASTParser {
 	protected Phase parsePhase() throws Exception {
 		Phase phase = new Phase();
 		
-		if(!tree.getText().equals("PHASE"))
+		if(!getType().equals("PHASE"))
 			return null;
 		
-		phase.name = tree.getChild(0).getText();
+		phase.name = getName();
 
 		for(int i = 1; i < tree.getChildCount(); i++) {
 			Tree child = tree.getChild(i);
@@ -279,7 +282,7 @@ public class SinglePhaseJapeASTParser {
 	
 	protected Object parseVal(Tree val) {
 		assert val.getChildCount() == 1;
-		String str = val.getText();
+		
 		
 		switch(val.getText()) {
 		case "IDENT":
@@ -307,9 +310,10 @@ public class SinglePhaseJapeASTParser {
 			}
 			return sb.toString();
 		case "INTEGER":
-			return Integer.parseInt(str);
+			return Integer.parseInt(val.getChild(0).getText());
 			
 		case "FLOAT":
+			String str = val.getChild(0).getText();
 			if(str.endsWith("f") ||str.endsWith("F"))
 				return Float.parseFloat(str);
 			return Double.parseDouble(str);
@@ -341,7 +345,16 @@ public class SinglePhaseJapeASTParser {
 			return new AnnotationMatchers.FeatureRegexMatcher(type, fa, val);
 		case "contains":
 			return new AnnotationMatchers.FeatureContainsRegexMatcher(type, fa, val);
+		case "greater":
+			return new AnnotationMatchers.FeatureGreaterMatcher(type, fa, val);
+		case "greater_eq":
+			return new AnnotationMatchers.FeatureGreaterEqMatcher(type, fa, val);
+		case "lesser":
+			return new AnnotationMatchers.FeatureLesserMatcher(type, fa, val);
+		case "lesser_eq":
+			return new AnnotationMatchers.FeatureLesserEqMatcher(type, fa, val);
 		}
+		
 		throw new IllegalStateException("illegal annotation type feature operation " + op);
 	}
 
@@ -359,6 +372,14 @@ public class SinglePhaseJapeASTParser {
 			}
 			
 		}
+	}
+	
+	protected String getType() {
+		return tree.getText();
+	}
+	
+	protected String getName() {
+		return tree.getChild(0).getText();
 	}
 	
 	
