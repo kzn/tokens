@@ -3,14 +3,13 @@ package name.kazennikov.annotations;
 import java.util.HashSet;
 import java.util.List;
 
+import junit.framework.TestCase;
 import name.kazennikov.annotations.annotators.SentenceSplitter;
 import name.kazennikov.annotations.annotators.UnicodeTokenizer;
 
 import org.junit.Test;
 
 import com.google.common.base.Predicate;
-
-import junit.framework.TestCase;
 
 public class SimpleAnnotationTests extends TestCase {
 	
@@ -19,7 +18,7 @@ public class SimpleAnnotationTests extends TestCase {
 		Document d = new Document("doc", "foo bar");
 		UnicodeTokenizer tokenizer = new UnicodeTokenizer();
 		tokenizer.annotate(d);
-		assertEquals(3, d.get(Annotation.TOKEN).size());
+		assertEquals(3, d.get(AnnotationConstants.TOKEN).size());
 	}
 
     @Test
@@ -27,7 +26,7 @@ public class SimpleAnnotationTests extends TestCase {
         Document d = new Document("doc", "foo=bar");
         UnicodeTokenizer tokenizer = new UnicodeTokenizer();
         tokenizer.annotate(d);
-        assertEquals(3, d.get(Annotation.TOKEN).size());
+        assertEquals(3, d.get(AnnotationConstants.TOKEN).size());
 
     }
 	
@@ -39,7 +38,7 @@ public class SimpleAnnotationTests extends TestCase {
 		SentenceSplitter ss = new SentenceSplitter(new HashSet<String>(), false);
 		ss.annotate(d);
 		
-		assertEquals(2, d.get(SentenceSplitter.SENT).size());
+		assertEquals(2, d.get(AnnotationConstants.SENT).size());
 	}
 	
 	@Test
@@ -49,7 +48,7 @@ public class SimpleAnnotationTests extends TestCase {
 		tokenizer.annotate(d);
 		SentenceSplitter ss = new SentenceSplitter(new HashSet<String>(), false);
 		ss.annotate(d);
-		Annotation sent = d.get(SentenceSplitter.SENT).get(1);
+		Annotation sent = d.get(AnnotationConstants.SENT).get(1);
 		List<Annotation> l = d.getAnnotationsWithin(sent, new Predicate<Annotation>() {
 			
 			@Override
