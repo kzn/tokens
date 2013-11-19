@@ -5,7 +5,7 @@ import java.nio.charset.Charset;
 
 import name.kazennikov.annotations.fsm.JapePlusFSM;
 import name.kazennikov.annotations.patterns.JapeConfiguration;
-import name.kazennikov.annotations.patterns.JapeNGASTParser;
+import name.kazennikov.annotations.patterns.SinglePhaseJapeASTParser;
 import name.kazennikov.annotations.patterns.Phase;
 import name.kazennikov.annotations.patterns.Rule;
 
@@ -20,7 +20,7 @@ public class TestParseDir {
 		
 		if(f.isFile()) {
 			String s = Files.toString(f, Charset.forName("UTF-8"));
-			Phase phase = JapeNGASTParser.parsePhase(config, s);
+			Phase phase = SinglePhaseJapeASTParser.parsePhase(config, s);
 
 
 			for(Rule r : phase.getRules()) {

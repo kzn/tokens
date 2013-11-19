@@ -86,5 +86,10 @@ public class AnnotatorSequence implements Annotator {
 			a.annotate(doc);
 		}
 	}
+    
+    @Override
+    public String getName() {
+    	return "Annotator Sequence";
+    }
 
 }

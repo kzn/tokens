@@ -482,5 +482,11 @@ public class RecursiveJapeAnnotator implements Annotator {
 		m.execute();
 		
 	}
+	
+	@Override
+	public String getName() {
+		return phase.name;
+	}
+
 
 }

@@ -110,6 +110,11 @@ public class TokenDAFSAGazetteer extends AbstractDAFSAGazetteer {
 
 		return t;
 	}
+	
+	@Override
+	public String getName() {
+		return "Token DAFSA Gazetteer";
+	}
 
 
 }

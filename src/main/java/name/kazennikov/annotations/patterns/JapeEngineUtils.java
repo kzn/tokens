@@ -14,7 +14,7 @@ public class JapeEngineUtils {
 	
 	public static Phase compilePhase(JapeConfiguration config, File file) throws Exception {
 		String s = Files.toString(file, Charset.forName("UTF-8"));
-		Phase phase = JapeNGASTParser.parsePhase(config, s);
+		Phase phase = SinglePhaseJapeASTParser.parsePhase(config, s);
 		phase.compile();
 		return phase;
 	}

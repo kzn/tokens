@@ -51,6 +51,12 @@ public class TokenNumberTagger implements Annotator {
 		doc.sortAnnotations();
 		
 	}
+	
+	@Override
+	public String getName() {
+		return "Token number tagger";
+	}
+
 
 
 }

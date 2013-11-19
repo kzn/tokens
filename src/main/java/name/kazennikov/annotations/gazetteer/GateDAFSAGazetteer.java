@@ -121,6 +121,11 @@ public class GateDAFSAGazetteer extends AbstractDAFSAGazetteer {
 	           Character.getType(ch) == Character.COMBINING_SPACING_MARK ||
 	           Character.getType(ch) == Character.NON_SPACING_MARK;
 	  }
+	  
+	  @Override
+	  public String getName() {
+		  return "DAFSA Gazetteer";
+	  }
 
 
 }

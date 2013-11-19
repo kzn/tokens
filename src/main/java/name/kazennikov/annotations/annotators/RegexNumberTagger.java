@@ -31,5 +31,10 @@ public class RegexNumberTagger implements Annotator {
 		
 	}
 	
+	@Override
+	public String getName() {
+		return "Regex number tagger";
+	}
+	
 
 }

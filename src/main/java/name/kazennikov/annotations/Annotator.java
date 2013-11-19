@@ -25,6 +25,12 @@ public interface Annotator {
 	 * @param doc
 	 */
 	public void annotate(Document doc);
+	
+	/**
+	 * Gets annotator name
+	 * @return
+	 */
+	public String getName();
 
 
 }

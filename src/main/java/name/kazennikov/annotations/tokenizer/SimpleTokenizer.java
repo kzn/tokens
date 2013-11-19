@@ -576,5 +576,10 @@ public class SimpleTokenizer implements Annotator {
 	public void setRulesURL(java.net.URL newRulesURL) {
 		rulesURL = newRulesURL;
 	}
+	
+	@Override
+	public String getName() {
+		return "Simple GATE tokenizer";
+	}
 
 }

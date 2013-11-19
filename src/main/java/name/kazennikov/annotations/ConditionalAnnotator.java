@@ -33,4 +33,9 @@ public class ConditionalAnnotator implements Annotator {
 			a.annotate(doc);
 		}
 	}
+    
+    @Override
+    public String getName() {
+    	return "Conditional annotator";
+    }
 }

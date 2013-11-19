@@ -166,4 +166,9 @@ public abstract class AbstractTokenizer implements Annotator {
     	feats.put(AnnotationConstants.TYPE, type);
         d.addAnnotation(tokenAnnotationType, start, end, feats);
     }
+    
+    @Override
+    public String getName() {
+    	return "AbstractTokenizer";
+    }
 }

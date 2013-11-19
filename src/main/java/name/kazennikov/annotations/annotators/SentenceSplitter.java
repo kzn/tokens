@@ -204,6 +204,12 @@ public class SentenceSplitter implements Annotator {
 		
 	}
 	
+	@Override
+	public String getName() {
+		return "ETAP sentence splitter";
+	}
+
+	
 	public static void main(String[] args) {
 		String s = "Мама мыла раму. Это 2.5 предложения.";
 		Document d = new Document(s);
@@ -218,6 +224,7 @@ public class SentenceSplitter implements Annotator {
 
 		
 	}
+	
 
 
 

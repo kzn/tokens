@@ -20,7 +20,7 @@ import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
 
-public class JapeNGASTParser {
+public class SinglePhaseJapeASTParser {
 	private static final Logger logger = Logger.getLogger();
 	String src;
 	CharStream charStream;
@@ -31,11 +31,11 @@ public class JapeNGASTParser {
 	JapeConfiguration config;
 	
 	public static Phase parsePhase(JapeConfiguration config, String source) throws Exception {
-		JapeNGASTParser parser = new JapeNGASTParser(config, source);
+		SinglePhaseJapeASTParser parser = new SinglePhaseJapeASTParser(config, source);
 		return parser.parsePhase();
 	}
 	
-	private JapeNGASTParser(JapeConfiguration config, String source) throws RecognitionException {
+	protected SinglePhaseJapeASTParser(JapeConfiguration config, String source) throws RecognitionException {
 		this.config = config;
 		this.src = source;
 		charStream = new ANTLRStringStream(src);
@@ -48,7 +48,7 @@ public class JapeNGASTParser {
 	}
 	
 	
-	private Phase parsePhase() throws Exception {
+	protected Phase parsePhase() throws Exception {
 		Phase phase = new Phase();
 		
 		if(!tree.getText().equals("PHASE"))
@@ -88,7 +88,7 @@ public class JapeNGASTParser {
 		return phase;
 	}
 
-	private Rule parseRule(Tree r) throws Exception {
+	protected Rule parseRule(Tree r) throws Exception {
 		Rule rule = new Rule();
 		
 		
@@ -127,7 +127,7 @@ public class JapeNGASTParser {
 		return rule;
 	}
 
-	private RHS parseSimpleRHS(Tree rhsTree) {
+	protected RHS parseSimpleRHS(Tree rhsTree) {
 		SimpleRHS rhs = new SimpleRHS();
 		
 		for(int i = 0; i < rhsTree.getChildCount(); i++) {
@@ -145,7 +145,7 @@ public class JapeNGASTParser {
 		return rhs;
 	}
 
-	private Value parseAttr(Tree attr) {
+	protected Value parseAttr(Tree attr) {
 		String name = parseVal(attr.getChild(0)).toString();
 		Tree value = attr.getChild(1);
 		
@@ -162,14 +162,14 @@ public class JapeNGASTParser {
 		return null;
 	}
 
-	private void parseRHSName(Tree child, SimpleRHS rhs) {
+	protected void parseRHSName(Tree child, SimpleRHS rhs) {
 		String group = child.getChild(0).getText();
 		String type = parseVal(child.getChild(1)).toString();
 		rhs.bindingName = group;
 		rhs.type = type;
 	}
 
-	private RHS parseJavaRHS(Tree child) throws Exception {
+	protected RHS parseJavaRHS(Tree child) throws Exception {
 		List<CommonToken> tokens = tokenStream.get(child.getTokenStartIndex(), child.getTokenStopIndex());
 		String s = src.substring(tokens.get(0).getStartIndex(), tokens.get(tokens.size() - 1).getStopIndex() + 1);
 		
@@ -179,7 +179,7 @@ public class JapeNGASTParser {
 		return JavaRHSBuilder.build("japeng", null, s);
 	}
 
-	private PatternElement parsePatternElement(Tree bpe) {
+	protected PatternElement parsePatternElement(Tree bpe) {
 		String name = null;
 		PatternElement.Operator op = bpe.getText().equals("OR")? Operator.OR : Operator.SEQ;
 		RangePatternElement enclosing = null;
@@ -244,7 +244,7 @@ public class JapeNGASTParser {
 		return pe;
 	}
 
-	private AnnotationMatcher parseAnnot(Tree annTree) {
+	protected AnnotationMatcher parseAnnot(Tree annTree) {
 
 		List<AnnotationMatcher> matchers = new ArrayList<>();
 		for(int i = 0; i < annTree.getChildCount(); i++) {
@@ -277,7 +277,7 @@ public class JapeNGASTParser {
 
 	}
 	
-	private Object parseVal(Tree val) {
+	protected Object parseVal(Tree val) {
 		assert val.getChildCount() == 1;
 		String str = val.getText();
 		
@@ -317,7 +317,7 @@ public class JapeNGASTParser {
 		return val.getText();
 	}
 
-	private AnnotationMatcher parseAnFeat(Tree feats, boolean isSimpleFeature) {
+	protected AnnotationMatcher parseAnFeat(Tree feats, boolean isSimpleFeature) {
 		String op = feats.getChild(0).getText();
 		Object val = parseVal(feats.getChild(1));
 		String type = feats.getChild(2).getText();
@@ -346,7 +346,7 @@ public class JapeNGASTParser {
 	}
 
 
-	private void parseOptions(Phase phase, Tree options) {
+	protected void parseOptions(Phase phase, Tree options) {
 		for(int i = 0; i < options.getChildCount(); i++) {
 			Tree child = options.getChild(i);
 			
