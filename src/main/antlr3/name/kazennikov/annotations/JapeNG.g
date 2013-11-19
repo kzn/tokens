@@ -63,7 +63,9 @@ annotSpec: '!' simpleAnnotSpec -> ^(SIMPLE["NOT"] simpleAnnotSpec)
          | simpleAnnotSpec -> simpleAnnotSpec;
 simpleAnnotSpec: type=SIMPLE ( -> ^(SIMPLE["AN_TYPE"] SIMPLE)
                                | '.' SIMPLE op value -> ^(SIMPLE["AN_FEAT"] op value SIMPLE+)
-                               | '@' SIMPLE op value -> ^(SIMPLE["AN_METAFEAT"] op value SIMPLE+));
+                               | '@' SIMPLE op value -> ^(SIMPLE["AN_METAFEAT"] op value SIMPLE+)
+                               | SIMPLE simpleMatcher -> ^(SIMPLE["COMPLEX_PRED"] SIMPLE simpleMatcher)
+                               );
                                
 attrName: SIMPLE -> ^(TYPE["IDENT"] SIMPLE)
         | STRING -> ^(TYPE["STRING"] STRING)
