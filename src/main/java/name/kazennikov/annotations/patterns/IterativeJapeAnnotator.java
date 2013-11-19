@@ -4,6 +4,7 @@ import gnu.trove.iterator.TIntIterator;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,9 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import name.kazennikov.annotations.Annotation;
-import name.kazennikov.annotations.AnnotationEngineException;
 import name.kazennikov.annotations.AnnotationList;
-import name.kazennikov.annotations.Annotator;
 import name.kazennikov.annotations.Document;
 import name.kazennikov.annotations.annotators.BasicTokenizer;
 import name.kazennikov.annotations.fsm.JapePlusFSM;
@@ -28,8 +27,9 @@ import name.kazennikov.logger.Logger;
 import org.apache.log4j.BasicConfigurator;
 
 import com.google.common.base.Predicate;
+import com.google.common.io.Files;
 
-public class IterativeJapeAnnotator implements Annotator {
+public class IterativeJapeAnnotator extends AbstractPhaseAnnotator {
 	private static final Logger logger = Logger.getLogger();
 
 
@@ -465,43 +465,6 @@ public class IterativeJapeAnnotator implements Annotator {
 		System.out.printf("Done%n");
 	}
 	
-	File japeFile;
-	JapeConfiguration config;
-	Phase phase;
-	
-	public File getJapeFile() {
-		return japeFile;
-	}
-
-	public void setJapeFile(File japeFile) {
-		this.japeFile = japeFile;
-	}
-	
-	
-	public JapeConfiguration getConfig() {
-		return config;
-	}
-
-	public void setConfig(JapeConfiguration config) {
-		this.config = config;
-	}
-
-	public void init() {
-		try {
-			phase = JapeEngineUtils.compilePhase(config, japeFile);
-		} catch(Exception e) {
-			logger.warn(e);
-			throw new AnnotationEngineException(e);
-		}
-	}
-	
-	
-	
-
-	@Override
-	public boolean isApplicable(Document doc) {
-		return true;
-	}
 
 	@Override
 	public void annotate(Document doc) {
@@ -510,11 +473,15 @@ public class IterativeJapeAnnotator implements Annotator {
 		
 	}
 	
-	@Override
-	public String getName() {
-		return phase.name;
+
+
+	public static IterativeJapeAnnotator newAnnotator(JapeConfiguration config, File file) throws Exception {
+		IterativeJapeAnnotator a = new IterativeJapeAnnotator();
+		String source = Files.toString(file, Charset.forName("UTF-8"));
+		Phase p = SinglePhaseJapeASTParser.parsePhase(config, source);
+		a.setPhase(p);
+		a.init();
+		return a;
 	}
-
-
 
 }

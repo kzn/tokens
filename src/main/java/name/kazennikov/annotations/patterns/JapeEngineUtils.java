@@ -13,8 +13,8 @@ import com.google.common.io.Files;
 public class JapeEngineUtils {
 	
 	public static Phase compilePhase(JapeConfiguration config, File file) throws Exception {
-		String s = Files.toString(file, Charset.forName("UTF-8"));
-		Phase phase = SinglePhaseJapeASTParser.parsePhase(config, s);
+		String src = Files.toString(file, Charset.forName("UTF-8"));
+		Phase phase = SinglePhaseJapeASTParser.parsePhase(config, src);
 		phase.compile();
 		return phase;
 	}

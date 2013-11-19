@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import name.kazennikov.annotations.Annotation;
-import name.kazennikov.annotations.AnnotationEngineException;
 import name.kazennikov.annotations.AnnotationList;
-import name.kazennikov.annotations.Annotator;
 import name.kazennikov.annotations.Document;
 import name.kazennikov.annotations.annotators.BasicTokenizer;
 import name.kazennikov.annotations.fsm.JapePlusFSM;
@@ -27,7 +25,7 @@ import org.apache.log4j.BasicConfigurator;
 
 import com.google.common.base.Predicate;
 
-public class RecursiveJapeAnnotator implements Annotator {
+public class RecursiveJapeAnnotator extends AbstractPhaseAnnotator {
 	private static final Logger logger = Logger.getLogger();
 
 	public static class FSMInstance {
@@ -436,57 +434,10 @@ public class RecursiveJapeAnnotator implements Annotator {
 
 		System.out.printf("Done%n");
 	}
-	
-	File japeFile;
-	JapeConfiguration config;
-	Phase phase;
-	
-	public File getJapeFile() {
-		return japeFile;
-	}
-
-	public void setJapeFile(File japeFile) {
-		this.japeFile = japeFile;
-	}
-	
-	public JapeConfiguration getConfig() {
-		return config;
-	}
-
-	public void setConfig(JapeConfiguration config) {
-		this.config = config;
-	}
-
-
-	
-	public void init() {
-		try {
-			phase = JapeEngineUtils.compilePhase(config, japeFile);
-		} catch(Exception e) {
-			logger.warn(e);
-			throw new AnnotationEngineException(e);
-		}
-	}
-	
-	
-	
-
-	@Override
-	public boolean isApplicable(Document doc) {
-		return true;
-	}
 
 	@Override
 	public void annotate(Document doc) {
 		Matcher m = new Matcher(doc, phase);
 		m.execute();
-		
 	}
-	
-	@Override
-	public String getName() {
-		return phase.name;
-	}
-
-
 }

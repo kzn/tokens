@@ -5,9 +5,9 @@ import java.nio.charset.Charset;
 
 import name.kazennikov.annotations.fsm.JapePlusFSM;
 import name.kazennikov.annotations.patterns.JapeConfiguration;
-import name.kazennikov.annotations.patterns.SinglePhaseJapeASTParser;
 import name.kazennikov.annotations.patterns.Phase;
 import name.kazennikov.annotations.patterns.Rule;
+import name.kazennikov.annotations.patterns.SinglePhaseJapeASTParser;
 
 import org.apache.log4j.BasicConfigurator;
 
@@ -19,8 +19,8 @@ public class TestParseDir {
 			return;
 		
 		if(f.isFile()) {
-			String s = Files.toString(f, Charset.forName("UTF-8"));
-			Phase phase = SinglePhaseJapeASTParser.parsePhase(config, s);
+			String src = Files.toString(f, Charset.forName("UTF-8"));
+			Phase phase = SinglePhaseJapeASTParser.parsePhase(config, src);
 
 
 			for(Rule r : phase.getRules()) {

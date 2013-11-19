@@ -10,9 +10,14 @@ import java.util.List;
  */
 public class AnnotatorSequence implements Annotator {
 	List<Annotator> annotators = new ArrayList<Annotator>();
+	String name = "AnnotatorSequence";
 	
 	public AnnotatorSequence() {
 	
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	/**
@@ -89,7 +94,7 @@ public class AnnotatorSequence implements Annotator {
     
     @Override
     public String getName() {
-    	return "Annotator Sequence";
+    	return name;
     }
 
 }
