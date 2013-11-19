@@ -238,7 +238,7 @@ public class Document extends Annotation implements CharSequence {
 	}
 	
 	/**
-	 * Get annotatations from document that satisfies a predicate
+	 * Get annotations from document that satisfies a predicate
 	 * @param type
 	 * @param predicate
 	 * @return
@@ -381,6 +381,10 @@ public class Document extends Annotation implements CharSequence {
     public Annotation getById(int id) {
         return annotationById.get(id);
     }
+
+	public void removeAll(Collection<?> c) {
+		annotations.removeAll(c);
+	}
 
     
 	
