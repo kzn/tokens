@@ -439,5 +439,6 @@ public class RecursiveJapeAnnotator extends AbstractPhaseAnnotator {
 	public void annotate(Document doc) {
 		Matcher m = new Matcher(doc, phase);
 		m.execute();
+		doc.sortAnnotations();
 	}
 }
