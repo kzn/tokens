@@ -109,7 +109,7 @@ modif: (':' SIMPLE) -> ^(GROUP_OP SIMPLE["named"] SIMPLE)
 // RHS grammar
 action: labelings | javaCode;
 javaCode: '{' ( '}'-> ^(EMPTY_RHS)
-                | code+=(SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '!' | javaCode)+ '}'
+                | code+=(SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '!' | '|' | javaCode)+ '}'
                 -> ^(JAVA));
 labelings: labeling (',' labeling)* -> labeling+;
 labeling: ':' SIMPLE '.' SIMPLE '=' '{' (attr (',' attr )*)?'}' -> ^(SIMPLE_RHS ^(NAME SIMPLE+) attr*);
