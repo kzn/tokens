@@ -1,11 +1,14 @@
 package name.kazennikov.annotations.patterns;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import name.kazennikov.annotations.fsm.JapePlusFSM;
 
 import com.google.common.base.Objects;
+import com.google.common.io.Files;
 
 public class Phase {
 	
@@ -40,6 +43,10 @@ public class Phase {
 		}
 		
 		fsm = builder.build();
+	}
+	
+	public static Phase parse(JapeConfiguration config, File f) throws Exception {
+		return SinglePhaseJapeASTParser.parsePhase(config, Files.toString(f, Charset.forName("UTF-8")));
 	}
 	
 	
