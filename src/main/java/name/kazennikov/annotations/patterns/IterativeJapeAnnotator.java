@@ -111,7 +111,6 @@ public class IterativeJapeAnnotator extends AbstractPhaseAnnotator {
 
 			}); 
 
-			input.sort();		
 			nextAnnotationIndex = computeNextAnnotationIndex(input);
 		}
 
