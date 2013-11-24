@@ -60,7 +60,7 @@ public interface XmlWriter {
     		writer.writeAttribute("text", doc.getText());
     		writer.writeAttribute("root", doc.getType()); // get root annotation
 
-    		for(Annotation a : doc.getAllAnnotations()) {
+    		for(Annotation a : doc.getAll()) {
     			writer.writeStartElement("annotation");
     			writer.writeAttribute("type", a.getType());
     			writer.writeAttribute("start", Integer.toString(a.getStart()));

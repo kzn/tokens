@@ -1,6 +1,7 @@
 package name.kazennikov.annotations;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -15,6 +16,10 @@ public class AnnotationList extends ArrayList<Annotation> {
 	
 	public AnnotationList() {
 		super();
+	}
+	
+	public AnnotationList(Collection<? extends Annotation> c) {
+		super(c);
 	}
 	
 	public AnnotationList(int initialSize) {
@@ -81,5 +86,29 @@ public class AnnotationList extends ArrayList<Annotation> {
     	}
     	
     	return copy;
+    }
+    
+    public int getStart() {
+    	int min = Integer.MAX_VALUE;
+    	
+    	for(Annotation a : this) {
+    		if(a.getStart() < min) {
+    			min = a.getStart();
+    		}
+    	}
+    	
+    	return min;
+    }
+    
+    public int getEnd() {
+    	int max = Integer.MIN_VALUE;
+    	
+    	for(Annotation a : this) {
+    		if(a.getEnd() > max) {
+    			max = a.getEnd();
+    		}
+    	}
+    	
+    	return max;
     }
 }

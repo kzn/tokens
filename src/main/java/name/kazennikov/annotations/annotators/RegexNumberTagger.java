@@ -27,7 +27,6 @@ public class RegexNumberTagger implements Annotator {
 			doc.addAnnotation(AnnotationConstants.NUMBER, m.start(), m.end(), feats);
 		}
 		
-		doc.sortAnnotations();
 		
 	}
 	

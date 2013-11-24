@@ -42,7 +42,6 @@ public class AlignTests extends TestCase {
 
 
 		
-		doc.sortAnnotations();
 		return doc;
 	}
 	

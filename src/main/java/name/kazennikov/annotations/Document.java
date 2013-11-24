@@ -1,13 +1,11 @@
 package name.kazennikov.annotations;
 
+import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -15,6 +13,7 @@ import javax.xml.stream.XMLStreamWriter;
 import name.kazennikov.xml.XmlWritable;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * Document is a representation of a text in the annotation framework.
@@ -28,7 +27,7 @@ public class Document extends Annotation implements CharSequence {
 
 	String text;
 	
-	AnnotationList annotations = new AnnotationList();
+	//AnnotationList annotations = new AnnotationList();
     TIntObjectHashMap<Annotation> annotationById = new TIntObjectHashMap<Annotation>();
 	int nextID = 0;
 	
@@ -37,7 +36,7 @@ public class Document extends Annotation implements CharSequence {
 	}
 	
 	public Document(String text) {
-		this("doc", text);
+		this(AnnotationConstants.DOCUMENT, text);
 	}
 
     /**
@@ -64,8 +63,11 @@ public class Document extends Annotation implements CharSequence {
      */
 	public AnnotationList get(String... types) {
         AnnotationList anns = new AnnotationList();
+        TIntObjectIterator<Annotation> it = annotationById.iterator();
         
-        for(Annotation a : annotations) {
+        while(it.hasNext()) {
+        	it.advance();
+        	Annotation a = it.value();
         	for(String type : types) {
         		if(a.getType().equals(type)) {
         			anns.add(a);
@@ -73,14 +75,23 @@ public class Document extends Annotation implements CharSequence {
         		}
         	}
         }
-
-        Collections.sort(anns, Annotation.COMPARATOR);
+        
+        anns.sort();
 		
 		return anns;
 	}
 	
 	public AnnotationList getAll() {
-		return annotations;
+		AnnotationList l = new AnnotationList(annotationById.size());
+		TIntObjectIterator<Annotation> it = annotationById.iterator();
+		
+		while(it.hasNext()) {
+			it.advance();
+			l.add(it.value());
+		}
+		
+		l.sort();
+		return l;
 	}	
 	
 	/**
@@ -91,24 +102,34 @@ public class Document extends Annotation implements CharSequence {
 	 */
 	public AnnotationList getCovering(int start, int end) {
 		AnnotationList anns = new AnnotationList();
+		TIntObjectIterator<Annotation> it = annotationById.iterator();
 		
-		for(Annotation a : getAll()) {
+		while(it.hasNext()) {
+			it.advance();
+			Annotation a = it.value();
 			if(a.getStart() <= start && a.getEnd() >= end)
 				anns.add(a);
 		}
 		
+		anns.sort();
 		return anns;
 		
 	}
 	
 	public AnnotationList get(Predicate<Annotation> predicate) {
 		AnnotationList anns = new AnnotationList();
+
+		TIntObjectIterator<Annotation> it = annotationById.iterator();
 		
-		for(Annotation a : getAll()) {
+		while(it.hasNext()) {
+			it.advance();
+			Annotation a = it.value();
+			
 			if(predicate.apply(a))
 				anns.add(a);
 		}
 		
+		anns.sort();
 		return anns;
 	}
 	
@@ -121,11 +142,16 @@ public class Document extends Annotation implements CharSequence {
 	public AnnotationList getOverlapping(int start, int end) {
 		AnnotationList anns = new AnnotationList();
 		
-		for(Annotation a : getAll()) {
+		TIntObjectIterator<Annotation> it = annotationById.iterator();
+		
+		while(it.hasNext()) {
+			it.advance();
+			Annotation a = it.value();
 			if(a.getStart() <= start && a.getEnd() >= end)
 				anns.add(a);
 		}
-		
+
+		anns.sort();
 		return anns;
 		
 	}
@@ -138,7 +164,11 @@ public class Document extends Annotation implements CharSequence {
      * @param annotationTypes annotation names
      */
     public boolean contains(String... annotationTypes) {
-    	for(Annotation a : annotations) {
+		TIntObjectIterator<Annotation> it = annotationById.iterator();
+		
+		while(it.hasNext()) {
+			it.advance();
+			Annotation a = it.value();
     		for(String s : annotationTypes) {
     			if(a.getType().equals(s))
     				return true;
@@ -157,7 +187,6 @@ public class Document extends Annotation implements CharSequence {
      */
 	protected Annotation addAnnotation(Annotation ann) {
 		ann.setDoc(this);
-		annotations.add(ann);
 		ann.id = nextID++;
 		annotationById.put(ann.id, ann);
 		return ann;
@@ -183,10 +212,6 @@ public class Document extends Annotation implements CharSequence {
 		}
 	}
 
-    public void sortAnnotations() {
-    	Collections.sort(annotations, Annotation.COMPARATOR);
-    }
-
 	@Override
 	public int length() {
 		return text.length();
@@ -211,7 +236,7 @@ public class Document extends Annotation implements CharSequence {
 	public AnnotationList getAnnotationsWithin(Annotation a, Predicate<Annotation> p) {
 		AnnotationList anns = new AnnotationList();
 		
-		for(Annotation an : annotations) {
+		for(Annotation an : getAll()) {
 				// skip given
 				if(an == a)
 					continue;
@@ -220,7 +245,7 @@ public class Document extends Annotation implements CharSequence {
 					anns.add(an);
 		}
 		
-		Collections.sort(anns, Annotation.COMPARATOR);
+		anns.sort();
 		
 		return anns;
 	}
@@ -232,9 +257,9 @@ public class Document extends Annotation implements CharSequence {
 	 */
 	@Override
 	public AnnotationList get(Predicate<Annotation>... predicate) {
-		AnnotationList anns = annotations.get(predicate);
-		Collections.sort(anns, Annotation.COMPARATOR);
-		return anns;
+		
+		Predicate<Annotation> p = Predicates.and(predicate);		
+		return get(p);
 	}
 	
 	/**
@@ -251,18 +276,14 @@ public class Document extends Annotation implements CharSequence {
 				anns.add(a);
 		}
 		
-		Collections.sort(anns, Annotation.COMPARATOR);
+		anns.sort();
 		
 		return anns;
 	}
 	
-	public AnnotationList getAllAnnotations() {
-		return annotations;
-	}
-	
 
 	public void toXml(XMLStreamWriter writer, Map<String, XmlWritable<Map<String, Object>>> anWriters) throws XMLStreamException {
-		writer.writeStartElement(AnnotationConstants.DOC);
+		writer.writeStartElement(AnnotationConstants.DOCUMENT);
 		writer.writeAttribute("text", getText());
 		writer.writeAttribute("type", getType()); // get root annotation
 
@@ -302,7 +323,7 @@ public class Document extends Annotation implements CharSequence {
 	 */
 	public static Document read(XMLStreamReader stream, Map<String, AnnotationXmlLoader> anLoaders) throws XMLStreamException {
 		String tag = stream.getName().getLocalPart();
-		if(!tag.equals(AnnotationConstants.DOC))
+		if(!tag.equals(AnnotationConstants.DOCUMENT))
 			return null;
 		
 		String anDoc = stream.getAttributeValue(null, "type");
@@ -310,7 +331,7 @@ public class Document extends Annotation implements CharSequence {
 		Document doc = new Document(anDoc, text);
 		
 		while(stream.hasNext()) {
-			if(stream.isEndElement() && stream.getLocalName().equals(AnnotationConstants.DOC))
+			if(stream.isEndElement() && stream.getLocalName().equals(AnnotationConstants.DOCUMENT))
 				break;
 			
 			if(stream.isStartElement()) {
@@ -353,28 +374,31 @@ public class Document extends Annotation implements CharSequence {
     
     public void removeIf(Predicate<Annotation> p) {
 
-        Iterator<Annotation> it = annotations.iterator();
+    	TIntObjectIterator<Annotation> it = annotationById.iterator();
 
         while(it.hasNext()) {
-            Annotation a = it.next();
+        	it.advance();
+            Annotation a = it.value();
             if(p.apply(a)) {
                 it.remove();
-                annotationById.remove(a.getId());
             }
         }
     }
     
-    public void removeIfNot(final Predicate<Annotation> p) {
-    	annotations.removeIfNot(new Predicate<Annotation>() {
-            @Override
-            public boolean apply(@Nullable Annotation annotation) {
-                return !p.apply(annotation);
-            }
-        });
-    }
+    public void removeIfNot(Predicate<Annotation> p) {
 
+    	TIntObjectIterator<Annotation> it = annotationById.iterator();
+
+        while(it.hasNext()) {
+        	it.advance();
+            Annotation a = it.value();
+            if(!p.apply(a)) {
+                it.remove();
+            }
+        }
+    }
+  
 	public void remove(Annotation a) {
-		annotations.remove(a);
         annotationById.remove(a.getId());
 	}
 
@@ -382,11 +406,19 @@ public class Document extends Annotation implements CharSequence {
         return annotationById.get(id);
     }
 
-	public void removeAll(Collection<?> c) {
-		annotations.removeAll(c);
+	public void removeAll(Collection<? extends Annotation> c) {
+		for(Annotation a : c) {
+			annotationById.remove(a.getId());
+		}		
 	}
 
-    
+	/**
+	 * Get document size in annotations
+	 * @return
+	 */
+    public int size() {
+    	return annotationById.size();
+    }
 	
 	
 }

@@ -313,7 +313,7 @@ public class SimpleTokenizer implements Annotator {
 			document.addAnnotation(type, tokenStartIdx, lastMatchIdx + 1, newTokenFm);
 		}
 		
-		document.sortAnnotations();
+		//document.sortAnnotations();
 
 	}
 

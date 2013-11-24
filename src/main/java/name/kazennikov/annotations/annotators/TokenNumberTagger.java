@@ -48,7 +48,6 @@ public class TokenNumberTagger implements Annotator {
 			}
 		}
 		
-		doc.sortAnnotations();
 		
 	}
 	

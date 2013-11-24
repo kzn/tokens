@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.tools.Diagnostic;
 import javax.tools.DiagnosticListener;
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
@@ -129,12 +130,23 @@ public class EclipseECJWrapper {
 		List<String> options = Collections.emptyList();
 
 		List<MemorySource> compilationUnits = Arrays.asList(new MemorySource(className, code));
-		DiagnosticListener<JavaFileObject> dianosticListener = null;
+		DiagnosticListener<JavaFileObject> dianosticListener = new DiagnosticListener<JavaFileObject>() {
+			
+			@Override
+			public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
+				System.err.printf("%s - [%d] %s%n", diagnostic.getKind(), diagnostic.getLineNumber(), diagnostic.getMessage(null));
+
+				
+			}
+		};
 		Iterable<String> classes = null;
 		JavaCompiler.CompilationTask compile = javac.getTask(compilerOut, fileManager,
 				dianosticListener, options, classes, compilationUnits);
+		
+		boolean res = compile.call();
 
-		return compile.call()? cl.findClass(className) : null;
+		
+		return res? cl.findClass(className) : null;
 
 	}
 }

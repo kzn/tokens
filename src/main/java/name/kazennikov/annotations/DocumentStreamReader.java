@@ -42,7 +42,7 @@ public class DocumentStreamReader {
     public Document readNext() throws XMLStreamException {
 
         while(s.hasNext()) {
-            if(s.isStartElement() && s.getLocalName().equals(AnnotationConstants.DOC))
+            if(s.isStartElement() && s.getLocalName().equals(AnnotationConstants.DOCUMENT))
                 return Document.read(s, anLoaders);
             s.next();
         }

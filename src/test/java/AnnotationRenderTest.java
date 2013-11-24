@@ -30,7 +30,7 @@ public class AnnotationRenderTest extends TestCase {
 		StringWriter sw = new StringWriter();
 		XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
 		XmlStreamAnnotationRender render = new XmlStreamAnnotationRender(writer);
-		render.render(d.getAllAnnotations());
+		render.render(d.getAll());
 		writer.close();
 		String value = sw.toString();
 		assertEquals("<doc><bar><foo>T<foo1>his</foo1></foo> is</bar> a <baz>tree.</baz></doc>", value);
