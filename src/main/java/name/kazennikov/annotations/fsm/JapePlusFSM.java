@@ -280,6 +280,7 @@ public class JapePlusFSM {
 		int number;
 		List<Transition> transitions = new ArrayList<>();
 		Set<Rule> rules;
+		boolean isFinal;
 		
 		public int getNumber() {
 			return number;
@@ -290,7 +291,7 @@ public class JapePlusFSM {
 		}
 
 		public boolean isFinal() {
-			return !(rules != null && rules.isEmpty());
+			return isFinal;
 		}
 		
 		public Set<Rule> getRules() {
@@ -402,6 +403,7 @@ public class JapePlusFSM {
 			State s = new State();
 			s.number = i;
 			s.rules = s0.getFinals();
+			s.isFinal = s.rules != null && !s.rules.isEmpty();
 			stateMap.put(s0, s);
 			states.add(s);
 		}
