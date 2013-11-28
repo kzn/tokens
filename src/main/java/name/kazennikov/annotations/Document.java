@@ -236,7 +236,12 @@ public class Document extends Annotation implements CharSequence {
 	public AnnotationList getAnnotationsWithin(Annotation a, Predicate<Annotation> p) {
 		AnnotationList anns = new AnnotationList();
 		
-		for(Annotation an : getAll()) {
+		TIntObjectIterator<Annotation> it = annotationById.iterator();
+		
+		while(it.hasNext()) {
+			it.advance();
+			Annotation an = it.value();
+
 				// skip given
 				if(an == a)
 					continue;
@@ -270,8 +275,11 @@ public class Document extends Annotation implements CharSequence {
 	 */
 	public AnnotationList get(String type, Predicate<Annotation> predicate) {
 		AnnotationList anns = new AnnotationList();
+		TIntObjectIterator<Annotation> it = annotationById.iterator();
 		
-		for(Annotation a : anns) {
+		while(it.hasNext()) {
+			it.advance();
+			Annotation a = it.value();
 			if(a.getType().equals(type) && predicate.apply(a))
 				anns.add(a);
 		}
