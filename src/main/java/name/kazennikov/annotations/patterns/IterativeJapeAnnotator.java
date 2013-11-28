@@ -45,7 +45,7 @@ public class IterativeJapeAnnotator extends AbstractPhaseAnnotator {
 			keys = new ArrayList<>();
 			values = new ArrayList<>();
 			stack = new ArrayList<>();
-		}	
+		}
 
 		public void push() {
 			stack.add(new TIntArrayList());
