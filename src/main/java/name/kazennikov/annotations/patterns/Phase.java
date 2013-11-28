@@ -3,7 +3,9 @@ package name.kazennikov.annotations.patterns;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import name.kazennikov.annotations.fsm.JapePlusFSM;
 
@@ -14,7 +16,7 @@ public class Phase {
 	
 	String name;
 	MatchMode mode = MatchMode.BRILL;
-	List<String> input = new ArrayList<>();
+	Set<String> input = new HashSet<>();
 	List<Rule> rules = new ArrayList<>();
 	JapePlusFSM fsm;
 	
