@@ -26,9 +26,11 @@ import com.google.common.base.Predicates;
 public class Document extends Annotation implements CharSequence {
 
 	String text;
-	
-	//AnnotationList annotations = new AnnotationList();
     TIntObjectHashMap<Annotation> annotationById = new TIntObjectHashMap<Annotation>();
+
+    // annotation id of the document is always 0
+    public static int DOCUMENT_ANNOTATION_ID = 0;
+    
 	int nextID = 0;
 	
 	public Document() {	
@@ -181,24 +183,39 @@ public class Document extends Annotation implements CharSequence {
 
 
     /**
-     * Add single annotation to the document
-     * @param ann
-     * @return generated annotation id
+     * Add annotation to the document.
+     * An error is signaled if an annotation with same id already exists in the
+     * document
+     * 
+     * @param ann annotation to add
+     * @return added annotation
      */
 	protected Annotation addAnnotation(Annotation ann) {
 		ann.setDoc(this);
-		ann.id = nextID++;
+		
+		if(annotationById.contains(ann.id))
+			throw new IllegalStateException("Annotation with id=" + ann.id + " already exists in the document");
+		
 		annotationById.put(ann.id, ann);
+		nextID = Math.max(ann.id, nextID) + 1;
 		return ann;
 	}
 	
 	public Annotation addAnnotation(String name, int start, int end) {
 		Annotation a = new Annotation(this, name, start, end);
+		a.id = nextID;
 		return addAnnotation(a);
 	}
 	
 	public Annotation addAnnotation(String name, int start, int end, Map<String, Object> features) {
 		Annotation a = new Annotation(this, name, start, end, features);
+		a.id = nextID;
+		return addAnnotation(a);
+	}
+	
+	public Annotation addAnnotation(int id, String name, int start, int end, Map<String, Object> features) {
+		Annotation a = new Annotation(this, name, start, end, features);
+		a.id = id;
 		return addAnnotation(a);
 	}
 

@@ -21,6 +21,9 @@ import com.google.common.base.Predicates;
  *
  */
 public class Annotation implements CharSequence, Comparable<Annotation> {
+	
+	public static final int UNASSIGNED_ID = -1;
+	public static final int DOCUMENT_ID = 0;
 
 	/**
 	 * Basic comparator for natural order. Sorts by:
@@ -41,7 +44,7 @@ public class Annotation implements CharSequence, Comparable<Annotation> {
 	};
 
 	Document doc;
-	int id;
+	int id = UNASSIGNED_ID;
 	String type;
 	int start;
 	int end;
