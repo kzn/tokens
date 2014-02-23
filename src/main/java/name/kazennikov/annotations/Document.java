@@ -193,6 +193,10 @@ public class Document extends Annotation implements CharSequence {
 	protected Annotation addAnnotation(Annotation ann) {
 		ann.setDoc(this);
 		
+		if(ann.id == Annotation.UNASSIGNED_ID) {
+			ann.id = nextID;
+		}
+		
 		if(annotationById.contains(ann.id))
 			throw new IllegalStateException("Annotation with id=" + ann.id + " already exists in the document");
 		
@@ -203,13 +207,11 @@ public class Document extends Annotation implements CharSequence {
 	
 	public Annotation addAnnotation(String name, int start, int end) {
 		Annotation a = new Annotation(this, name, start, end);
-		a.id = nextID;
 		return addAnnotation(a);
 	}
 	
 	public Annotation addAnnotation(String name, int start, int end, Map<String, Object> features) {
 		Annotation a = new Annotation(this, name, start, end, features);
-		a.id = nextID;
 		return addAnnotation(a);
 	}
 	
