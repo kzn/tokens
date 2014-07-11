@@ -13,6 +13,23 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    antlr3
+}
+
+ext.antlr = [
+    grammarpackage: "name.kazennikov.annotations",
+    antlrSource: 'src/main/antlr3',
+    destinationDir: "src/generated-sources/java"
+]
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', "${antlr.destinationDir}"]
+        }
+    }
+}
 
 dependencies {
     compile 'net.sf.trove4j:trove4j:3.0.3'
@@ -20,6 +37,8 @@ dependencies {
     compile 'junit:junit:4.10'
     compile 'org.antlr:antlr:3.4'
     compile 'org.antlr:antlr-runtime:3.4'
+
+    antlr3 'org.antlr:antlr:3.4'
 
     compile 'org.eclipse.jdt.core.compiler:ecj:4.2.2'
     compile 'uk.ac.gate:gate-core:7.1'
@@ -33,4 +52,31 @@ dependencies {
 
     }
 
+}
+
+
+
+
+task antlrOutputDir << {
+    mkdir(antlr.destinationDir)
+}
+
+task generateGrammarSource(dependsOn: antlrOutputDir, type: JavaExec) {
+    description = 'Generates Java sources from Antlr3 grammars.'
+
+
+    inputs.dir file(antlr.antlrSource)
+    outputs.dir file(antlr.destinationDir)
+
+    def grammars = fileTree(antlr.antlrSource).include('**/*.g')
+
+    main = 'org.antlr.Tool'
+    classpath = configurations.antlr3
+    def pkg = antlr.grammarpackage.replaceAll("\\.", "/")
+    args = ["-o", "${antlr.destinationDir}/${pkg}", "-package", grammars.files].flatten()
+}
+
+compileJava {
+    dependsOn generateGrammarSource
+    source antlr.destinationDir
 }
