@@ -32,9 +32,10 @@ annotSpec: '!' simpleAnnotSpec
          ;
 
 simpleAnnotSpec: SIMPLE
-               | '.' SIMPLE op value
+               ( '.' SIMPLE op value
                | '@' SIMPLE op value
                | SIMPLE simpleMatcher
+               )?
                ;
 
 attrName: SIMPLE
@@ -71,7 +72,7 @@ modif: (':' SIMPLE)
 // RHS grammar
 action: labelings | javaCode;
 javaCode: '{' ( '}'
-        | SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '-' |'!' | '|' | javaCode)+ '}'
+        | SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '-' |'!' | '|' | javaCode)* '}'
         ;
 
 labelings: labeling (',' labeling)*;
