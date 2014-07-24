@@ -173,12 +173,7 @@ public class SinglePhaseJapeASTParser {
 	}
 
 	protected RHS parseJavaRHS(Tree child) throws Exception {
-		List<CommonToken> tokens = tokenStream.get(child.getTokenStartIndex(), child.getTokenStopIndex());
-		String s = src.substring(tokens.get(0).getStartIndex(), tokens.get(tokens.size() - 1).getStopIndex() + 1);
-		
-		
-		
-
+		String s = tokenStream.toString(child.getTokenStartIndex(), child.getTokenStopIndex());
 		return JavaRHSBuilder.build("japeng", null, s);
 	}
 
