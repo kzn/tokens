@@ -91,6 +91,7 @@ public class IterativeJapeAnnotator extends AbstractPhaseAnnotator {
 	public static class Matcher {
 		AnnotationList input;
 		int[] nextAnnotationIndex;
+		int[] followingAnnotationIndex;
 		Document doc;
 		Phase phase;
 		

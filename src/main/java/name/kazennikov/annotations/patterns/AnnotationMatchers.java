@@ -362,7 +362,7 @@ public class AnnotationMatchers {
 	public static final class NOTAnnotationMatcher implements AnnotationMatcher {
 		AnnotationMatcher matcher;
 		
-		NOTAnnotationMatcher(AnnotationMatcher matcher) {
+		public NOTAnnotationMatcher(AnnotationMatcher matcher) {
 			this.matcher = matcher;
 		}
 
