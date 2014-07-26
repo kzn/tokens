@@ -5,44 +5,66 @@ grammar JapeNG4;
 }
 
 
-jape: phase | multiPhase;
+jape: multiPhaseHead? (singlePhase | phasesDecl);
+
+ident: SIMPLE;
 
 // multi phase grammar
-multiPhase: 'MultiPhase:' SIMPLE phasesDecl;
-phasesDecl: 'Phases:' SIMPLE+;
+multiPhaseHead: ('MultiPhase:' | 'Multiphase:') ident;
+
+phasesDecl: 'Phases:' ident+;
+
+imports: 'Imports:' javaCode;
+controllerOpt: controllerStarted | controllerFinished | controllerAborted;
+
+controllerStarted: 'ControllerStarted:' javaCode;
+controllerFinished: 'ControllerFinished:' javaCode;
+controllerAborted: 'ControllerAborted:' javaCode;
 
 // single phase grammar
-phase: 'Phase:' SIMPLE input opts? singleRule+;
-input: 'Input:' SIMPLE+;
-opts: 'Options:' option (',' option)*;
-option: SIMPLE '=' SIMPLE;
+preHead: imports? (controllerOpt)*;
+singlePhase: preHead phase+;
+phase: 'Phase:' ident (input | opts)* (singleRule | macro | templateDef)+;
+input: 'Input:' ident+;
+opts: 'Options:' option (','? option)*;
+option: ident '=' ident;
+macro: lhsMacro | rhsMacro;
+lhsMacro: ('Macro:' | 'MACRO:') ident (matcher | simpleMatcher);
+rhsMacro: ('Macro:' | 'MACRO:') ident ':' ident action;
 
-singleRule: 'Rule:' SIMPLE priority? matcher+ '-->' action+;
+templateDef: 'Template:' ident '=' value;
+templateRef: '[' ident templateParams? ']';
+templateParams:(templateKV (',' templateKV)*);
+templateKV: ident '=' ident;
+
+singleRule: 'Rule:' ident priority? ruleElem ('|' ruleElem)* '-->' actions;
+ruleElem: (matcher | simpleMatcher | ident)+;
 priority: 'Priority:' integer;
+actions: action (',' action)*;
 
 // LHS grammar
-matcher: group modif?;
+matcher: group modif? label?;
 group: '(' groupAnd ('|' groupAnd)*')';
+
 groupAnd: groupElem+;
-groupElem: matcher | simpleMatcher;
+groupElem: matcher | simpleMatcher | ident;
 
 simpleMatcher: '{' annotSpec (',' annotSpec)* '}';
 annotSpec: '!' simpleAnnotSpec
          | simpleAnnotSpec
          ;
 
-simpleAnnotSpec: SIMPLE
-               ( '.' SIMPLE op value
-               | '@' SIMPLE op value
-               | SIMPLE simpleMatcher
-               )?
+simpleAnnotSpec: ident
+               | ident '.' ident op value
+               | ident '@' ident op value
+               | ident ident simpleMatcher
                ;
 
-attrName: SIMPLE
+attrName: ident
         | STRING
         ;
 
-value: SIMPLE
+value: ident
      | STRING
      | integer
      | floatingPoint
@@ -56,32 +78,40 @@ op: '!='
   | '>='
   | '<'
   | '<='
-  | SIMPLE
+  | '!=~'
+  | '!~'
+  | ident
   ;
 
 
 
 
-modif: (':' SIMPLE)
-     | '?'
+modif: '?'
      | '*'
      | '+'
      | '[' DIGITS (',' to=DIGITS?)? ']'
      ;
 
+label: (':' ident);
+
+
 // RHS grammar
-action: labelings | javaCode;
-javaCode: '{' ( '}'
-        | SIMPLE | DIGITS | STRING | '(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '-' |'!' | '|' | javaCode)* '}'
+action: labelings | label? javaCode | rhsMacroRef;
+javaCode: '{' (
+        ident | DIGITS | STRING | op |'(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '-' |'!' | '|' | '~' |
+        'e' | 'E' | 'f' | 'F' | 'd' | 'D' | '+' | '-' | '?' | '*' | ';' |
+        javaCode)* '}'
         ;
 
+rhsMacroRef: ident;
+
 labelings: labeling (',' labeling)*;
-labeling: ':' SIMPLE '.' SIMPLE '=' '{' (attr (',' attr )*)?'}';
+labeling: ':' ident '.' ident '=' '{' (attr (',' attr )*)?'}';
 
 attr:  attrName '=' attrValue;
 attrValue: value
-         |':' SIMPLE '.' SIMPLE '.' SIMPLE
-         |':' SIMPLE '.' SIMPLE '@' SIMPLE
+         |':' ident '.' ident '.' ident
+         |':' ident '.' ident '@' ident
          ;
 
 
@@ -92,13 +122,37 @@ COMMENT:   '/*' (.)*? '*/' -> skip;
 
 integer: ('-'|'+')? DIGITS;
 
-floatingPoint: ('-'|'+')? DIGITS '.' DIGITS exponent? ('f' | 'F' | 'd' 'D')?
-             | '.' DIGITS exponent? ('f' | 'F' | 'd' 'D')?
-             | DIGITS exponent  ('f' | 'F' | 'd' 'D')?
-             | DIGITS exponent? ('f' | 'F' | 'd' 'D');
+floatingPoint: ('-'|'+')? DIGITS '.' DIGITS exponent? ('f' | 'F' | 'd' | 'D')?
+             | '.' DIGITS exponent? ('f' | 'F' | 'd' | 'D')?
+             | DIGITS exponent  ('f' | 'F' | 'd' | 'D')?
+             | DIGITS exponent? ('f' | 'F' | 'd' | 'D');
 
 exponent: ('e' | 'E') ('-'|'+')? DIGITS;
 
 STRING : '"' (~('"' | '\\') | '\\' .)* '"';
 DIGITS: '0'..'9'+;
-SIMPLE: ~('(' | ')' | ' ' | ',' | '.' | '<' | '>' | '\t' | '\r' | '\n' | '{' | '}' | '[' | ']' | ':' | '=' | '!' | '~' | '"' | '@')+;
+//SIMPLE: ~('(' | ')' | ' ' | ',' | '.' | '<' | '>' | '\t' | '\r' | '\n' | '{' | '}' | '[' | ']' | ':' | '=' | '!' | '~' | '"' | '@')+;
+SIMPLE: JavaLetter JavaLetterOrDigit*
+;
+
+fragment
+JavaLetter
+: [a-zA-Z$_] // these are the "java letters" below 0xFF
+| // covers all characters above 0xFF which are not a surrogate
+~[\u0000-\u00FF\uD800-\uDBFF]
+{Character.isJavaIdentifierStart(_input.LA(-1))}?
+| // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
+[\uD800-\uDBFF] [\uDC00-\uDFFF]
+{Character.isJavaIdentifierStart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}?
+;
+
+fragment
+JavaLetterOrDigit
+: [a-zA-Z0-9$_] // these are the "java letters or digits" below 0xFF
+| // covers all characters above 0xFF which are not a surrogate
+~[\u0000-\u00FF\uD800-\uDBFF]
+{Character.isJavaIdentifierPart(_input.LA(-1))}?
+| // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
+[\uD800-\uDBFF] [\uDC00-\uDFFF]
+{Character.isJavaIdentifierPart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}?
+;
