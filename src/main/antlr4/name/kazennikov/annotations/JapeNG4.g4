@@ -7,7 +7,7 @@ grammar JapeNG4;
 
 jape: multiPhaseHead? (singlePhase | phasesDecl);
 
-ident: SIMPLE | 'f' | 'F' | 'd' | 'D' | 'e' | 'E';
+ident: SIMPLE | Number;
 
 // multi phase grammar
 multiPhaseHead: ('MultiPhase:' | 'Multiphase:') ident;
@@ -39,7 +39,7 @@ templateKV: ident '=' ident;
 
 singleRule: 'Rule:' ident priority? ruleElem ('|' ruleElem)* '-->' actions;
 ruleElem: (matcher | simpleMatcher | ident)+;
-priority: 'Priority:' DIGITS;
+priority: 'Priority:' number;
 actions: action (',' action)*;
 
 // LHS grammar
@@ -66,7 +66,7 @@ attrName: ident
 
 value: ident
      | STRING
-     | floatingPoint
+     | number
      ;
 
 op: '!='
@@ -88,7 +88,7 @@ op: '!='
 modif: '?'
      | '*'
      | '+'
-     | '[' DIGITS (',' to=DIGITS?)? ']'
+     | '[' number (',' number?)? ']'
      ;
 
 label: (':' ident);
@@ -97,8 +97,8 @@ label: (':' ident);
 // RHS grammar
 action: labeling | label? javaCode | rhsMacroRef;
 javaCode: '{' (
-        ident | DIGITS | STRING | op |'(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '-' |'!' | '|' | '~' |
-        'e' | 'E' | 'f' | 'F' | 'd' | 'D' | '+' | '-' | '?' | '*' | ';' | '&' | '-' | '/' | '\'' |
+        ident | number | STRING | op |'(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '-' |'!' | '|' | '~' |
+        '+' | '-' | '?' | '*' | ';' | '&' | '-' | '/' | '\'' |
         javaCode)* '}'
         ;
 
@@ -118,21 +118,21 @@ WS: (' ' | '\t' | '\n' | '\r')+ -> skip;
 SINGLE_COMMENT: '//' ~('\r' | '\n')* -> skip;
 COMMENT:   '/*' (.)*? '*/' -> skip;
 
+number: Number;
 
-floatingPoint: ('-'|'+')?
+Number: ('-'|'+')?
              (
                DIGITS
-             | DIGITS '.' DIGITS exponent? ('f' | 'F' | 'd' | 'D')?
-             | '.' DIGITS exponent? ('f' | 'F' | 'd' | 'D')?
-             | DIGITS exponent  ('f' | 'F' | 'd' | 'D')?
-             | DIGITS exponent? ('f' | 'F' | 'd' | 'D')
+             | DIGITS '.' DIGITS Exponent? ('f' | 'F' | 'd' | 'D')?
+             | '.' DIGITS Exponent? ('f' | 'F' | 'd' | 'D')?
+             | DIGITS Exponent  ('f' | 'F' | 'd' | 'D')?
+             | DIGITS Exponent? ('f' | 'F' | 'd' | 'D')
              );
 
-exponent: ('e' | 'E') ('-'|'+')? DIGITS;
+fragment Exponent: ('e' | 'E') ('-'|'+')? DIGITS;
 
 STRING : '"' (~('"' | '\\') | '\\' .)* '"';
-DIGITS: '0'..'9'+;
-//SIMPLE: ~('(' | ')' | ' ' | ',' | '.' | '<' | '>' | '\t' | '\r' | '\n' | '{' | '}' | '[' | ']' | ':' | '=' | '!' | '~' | '"' | '@')+;
+fragment DIGITS: '0'..'9'+;
 
 SIMPLE: JavaLetter JavaLetterOrDigit*
 ;
