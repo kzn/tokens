@@ -7,12 +7,12 @@ grammar JapeNG4;
 
 jape: multiPhaseHead? (singlePhase | phasesDecl);
 
-ident: SIMPLE;
+ident: SIMPLE | 'f' | 'F' | 'd' | 'D' | 'e' | 'E';
 
 // multi phase grammar
 multiPhaseHead: ('MultiPhase:' | 'Multiphase:') ident;
 
-phasesDecl: 'Phases:' ident+;
+phasesDecl: 'Phases:' SIMPLE+;
 
 imports: 'Imports:' javaCode;
 controllerOpt: controllerStarted | controllerFinished | controllerAborted;
@@ -26,11 +26,11 @@ preHead: imports? (controllerOpt)*;
 singlePhase: preHead phase+;
 phase: 'Phase:' ident (input | opts)* (singleRule | macro | templateDef)+;
 input: 'Input:' ident+;
-opts: 'Options:' option (','? option)*;
+opts: ('Options:' | 'options:') option (','? option)*;
 option: ident '=' ident;
 macro: lhsMacro | rhsMacro;
 lhsMacro: ('Macro:' | 'MACRO:') ident (matcher | simpleMatcher);
-rhsMacro: ('Macro:' | 'MACRO:') ident ':' ident action;
+rhsMacro: ('Macro:' | 'MACRO:') ident action;
 
 templateDef: 'Template:' ident '=' value;
 templateRef: '[' ident templateParams? ']';
@@ -39,7 +39,7 @@ templateKV: ident '=' ident;
 
 singleRule: 'Rule:' ident priority? ruleElem ('|' ruleElem)* '-->' actions;
 ruleElem: (matcher | simpleMatcher | ident)+;
-priority: 'Priority:' integer;
+priority: 'Priority:' DIGITS;
 actions: action (',' action)*;
 
 // LHS grammar
@@ -57,7 +57,7 @@ annotSpec: '!' simpleAnnotSpec
 simpleAnnotSpec: ident
                | ident '.' ident op value
                | ident '@' ident op value
-               | ident ident simpleMatcher
+               | ident ident (simpleMatcher | ident)
                ;
 
 attrName: ident
@@ -66,7 +66,6 @@ attrName: ident
 
 value: ident
      | STRING
-     | integer
      | floatingPoint
      ;
 
@@ -96,16 +95,15 @@ label: (':' ident);
 
 
 // RHS grammar
-action: labelings | label? javaCode | rhsMacroRef;
+action: labeling | label? javaCode | rhsMacroRef;
 javaCode: '{' (
         ident | DIGITS | STRING | op |'(' | ')' | ',' | '.' | '<' | '>' | '[' | ']' | ':' | '=' | '!=' | '+' | '-' |'!' | '|' | '~' |
-        'e' | 'E' | 'f' | 'F' | 'd' | 'D' | '+' | '-' | '?' | '*' | ';' |
+        'e' | 'E' | 'f' | 'F' | 'd' | 'D' | '+' | '-' | '?' | '*' | ';' | '&' | '-' | '/' | '\'' |
         javaCode)* '}'
         ;
 
 rhsMacroRef: ident;
 
-labelings: labeling (',' labeling)*;
 labeling: ':' ident '.' ident '=' '{' (attr (',' attr )*)?'}';
 
 attr:  attrName '=' attrValue;
@@ -120,20 +118,26 @@ WS: (' ' | '\t' | '\n' | '\r')+ -> skip;
 SINGLE_COMMENT: '//' ~('\r' | '\n')* -> skip;
 COMMENT:   '/*' (.)*? '*/' -> skip;
 
-integer: ('-'|'+')? DIGITS;
 
-floatingPoint: ('-'|'+')? DIGITS '.' DIGITS exponent? ('f' | 'F' | 'd' | 'D')?
+floatingPoint: ('-'|'+')?
+             (
+               DIGITS
+             | DIGITS '.' DIGITS exponent? ('f' | 'F' | 'd' | 'D')?
              | '.' DIGITS exponent? ('f' | 'F' | 'd' | 'D')?
              | DIGITS exponent  ('f' | 'F' | 'd' | 'D')?
-             | DIGITS exponent? ('f' | 'F' | 'd' | 'D');
+             | DIGITS exponent? ('f' | 'F' | 'd' | 'D')
+             );
 
 exponent: ('e' | 'E') ('-'|'+')? DIGITS;
 
 STRING : '"' (~('"' | '\\') | '\\' .)* '"';
 DIGITS: '0'..'9'+;
 //SIMPLE: ~('(' | ')' | ' ' | ',' | '.' | '<' | '>' | '\t' | '\r' | '\n' | '{' | '}' | '[' | ']' | ':' | '=' | '!' | '~' | '"' | '@')+;
+
 SIMPLE: JavaLetter JavaLetterOrDigit*
 ;
+
+
 
 fragment
 JavaLetter
@@ -149,6 +153,7 @@ JavaLetter
 fragment
 JavaLetterOrDigit
 : [a-zA-Z0-9$_] // these are the "java letters or digits" below 0xFF
+| '-'
 | // covers all characters above 0xFF which are not a surrogate
 ~[\u0000-\u00FF\uD800-\uDBFF]
 {Character.isJavaIdentifierPart(_input.LA(-1))}?
