@@ -10,6 +10,10 @@ if(project.hasProperty('standalone')) {
     version = '0.0.1-SNAPSHOT'
 }
 
+ext.antlr4 += [
+    'options' : ['-visitor']
+]
+
 
 repositories {
     mavenLocal()
@@ -24,7 +28,7 @@ dependencies {
     compile 'org.antlr:antlr-runtime:3.5.2'
 
     compile 'org.antlr:antlr4:4.3'
-    compile 'org.antlr:antlr4-runtime:3.4'
+    compile 'org.antlr:antlr4-runtime:4.3'
 
     compile 'org.eclipse.jdt.core.compiler:ecj:4.2.2'
     compile 'uk.ac.gate:gate-core:7.1'
