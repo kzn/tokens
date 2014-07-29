@@ -107,9 +107,10 @@ rhsMacroRef: ident;
 labeling: ':' ident '.' ident '=' '{' (attr (',' attr )*)?'}';
 
 attr:  attrName '=' attrValue;
-attrValue: value
-         |':' ident '.' ident '.' ident
-         |':' ident '.' ident '@' ident
+attrValue: value                            #simpleValue
+         |':' ident '@' ident               #asMetaFeature
+         |':' ident '.' ident '.' ident     #annFeature
+         |':' ident '.' ident '@' ident     #annMetaFeature
          ;
 
 
