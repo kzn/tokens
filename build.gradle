@@ -36,9 +36,11 @@ dependencies {
     if(project.hasProperty('standalone')) {
         compile 'name.kazennikov:fsa:0.0.1-SNAPSHOT'
         compile 'name.kazennikov:logger:0.0.1-SNAPSHOT'
+		
     } else {
         compile project(':modules:fsa')
         compile project(':modules:logger')
+		compile project(':modules:common')
 
     }
 
