@@ -2,6 +2,8 @@ package name.kazennikov.annotations;
 
 import java.util.List;
 
+import name.kazennikov.common.SequenceStream;
+
 /**
  * Stream of annotations
  * @author Anton Kazennikov
