@@ -23,7 +23,7 @@ import name.kazennikov.annotations.patterns.Rule;
 import name.kazennikov.fsa.FSA;
 import name.kazennikov.fsa.FSAState;
 import name.kazennikov.fsa.FSATransition;
-import name.kazennikov.tools.Alphabet;
+import name.kazennikov.common.Alphabet;
 
 import com.google.common.base.Objects;
 
@@ -77,8 +77,8 @@ public class JapePlusFSM {
 	
 	
 	public static class Builder {
-		Alphabet<String> groups = new Alphabet<>();
-		Alphabet<AnnotationMatcher> matchers = new Alphabet<>();
+		Alphabet<String> groups = new Alphabet<>(1);
+		Alphabet<AnnotationMatcher> matchers = new Alphabet<>(1);
 		IntermediateFSM fsm = new IntermediateFSM();
 		
 		
@@ -380,7 +380,7 @@ public class JapePlusFSM {
 
 	}
 	
-	Alphabet<AnnotationMatcher> matchers = new Alphabet<>();
+	Alphabet<AnnotationMatcher> matchers = new Alphabet<>(1);
 	Alphabet<String> groups;
 	
 

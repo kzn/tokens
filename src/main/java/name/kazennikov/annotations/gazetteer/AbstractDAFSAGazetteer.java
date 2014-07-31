@@ -9,12 +9,12 @@ import name.kazennikov.annotations.AnnotationConstants;
 import name.kazennikov.annotations.Document;
 import name.kazennikov.dafsa.IntDAFSAInt;
 import name.kazennikov.fsa.walk.WalkFSAInt;
-import name.kazennikov.tools.Alphabet;
+import name.kazennikov.common.Alphabet;
 
 public abstract class AbstractDAFSAGazetteer extends BaseGazetteer {
 	
 	protected IntDAFSAInt fsa = new IntDAFSAInt();
-	protected Alphabet<Map<String, String>> feats = new Alphabet<>();
+	protected Alphabet<Map<String, String>> feats = new Alphabet<>(1);
 	protected WalkFSAInt walkFSA;
 	
 	protected boolean caseSensitive;

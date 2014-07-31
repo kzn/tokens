@@ -4,7 +4,6 @@ import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
@@ -28,9 +27,9 @@ public class Document extends Annotation implements CharSequence {
 
 	String text;
     TIntObjectHashMap<Annotation> annotationById = new TIntObjectHashMap<Annotation>();
-    TIntObjectHashMap<AnnotationList> annotationsByStart = new TIntObjectHashMap<>(); 
-    TIntObjectHashMap<AnnotationList> annotationsByEnd = new TIntObjectHashMap<>(); // new Int2ObjectAVLTreeMap<>();
-    Map<String, AnnotationList> annotationsByType = new HashMap<String, AnnotationList>();
+    //TIntObjectHashMap<AnnotationList> annotationsByStart = new TIntObjectHashMap<>(); 
+    //TIntObjectHashMap<AnnotationList> annotationsByEnd = new TIntObjectHashMap<>(); // new Int2ObjectAVLTreeMap<>();
+    //Map<String, AnnotationList> annotationsByType = new HashMap<String, AnnotationList>();
 
 	int nextID = 0;
 	
@@ -203,7 +202,7 @@ public class Document extends Annotation implements CharSequence {
 		
 		annotationById.put(ann.id, ann);
 		nextID = Math.max(ann.id, nextID) + 1;
-		AnnotationList start = annotationsByStart.get(ann.getStart());
+		/*AnnotationList start = annotationsByStart.get(ann.getStart());
 		
 		if(start == null) {
 			start = new AnnotationList();
@@ -227,7 +226,7 @@ public class Document extends Annotation implements CharSequence {
 			annotationsByType.put(ann.getType(), type);
 		}
 		
-		type.add(ann);
+		type.add(ann);*/
 		
 		return ann;
 	}
