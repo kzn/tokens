@@ -5,11 +5,12 @@ import gnu.trove.list.array.TIntArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import name.kazennikov.alphabet.Alphabet;
 import name.kazennikov.annotations.AnnotationConstants;
 import name.kazennikov.annotations.Document;
 import name.kazennikov.dafsa.IntDAFSAInt;
 import name.kazennikov.fsa.walk.WalkFSAInt;
-import name.kazennikov.common.Alphabet;
+
 
 public abstract class AbstractDAFSAGazetteer extends BaseGazetteer {
 	

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import name.kazennikov.alphabet.Alphabet;
 import name.kazennikov.annotations.patterns.AnnotationMatcher;
 import name.kazennikov.annotations.patterns.AnnotationMatcherPatternElement;
 import name.kazennikov.annotations.patterns.AnnotationMatchers;
@@ -23,7 +24,6 @@ import name.kazennikov.annotations.patterns.Rule;
 import name.kazennikov.fsa.FSA;
 import name.kazennikov.fsa.FSAState;
 import name.kazennikov.fsa.FSATransition;
-import name.kazennikov.common.Alphabet;
 
 import com.google.common.base.Objects;
 
