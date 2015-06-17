@@ -21,27 +21,21 @@ repositories {
 }
 
 dependencies {
-    compile 'net.sf.trove4j:trove4j:3.0.3'
-    compile 'com.google.guava:guava:12.0'
+    compile "net.sf.trove4j:trove4j:$trove4jVersion"
+    compile "com.google.guava:guava:$guavaVersion"
     compile 'junit:junit:4.10'
     compile 'org.antlr:antlr:3.5.2'
     compile 'org.antlr:antlr-runtime:3.5.2'
 
-    compile 'org.antlr:antlr4:4.3'
-    compile 'org.antlr:antlr4-runtime:4.3'
+    compile "org.antlr:antlr4:$antlrVersion"
+    compile "org.antlr:antlr4-runtime:$antlrVersion"
+
 
     compile 'org.eclipse.jdt.core.compiler:ecj:4.2.2'
-    compile 'uk.ac.gate:gate-core:7.1'
-
-    if(project.hasProperty('standalone')) {
-        compile 'name.kazennikov:fsa:0.0.1-SNAPSHOT'
-        compile 'name.kazennikov:logger:0.0.1-SNAPSHOT'
-		
-    } else {
-        compile project(':modules:fsa')
-        compile project(':modules:logger')
-		compile project(':modules:common')
-
-    }
+    //compile 'uk.ac.gate:gate-core:7.1'
+    compile project(':modules:gate')
+    compile project(':modules:fsa')
+    compile project(':modules:logger')
+    compile project(':modules:common')
 
 }
