@@ -29,7 +29,7 @@ dependencies {
 
     compile "org.antlr:antlr4:$antlrVersion"
     compile "org.antlr:antlr4-runtime:$antlrVersion"
-
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.0'
 
     compile 'org.eclipse.jdt.core.compiler:ecj:4.2.2'
     //compile 'uk.ac.gate:gate-core:7.1'
