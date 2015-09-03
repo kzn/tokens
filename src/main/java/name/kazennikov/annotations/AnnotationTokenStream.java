@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
-import name.kazennikov.common.trove.TPositionalCharIterator;
+import name.kazennikov.trove.TPositionalCharIterator;
 
 import com.google.common.base.Predicate;
 
