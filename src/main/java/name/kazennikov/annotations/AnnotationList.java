@@ -44,14 +44,7 @@ public class AnnotationList extends ArrayList<Annotation> {
         Collections.sort(this, Annotation.COMPARATOR);
     }
 
-    /**
-     * Sort annotations with given annotation comparator
-     * @param comparator annotation comparator
-     */
-    public void sort(Comparator<Annotation> comparator) {
-        Collections.sort(this, comparator);
-    }
-    
+
     /**
      * Removes all annotations which match a predicate
      * @param p annotation predicate
